@@ -17,7 +17,9 @@ contract** live → close the issue.
 **The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the team
 lead; you own deploy and live proof, and the live box is yours alone.
 
-**The one knob — autonomy level** (set at step 1, from the router):
+**How this run behaves comes from the map's run profile** — the concurrency cap, the model per role,
+and the **autonomy level** — not from this conversation, so a fresh context window runs the DAG the way
+the last one did. Autonomy decides how freely the loop runs:
 - **autonomous** (default) — the **inner loop** (diagnose the nest, apply the consolidating fix,
   continue) runs freely; the **outer loop** fires only for the three rung-3 cases below, pre-validated.
 - **supervised** — diagnose the nest autonomously, but return with the validated diagnosis *before*
@@ -28,12 +30,12 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 
 ## 1. Open the run
 
-Fix the **autonomy level** for this run. Seed the **proof ledger**: one row per node carrying the
+Read the **run profile** off the map. Seed the **proof ledger**: one row per node carrying the
 **proof contract** pre-flight signed — its **tiers**, **evidence form**, and **nonce** — every tier
 marked unsatisfied. The ledger is the single record that keeps **triage-clean** (reviews pass) from ever
 passing for **done-clean** (proof gathered, in the PR).
 
-*Done when:* the autonomy level is fixed, and every node in the DAG has a ledger row carrying its proof
+*Done when:* the run profile is read, and every node in the DAG has a ledger row carrying its proof
 contract's tiers, each unsatisfied.
 
 ## 2. Dispatch the wave

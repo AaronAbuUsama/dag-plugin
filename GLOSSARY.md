@@ -94,6 +94,10 @@ brief, never the lead's conversation. Teammates share a task list that unblocks 
 complete, so the team mirrors the **frontier**. Sized from the frontier and held under the concurrency
 cap. It is the suite's one runner; there is no second way to walk a DAG.
 
+**run profile** — how an effort is run, declared on the **map** beside the **proof profile**: the
+concurrency cap, the model per role, and the **autonomy level**. It lives on GitHub rather than in a
+conversation, so every context window runs the DAG the same way.
+
 **merge gate** — the three signals that must all be clean before a node merges: CI, an independent
 review (bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), and the
 orchestrator's own cold read of the diff.
@@ -135,7 +139,7 @@ regression class — including on a **consolidating fix**, which must cover ever
    code), the proof can't be gathered, or the fix would cost more than it's worth.
 
 **inner loop / outer loop** — the inner loop is autonomous diagnose-and-fix (rung 2); the outer loop is
-the rare, pre-validated human escalation (rung 3). The **autonomy level** (set via the router) decides
+the rare, pre-validated human escalation (rung 3). The **autonomy level** (from the **run profile**) decides
 how freely the inner loop runs before the outer loop is allowed to fire — autonomous by default.
 
 **code-wrong vs node-wrong** — diagnosis's verdict on a cluster. **code-wrong**: the implementation was

@@ -31,6 +31,14 @@ they're open child issues found by query. The map only gists and links.
 
 Receipts are committed to `docs/receipts/<node>-<date>/`.
 
+## Run profile
+
+<!-- How this effort is run. Defaults are fine; state them so a fresh window runs it the same way. -->
+
+- **concurrency** — `<max nodes in flight at once>`
+- **models** — coder `<model>` · reviewer `<model>`
+- **autonomy** — autonomous | supervised
+
 ## Nodes
 
 <!-- one line per node: title (linked) — readiness — one-line gist. -->

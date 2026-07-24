@@ -61,11 +61,13 @@ For each node, check its contract against the map's **proof profile**:
   node is exempt.
 - The evidence is *reachable* — the states are observable and the records readable once the node is
   built. If satisfying the contract would need something the node doesn't build, add it to the node.
+- Its **stage** follows the profile, not the node: where tier 3 is reachable from a branch the contract
+  is a **merge gate** signal; where it isn't, the contract names the shared environment it waits on.
 - A **nonce** ties the evidence to its run.
 
 **The hard rule:** a node whose contract cannot be run as written does not pass pre-flight. "Prove it
-after deploy" is banned — it is a **stop**, sent back to reshape the node into something provable, or to
-a **spike** when whether it can be observed at all is itself the unknown. A design that admits no proof
+later" is banned — it is a **stop**, sent back to reshape the node into something provable, or to a
+**spike** when whether it can be observed at all is itself the unknown. A design that admits no proof
 is a design no one can call done.
 
 *Done when:* every node's contract is validated against the profile — tiers reachable, evidence form

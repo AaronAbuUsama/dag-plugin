@@ -30,6 +30,10 @@ and links.
 | 4 readback | yes/no | `<the durable store and how it is queried>` |
 | 5 observed | yes/no | `<the event/error collector and how it is queried, or "none">` |
 
+**Tier 3 reachable from a branch?** yes | no. Yes — proof is a **merge gate** signal, gathered on the PR
+before the node merges. No — name the shared environment only the merged head reaches, and proof runs
+straight after the merge. This is the whole of the proof-stage decision; no node declares its own.
+
 Receipts are committed to `docs/receipts/<node>-<date>/`.
 
 ## Run profile

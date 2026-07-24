@@ -11,8 +11,9 @@ wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-
 **proof ledger**, and close-on-proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
 **The core loop, per node:** dispatch a self-contained brief → **merge gate** (CI + independent review
-whose verdict is *posted to the PR* + your own cold read) → merge → deploy → satisfy the **proof
-contract** live → close the issue.
+whose verdict is *posted to the PR* + your own cold read + the **proof contract** satisfied, wherever
+the **proof profile** says tier 3 is reachable from a branch) → merge → close the issue. Where tier 3
+needs the merged head instead, proof runs straight after the merge and the issue closes on it.
 
 **The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the team
 lead; you own deploy and live proof, and the live box is yours alone.
@@ -64,13 +65,20 @@ in-flight node's edges are all merged.
 
 ## 3. Work the merge gate
 
-A node merges only when all three signals are clean: CI green; an **independent review** — bot or
-subagent — whose **verdict is posted to the PR as a comment**, never left in a transcript; and your own
-cold read of the full diff. Each review round returns findings; every round's findings feed the ladder
-(step 4), and the fix goes back through all three signals.
+A node merges only when every signal is clean: CI green; an **independent review** — bot or subagent —
+whose **verdict is posted to the PR as a comment**, never left in a transcript; your own cold read of
+the full diff; and — wherever the **proof profile** says tier 3 is reachable from a branch — the node's
+**proof contract** satisfied by `/dag:prove`, with the evidence in the PR. Each review round returns
+findings; every round's findings feed the ladder (step 4), and the fix goes back through every signal.
 
-*Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, and every
-finding of the last round was resolved through the ladder — the node is **triage-clean**.
+**Proof belongs at this gate whenever it can be reached from the branch.** The open PR is the one moment
+a reviewer is actually reading, and a node whose proof can't be gathered has not earned a merge — far
+cheaper to learn before the merge than after. Only where tier 3 genuinely needs the merged head does
+proof move to step 5.
+
+*Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, every finding
+of the last round was resolved through the ladder, and the proof contract is satisfied — or the profile
+says this node's tier 3 waits for the merged head.
 
 ## 4. Climb the ladder
 
@@ -112,10 +120,14 @@ finding is still being patched after a trigger has fired.
 
 ## 5. Finish the node
 
-Triage-clean clears the node to merge; it does not make the node done. Carry it through, in one sitting:
-merge → deploy (you, never the agent) → **`/dag:prove`** the node, which runs its **proof contract** at
-each **tier**, captures the evidence in the form its surface calls for, commits the **receipt**, and posts
-the tier table and the evidence **into the PR** → **done-clean**.
+Where tier 3 was reachable from the branch, the node arrives here already proven — the merge gate took
+its evidence in step 3. Merge it, and close its issue on the satisfied contract.
+
+Where tier 3 needs the merged head, triage-clean clears the node to merge but does not make it done.
+Carry it through in one sitting: merge → get the head running the way the profile says this repo runs
+it → **`/dag:prove`** the node, which runs its **proof contract** at each **tier**, captures the evidence
+in the form its surface calls for, commits the **receipt**, and posts the tier table and the evidence
+**into the PR** → **done-clean**.
 
 The contract was written when the node was created, so nothing here is invented now: the agent that built
 the node never chose its own bar, and you are checking evidence against a bar set before the code existed.
@@ -126,9 +138,9 @@ tier with no evidence in the PR is `NOT PROVEN` — never promoted from a tier t
 tier's verdict in the ledger row. The instant the contract is satisfied, close the node's issue in the
 same step — close-on-proof, so the recorded state never drifts from the real one.
 
-*Done when:* the node is deployed, `/dag:prove` has returned a verdict for every tier in its contract with
-the evidence posted to the PR and the receipt committed, and its issue is closed — or the node is a rung-3
-stop and its ledger row says which tier failed and why.
+*Done when:* `/dag:prove` has returned a verdict for every tier in the node's contract with the evidence
+posted to the PR and the receipt committed, the node is merged, and its issue is closed — or the node is
+a rung-3 stop and its ledger row says which tier failed and why.
 
 ## 6. Advance the DAG
 

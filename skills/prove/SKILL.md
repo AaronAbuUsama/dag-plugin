@@ -6,8 +6,9 @@ description: Put a node's proof in the pull request — the evidence its surface
 # Prove — show it, don't claim it
 
 Satisfy one node's **proof contract** and land the evidence where a human will actually look: **in the
-pull request**. `run` reaches this skill at the moment a node has merged and deployed; you can also run it
-directly on any PR that owes proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md);
+pull request**. `run` reaches this skill at the **merge gate**, on the open PR, wherever the **proof
+profile** says tier 3 is reachable from a branch — and straight after the merge where it isn't. You can
+also run it directly on any PR that owes proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md);
 the capture mechanics live in [`evidence.md`](evidence.md).
 
 Two things a reviewer needs from this, and both matter: **verification** — seeing the thing actually

@@ -83,9 +83,12 @@ the difference between the two done-states impossible to blur:
 - **done-clean** — the proof contract is *satisfied*: the evidence exists, is in the PR, and is
   committed as a receipt. The only real "done".
 
-Proof is never deferred, and it is never merely asserted — **show it, don't claim it**. If a node cannot
-be proven, that is a **stop** signal — before work starts if the contract can't be defined, or at merge
-if the evidence can't be gathered — never a shrug.
+Proof is never deferred, and it is never merely asserted — **show it, don't claim it**. Where the
+**proof profile** says tier 3 is reachable from a branch, proof is gathered *before* the merge, as a
+**merge gate** signal — so "never deferred" is literal, and a node reaches **done-clean** before it
+lands. Where tier 3 needs the merged head, proof runs immediately after the merge and the issue closes
+on it. If a node cannot be proven, that is a **stop** signal — before work starts if the contract can't
+be defined, or at the gate if the evidence can't be gathered — never a shrug.
 
 **proof profile** — what *this repo* can prove with, declared once in the map's Notes and read by every
 proof step: which **tiers** exist here, the command or query that reaches each, and where receipts are
@@ -103,9 +106,10 @@ cap. It is the suite's one runner; there is no second way to walk a DAG.
 concurrency cap, the model per role, and the **autonomy level**. It lives on GitHub rather than in a
 conversation, so every context window runs the DAG the same way.
 
-**merge gate** — the three signals that must all be clean before a node merges: CI, an independent
-review (bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), and the
-orchestrator's own cold read of the diff.
+**merge gate** — the signals that must all be clean before a node merges: CI, an independent review
+(bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), the orchestrator's
+own cold read of the diff, and — wherever the **proof profile** says tier 3 is reachable from a
+branch — the node's **proof contract** satisfied, with the evidence in the PR.
 
 **triage vs diagnosis** — the two review modes.
 - **triage** — what a point-reviewer does: surface one symptom at a time. Fast, shallow, never names

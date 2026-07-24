@@ -22,8 +22,8 @@ present, confirm, then write.
 - `CLAUDE.md` / `AGENTS.md` at the repo root — does either exist, and is there already a `## DAG suite`
   section?
 - `CONTEXT.md`, `CONTEXT-MAP.md`, `docs/adr/` — existing domain docs.
-- Monorepo signals — `pnpm-workspace.yaml`, a `workspaces` field, populated `packages/*/src`. Their
-  absence (the common case) means single-context.
+- Monorepo signals — a workspace declaration in whatever form this repo's tooling uses, plus populated
+  `packages/*/src`. Their absence (the common case) means single-context.
 
 *Done when:* you know the remote, auth state, which labels already exist, which root doc to edit, and
 whether domain docs already exist.

@@ -89,7 +89,9 @@ The end-to-end behaviour this node makes work, from the user's perspective — n
 <!-- Include only the tiers in the map's proof profile. If a tier in the profile does not apply to
      this node, keep the row and write "N/A — <reason>"; silent omission reads as coverage. -->
 
-**Nonce:** <the token this run will carry through every tier>
+**Nonce:** <where it enters and the path it must travel — e.g. "the reference typed into the submit
+form, read back on the confirmation screen and in the orders row". The value is minted at run time,
+not written here: anything written here is in the repo before the run and can never be shown absent.>
 
 ## Readiness
 

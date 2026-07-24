@@ -66,9 +66,12 @@ into the node's issue **when the node is created** — before any code — and v
 **A node whose proof contract cannot be defined does not get built**: that is a **stop**, routed back to
 a grill (a decision is open) or a **spike** (nobody knows yet whether it can be proven).
 
-**nonce** — a unique token minted per proof run and carried through the evidence, so a receipt can only
-belong to *this* run. Its absence must be established first: show the nonce appears nowhere before the
-run, then show it appearing at each tier.
+**nonce** — a unique token minted **per proof run** and carried through the evidence, so a receipt can
+only belong to *this* run. The **proof contract** fixes where it enters and which path it must travel;
+the *value* is minted at run time, never written into the issue — a value recorded before the run is
+already in the repo and can never be shown absent. And it must travel **through the behaviour the
+acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
+the feature worked. Its absence is established first, at each tier the contract names.
 
 **receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
 exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.

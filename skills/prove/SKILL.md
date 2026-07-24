@@ -18,10 +18,13 @@ Inputs: the node's issue (its proof table, surface, and nonce), the map's **proo
 
 ## 1. Establish the baseline
 
-Read the node's proof contract and the profile. Mint the **nonce** if the contract left it open, then
-show it appears **nowhere yet** — establish its absence at each tier the contract names, using that
-tier's own reach command from the profile, and record the empty result. A receipt whose nonce was
-already present proves nothing about this run.
+Read the node's proof contract and the profile. **Mint the nonce now** — a fresh value for this run,
+never the one written in the issue and never one reused from an earlier run. A value that already lives
+in the repo (a committed receipt carries every previous one) cannot be shown absent, so reusing it
+turns the next step into theatre.
+
+Then show it appears **nowhere yet**: establish its absence at each tier the contract names, using that
+tier's own reach command, and record the empty result.
 
 *Done when:* every tier the contract names has a reach command from the profile, and the nonce's absence
 at each of them is recorded with the query that established it.
@@ -31,6 +34,11 @@ at each of them is recorded with the query that established it.
 Work the contract's **proof tiers** in order against the **exact committed head**, running as the
 **proof profile** says this repo runs it — never a rebuilt tree, never uncommitted changes. Record for
 each tier: the command or query run, its result, the UTC window, and the exact identifiers it produced.
+
+**Carry the nonce through the behaviour, not past it.** The contract names where it enters and which
+path it must travel. Drive it the way a real user would, so it reaches each tier *by doing the node's
+actual job* — a nonce the code emits alongside the feature proves the code ran; only one that travelled
+the path the acceptance criteria name proves the feature worked.
 
 **Never weaken an assertion to manufacture green.** A failing proof is a finding about the product, not a
 problem with the proof — take it to step 5.

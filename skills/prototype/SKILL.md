@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build a throwaway spike to answer a design question. Use when a node's readiness is needs-prototype, or when a state model, logic, or UI has to be felt before it can be specified.
+description: Build the throwaway spike that de-risks a DAG node. Use when a node's readiness is needs-prototype, or when another dag skill raises a spike against a node.
 ---
 
 # Prototype

@@ -101,4 +101,10 @@ Install from the marketplace as above, or load a working copy with
 `claude --plugin-dir /path/to/dag-plugin` while iterating. `scripts/check.sh` runs the suite's own
 consistency checks. No external skill dependencies.
 
+**What it needs.** GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's
+own issue-dependency relation, so `gh` authenticated against the repo is a hard requirement.
+`/dag:execute` runs a wave as an **agent team**, which is experimental and env-gated. `/dag:prove`
+needs whatever its **evidence form** calls for — a browser to drive a UI, `ffmpeg` to pull a still out
+of a journey video — and `scripts/check.sh` needs `python3`.
+
 MIT licensed. Changes in [`CHANGELOG.md`](CHANGELOG.md).

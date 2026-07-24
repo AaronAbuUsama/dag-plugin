@@ -1,6 +1,6 @@
 ---
 name: research
-description: Settle a question against primary sources and capture the findings as a Markdown file in the repo. Use when a node's readiness is needs-research, or when a fact must be found before a decision can be made.
+description: Settle a DAG node's open fact against primary sources and capture the findings as a Markdown file in the repo. Use when a node's readiness is needs-research, or when another dag skill dispatches a research node.
 ---
 
 # Research — settle a question against primary sources

@@ -1,0 +1,76 @@
+---
+title: Introduction
+description: One way to turn intent into a graph of provable work and walk it — from a loose idea to shipped, proven, closed.
+---
+
+DAG Engineering is a Claude Code plugin. It takes an idea, grills it into a plan, lays that plan onto
+GitHub as a graph of issues, then walks the graph — building each slice, proving it against reality, and
+closing it only once the evidence exists.
+
+It encodes the lessons of a real multi-wave rollout where one node took **11 review rounds** and half
+its findings were introduced by earlier fixes — the signature of patching without diagnosis. Every rule
+here was paid for.
+
+## The problem it exists to solve
+
+Tests check code against your *model* of the code. If the model is wrong, the tests are wrong the same
+way — confidently. And agents optimise for the signal they are judged on, so "make the tests pass"
+reliably produces passing tests rather than working software.
+
+So the suite forces three things:
+
+<Steps>
+  <Step title="Reality contact before anything is called done">
+    A node is done when the real system was observed doing the real thing — not when the suite is green.
+  </Step>
+  <Step title="Evidence visible to someone who wasn't there">
+    The proof lands in the pull request, which doubles as the forensic trail when it breaks later.
+  </Step>
+  <Step title="The bar fixed before the work">
+    A node's proof contract is written when its issue is created, so whoever builds it cannot pick a bar
+    they can clear.
+  </Step>
+</Steps>
+
+## Two doors
+
+```
+        YOU drive                    │        THE ORCHESTRATOR drives
+  grill · prototype · chart          │   execute · prove · diagnose
+  settle the plan, fix the proof     │   walk the graph, gather the evidence
+────────────── /dag:plan ───────────►│◄──────────── /dag:execute ───────────
+                          the pre-flight signature
+```
+
+**Planning is human-in-the-loop.** `/dag:plan` reads the chart's state off GitHub, tells you where you
+are, and names the single next move. You make the decisions.
+
+**Execution is not.** Once pre-flight is signed, `/dag:execute` walks the graph on its own — dispatching
+a teammate per node, climbing the escalation ladder when findings recur, and proving each node before it
+closes.
+
+The signature is the door between them. It lives on GitHub as a label, so `/dag:execute` refuses to
+start without it, and a hard stop hands the graph back to `/dag:plan`.
+
+:::note
+The state lives on GitHub, not in the conversation. The chart — a `dag:map` issue, its child node
+issues, their blocking edges, the signature — *is* the memory, so a fresh context window picks up
+exactly where the last one stopped.
+:::
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/quickstart">
+    Install it, configure a repo, and run your first chart.
+  </Card>
+  <Card title="Proof" href="/concepts/proof">
+    Tiers, the proof profile, contracts, and what counts as evidence.
+  </Card>
+  <Card title="The DAG" href="/concepts/the-dag">
+    Nodes, edges, the frontier, and how readiness routes work.
+  </Card>
+  <Card title="Skills" href="/reference/skills">
+    All eleven commands and what each one does.
+  </Card>
+</CardGroup>

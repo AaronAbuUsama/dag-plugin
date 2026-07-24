@@ -1,0 +1,62 @@
+---
+title: Skills
+description: All eleven commands the plugin ships, what each does, and which ones fire on their own.
+sidebar:
+  icon: terminal
+---
+
+The plugin ships eleven skills under the `dag` namespace. Two are doors you walk in through; the rest
+are steps.
+
+## The doors
+
+| Command | What it does |
+| --- | --- |
+| `/dag:plan` | The planning door. Reads the chart's state, names the single next move, ends at the pre-flight signature. |
+| `/dag:execute` | The execution door. Refuses to start without the signature, then walks the signed graph to done-clean. |
+
+## Setup
+
+| Command | What it does |
+| --- | --- |
+| `/dag:setup` | Once per repo. Confirms GitHub blocking works *on this repo*, creates the label vocabulary, lays out domain docs. |
+
+## Planning
+
+| Command | What it does |
+| --- | --- |
+| `/dag:grill` | A batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
+| `/dag:grill-deep` | `grill` plus a durable paper trail: resolved terms to the glossary, hard trade-offs to ADRs, captured as they settle. |
+| `/dag:research` | Settles a fact a decision is waiting on, against primary sources, in a background agent. |
+| `/dag:prototype` | The throwaway spike that de-risks a node which isn't knowable on paper. |
+| `/dag:chart` | Lays the settled plan onto GitHub — nodes, real blocking edges, readiness labels, and each node's proof contract. |
+| `/dag:preflight` | The gate. Every node validated against its invariants, criteria, edges, and a runnable proof contract. Signing it opens the execution door. |
+
+## Execution
+
+| Command | What it does |
+| --- | --- |
+| `/dag:prove` | Runs a node's proof contract, captures the evidence its surface calls for, commits a receipt, posts the tier table into the PR. |
+| `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster, and the consolidating fix that closes it. |
+
+## Which ones fire on their own
+
+Most skills are **user-invoked**: only you, typing the name, can start them. Four are
+**model-invoked**, because another skill has to be able to reach them:
+
+<CardGroup cols={2}>
+  <Card title="research · prototype">
+    `chart` dispatches these when it classifies a node's readiness, so a de-fog move resolves in
+    parallel with the rest of the charting.
+  </Card>
+  <Card title="prove · diagnose">
+    `execute` reaches these on its own — `prove` at the merge gate, `diagnose` when the ladder climbs to
+    rung 2.
+  </Card>
+</CardGroup>
+
+:::note
+This is why planning has a router rather than an autopilot. The planning skills are user-invoked, so
+`/dag:plan` **names** the next command for you to run instead of firing it — you never have to work out
+*which* move, only to run it.
+:::

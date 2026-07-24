@@ -35,7 +35,7 @@ done
 note "no foreign skills linked in"
 
 echo "== /dag: cross-references resolve =="
-for s in $(git ls-files -z -- '*.md' | xargs -0 grep -hoE "/dag:[a-z-]+" | sort -u); do
+for s in $(git ls-files -z -- '*.md' '*.mdx' | xargs -0 grep -hoE "/dag:[a-z-]+" | sort -u); do
   [ -f "skills/${s#/dag:}/SKILL.md" ] || bad "unresolved reference $s"
 done
 note "all resolve"
@@ -78,7 +78,7 @@ else
 fi
 
 echo "== no vendor residue =="
-if git ls-files -z -- '*.md' '*.json' | xargs -0 grep -niE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" | grep -v '"email"' | grep -q .; then
+if git ls-files -z -- '*.md' '*.mdx' '*.json' | xargs -0 grep -niE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" | grep -v '"email"' | grep -q .; then
   bad "vendor residue found"
 else
   note "clean"

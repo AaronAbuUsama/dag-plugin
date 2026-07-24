@@ -1,0 +1,95 @@
+---
+title: Escalation
+description: What happens when review findings keep arriving — the three-rung ladder, the nest behind a cluster, and the consolidating fix that closes a class.
+sidebar:
+  icon: trending-up
+  order: 3
+---
+
+Patching an undiagnosed subsystem spawns new defects. The motivating rollout proved it: one node reached
+**11 review rounds**, and half its findings were **fix-induced** — introduced by earlier fixes rather
+than present in the original code. That statistic is the fingerprint of missing diagnosis.
+
+## Triage vs diagnosis
+
+<CardGroup cols={2}>
+  <Card title="Triage">
+    Surface one symptom at a time. Fast, shallow, never names the underlying cause. Correct for rounds
+    1–2.
+  </Card>
+  <Card title="Diagnosis">
+    Find the *disease* behind a cluster of symptoms. Slow, deep, names the root.
+  </Card>
+</CardGroup>
+
+## The ladder
+
+| Rung | Mode | What happens |
+| --- | --- | --- |
+| **1 — Patch** | triage | Fix the reported defect. Normal for rounds 1–2. |
+| **2 — Diagnose + fix** | diagnosis | Stop patching. Find the nest, apply one consolidating fix. Autonomous by default. |
+| **3 — Stop** | escalate | Surface to the human, pre-validated. Rare. |
+
+### Climb to rung 2 the moment any trigger fires
+
+- **Class-recurrence** — the same bug-class a *second* time. The primary trigger; act on the recurrence,
+  not on a count.
+- **The tell** — a finding whose fix needs a *new mechanism* rather than a tightened check. When a fix
+  adds machinery instead of narrowing an existing guard, the design has a hole near it.
+- **Round-count backstop** — round **4**, whatever the findings look like. By four, a pattern is real.
+  Hitting it *is* the climb, not a suggestion.
+
+## The nest
+
+The single design gap that generates a whole **cluster** of findings. *Stop hitting moles, find the
+nest.*
+
+A cluster is two or more findings that are the same underlying issue recurring at a different call site,
+branch, or checkpoint. A shared *file* is not a shared shape; a shared **shape** is the signature of a
+nest.
+
+:::tip
+The load-bearing move in diagnosis is reading the **whole subsystem, not the diff**. The diff shows you
+where a mole surfaced; it never shows you the nest. In the motivating failure, six stale-state findings
+were patched one diff at a time across rounds 3→11, and nobody read the subsystem as a whole until round
+11 — five rounds late.
+:::
+
+You have read enough when you can write the nest in one sentence: *"every consumer of live PR state
+assumes it is fresh, but nothing re-reads it after the window opens."* If you can't write that sentence,
+keep reading.
+
+## Three verdicts
+
+| Verdict | Meaning | What follows |
+| --- | --- | --- |
+| **code-wrong** | The implementation has a gap; the spec is sound. | Consolidating fix, continue. Rung 2, autonomous. |
+| **node-wrong** | The spec or premise is wrong; no code change closes it honestly. | Do not fix. Escalate. Rung 3. |
+| **independent** | The cluster dissolved; findings are genuinely unrelated. | Resume patching, now with confidence there is no nest. |
+
+## Fix-completeness
+
+Before any fix is done, enumerate **every branch and caller** its reasoning touches, and cover each.
+This binds every fix on every rung — including the consolidating one.
+
+It is the discipline that kills the narrow-fix regression class, and it is exactly what the motivating
+round-11 consolidation failed: a shared guard closed five of the cluster's six members but missed one
+call site, and that sixth mole reached merge unresolved.
+
+:::warning
+Half a consolidation reopens the class it was meant to close. Find the call sites by grepping the whole
+subsystem for the shared state or invariant — not by listing only the sites the findings named.
+:::
+
+## Autonomy
+
+The **run profile** on the map decides how freely the inner loop runs:
+
+- **autonomous** (default) — diagnose the nest, apply the consolidating fix, and continue without a
+  human. Most escalations resolve and die here.
+- **supervised** — diagnose autonomously, but return with the validated diagnosis *before* applying the
+  fix.
+
+Rung 3 fires only when diagnosis returns node-wrong, the node's proof cannot be gathered, or the fix
+would cost more than the node is worth. It arrives pre-validated — the named nest, a confidence level,
+and whether fixing it unblocks the graph — so it is a stop a human can act on, not a bare "I'm stuck."

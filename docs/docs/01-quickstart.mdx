@@ -1,0 +1,113 @@
+---
+title: Quickstart
+description: Install the plugin, configure a repo once, and walk your first graph from idea to proven.
+sidebar:
+  label: Quickstart
+  icon: rocket
+  order: 1
+---
+
+## Install
+
+```
+/plugin marketplace add AaronAbuUsama/dag-plugin
+/plugin install dag@dag-engineering
+```
+
+To iterate on a working copy instead, launch with `claude --plugin-dir /path/to/dag-plugin`.
+
+## What it needs
+
+GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's own
+issue-dependency relation, which no other tracker renders.
+
+| Requirement | Why |
+| --- | --- |
+| **`gh`, authenticated** | Non-negotiable. The suite creates issues, sub-issues, dependency links, and labels through it. |
+| **Agent teams** | `/dag:execute` runs a wave as an agent team. The feature is experimental and env-gated. |
+| **A browser, `ffmpeg`** | Only what a node's evidence form calls for — driving a UI, pulling a still out of a journey video. |
+| **`python3`** | For `scripts/check.sh`, the suite's own consistency checks. |
+
+## Configure the repo, once
+
+```
+/dag:setup
+```
+
+It confirms your remote is GitHub, verifies on *this* repo that a real blocking link can be created and
+read back, creates the label vocabulary, and lays out the domain docs. Re-run it only to change the
+label set or the doc layout.
+
+The labels it creates:
+
+| Label | Meaning |
+| --- | --- |
+| `dag:map` | The parent **map** issue that indexes a chart's nodes. |
+| `dag:preflighted` | On the map: pre-flight is signed, the DAG is cleared to execute. |
+| `dag:needs-grilling` | A node whose readiness is needs-grilling — a decision is still open. |
+| `dag:needs-research` | A node waiting on a fact. |
+| `dag:needs-prototype` | A node that isn't knowable on paper; a spike blocks it. |
+
+A node with none of the three readiness labels is **clear**.
+
+## Plan
+
+```
+/dag:plan
+```
+
+This is where you live until the plan is signed. Run it from any window: it finds the chart, reads its
+state, and names the single next move. With no chart yet, that move is `/dag:grill`.
+
+A typical sequence, one move per turn:
+
+<Steps>
+  <Step title="/dag:grill">
+    A batched, code-grounded interview. Every question arrives with the problem in real code, what it
+    touches, the options as concrete diffs, and a graded recommendation — then the ask.
+  </Step>
+  <Step title="/dag:prototype or /dag:research">
+    Only where the plan needs them: a throwaway spike for what isn't knowable on paper, a background
+    agent for a fact that is knowable but not yet known.
+  </Step>
+  <Step title="/dag:chart">
+    Lays the settled plan onto GitHub — a map issue indexing node issues, joined by real blocking edges,
+    each node carrying its acceptance criteria **and its proof contract**.
+  </Step>
+  <Step title="/dag:preflight">
+    The gate. Every node checked against its invariants, its criteria, its edges, and a runnable proof
+    contract. Signing it adds `dag:preflighted` to the map.
+  </Step>
+</Steps>
+
+## Execute
+
+```
+/dag:execute
+```
+
+It checks the signature first and refuses to dispatch without it. Then it walks the graph wave by wave:
+one teammate per ready node, each in its own worktree, each opening one PR.
+
+Per node it works the **merge gate** — CI green, an independent review whose verdict is posted to the
+PR, your own cold read of the diff, and (wherever the branch can run the code) the node's proof
+contract satisfied with the evidence in the PR. Findings feed the **escalation ladder**; a bug-class
+recurring twice stops the patching and calls `/dag:diagnose`.
+
+:::tip
+You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a
+hard stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of
+whether fixing it unblocks anything.
+:::
+
+## What "done" means
+
+<CardGroup cols={2}>
+  <Card title="triage-clean">
+    The reviews are clean. Necessary, not sufficient.
+  </Card>
+  <Card title="done-clean">
+    The proof contract is satisfied — the evidence exists, it is in the PR, and a receipt is committed.
+    The only real done.
+  </Card>
+</CardGroup>

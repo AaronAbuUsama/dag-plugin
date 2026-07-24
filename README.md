@@ -91,6 +91,9 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──�
 
 ## Go deeper
 
+- **The docs site** lives in [`docs/`](docs/) — `bun run --cwd docs dev` to read it locally. It is
+  published to GitHub Pages by [`.github/workflows/docs.yml`](.github/workflows/docs.yml) once Pages is
+  enabled for the repo.
 - **The guided tour** is just `/dag:plan` with no chart yet — it orients you and starts.
 - **The vocabulary** — every **bold term** in the skills — lives in [`GLOSSARY.md`](GLOSSARY.md).
 - **Each skill** reads as a standalone playbook under [`skills/`](skills/).

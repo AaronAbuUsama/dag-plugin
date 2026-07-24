@@ -1,0 +1,102 @@
+---
+title: The DAG
+description: Nodes as vertical slices, edges as real GitHub blocking relationships, and the frontier that decides what runs next.
+sidebar:
+  icon: git-branch
+  order: 2
+---
+
+The plan as a graph of **nodes** joined by **edges**. Laid down by `/dag:chart` from a grilled plan; the
+suite then validates it, walks it, and closes it.
+
+## Node
+
+One work slice: a narrow-but-complete vertical path through every layer — schema → logic → UI → tests —
+sized for a single fresh context window and demoable on its own.
+
+**One node = one teammate = one worktree = one PR.**
+
+<CardGroup cols={2}>
+  <Card title="Vertical, never horizontal">
+    A node cuts a narrow path through every layer. A slice of one layer is not a node.
+  </Card>
+  <Card title="Demoable alone">
+    If you can't show it working by itself, it isn't a tracer bullet.
+  </Card>
+  <Card title="One context window">
+    Sized so a single fresh session can carry it to a merge-ready PR.
+  </Card>
+  <Card title="Prefactoring comes first">
+    "Make the change easy, then make the easy change" — the easy-making is its own node.
+  </Card>
+</CardGroup>
+
+### Wide refactors are the exception
+
+A mechanical change whose blast radius fans across the codebase — rename a shared symbol, retype a
+column — can't land green as one vertical slice. Sequence it **expand → migrate in batches →
+contract**: expand adds the new form beside the old so nothing breaks; each batch is its own node
+blocked by expand, green throughout because the old form survives; contract deletes the old form,
+blocked by every batch.
+
+## Edge
+
+The tracker's native blocking relationship, not prose. This is GitHub's real issue-dependency relation —
+a REST endpoint, not a `gh issue` flag, and it takes the issue's **database id**, never its `#number`:
+
+```bash
+gh api repos/<owner>/<repo>/issues/<n> --jq .id                       # the database id
+gh api -X POST repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by \
+  -F issue_id=<blocker-database-id>
+gh api repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by        # read the blockers back
+```
+
+The readback carries each blocker's `state`, so the frontier costs one query per node.
+
+:::warning
+Prose edges — a "Blocked by #12" line in the body — are the failure this suite exists to prevent, not a
+degraded mode of it. The edges are the product.
+:::
+
+## Map
+
+One issue labelled `dag:map`: an **index**, not a store. It lists each node once and links to it; detail
+lives in the node and is never restated on the map. Nodes are the map's sub-issues:
+
+```bash
+gh api repos/<owner>/<repo>/issues/<map-number>/sub_issues
+```
+
+The map also carries the two profiles that make a run reproducible across context windows — the
+[**proof profile**](/concepts/proof#the-proof-profile) and the **run profile** (concurrency cap, model
+per role, autonomy level).
+
+## Frontier
+
+The open, unblocked, unclaimed nodes — every node whose blockers are all closed. It is the executable
+edge of the graph, and it is what sizes a wave: three focused teammates beat five scattered ones, and a
+wave of four ready nodes wants about four.
+
+## Readiness
+
+How knowable a node is, decided while charting. It lands as a label, because that label is what the
+planning router reads:
+
+| Readiness | Label | The de-fog move |
+| --- | --- | --- |
+| **clear** | *(none)* | Spec it and build. |
+| **needs-grilling** | `dag:needs-grilling` | A decision is open — `/dag:grill` settles it. |
+| **needs-research** | `dag:needs-research` | A fact must be found — `/dag:research` finds it. |
+| **needs-prototype** | `dag:needs-prototype` | Not knowable on paper — a **spike** answers it. |
+
+Each de-fog move is a **real child issue with a real blocking edge** into the build node. That is what
+keeps the frontier from ever surfacing a build node whose premise is still unsettled.
+
+## Spike
+
+A throwaway prototype — code that answers one design question, then is discarded — raised as its own
+node that blocks a `needs-prototype` build node until it resolves. It de-risks the unknowable cheaply,
+before the real build commits.
+
+The validated decision is folded into the real code; the spike itself is captured on a throwaway branch
+as a primary source, referenced from the node's issue.

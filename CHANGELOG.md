@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.5.0
+
+**First real run, and what it broke.** Three failures found by running the suite on an actual repo
+rather than reading it.
+
+- **The doors now open.** `/dag:plan` answered with "next move: `/dag:grill`" and stopped — a door that
+  hands you another command to type is a signpost. It now *runs* the move in the same turn, reading the
+  named skill's `SKILL.md` and following it. `/dag:setup` did the same thing and worse, routing two hops
+  past the door to a planning step; it now hands back to `/dag:plan` and names nothing else. The only
+  commands either door ever hands over are the other door and, if the repo isn't configured, `/dag:setup`.
+- **One question, then work.** Where a move needs an input only the user can give — most often which
+  effort a chart covers — it goes through `AskUserQuestion` and the move starts in the same turn. Not a
+  command to type *and* a question to answer.
+- **The rubric-grill is codified properly.** It was ordered but not enforced, so prose led and the
+  grounding followed. Now: the artifact is the first thing on screen, fenced and language-tagged and
+  labelled `file:line`, with no preamble; context assumes the reader has read none of the surrounding
+  code; the rubric is stated as a visible table before anything is scored; every option carries its own
+  code or diagram and the comparison is a table; and the ask goes through **`AskUserQuestion`** rather
+  than trailing off into prose. A section on presentation makes syntax highlighting, tables and diagrams
+  part of the job rather than polish — the grounding only works if it can be taken in at a glance.
+
 ## 0.4.0
 
 **The running model, and two doors.** Tier 3 stops meaning *deployed* and starts meaning *running and

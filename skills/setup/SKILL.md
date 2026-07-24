@@ -1,6 +1,6 @@
 ---
 name: setup
-description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once before /dag:chart.
+description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once, before /dag:plan.
 disable-model-invocation: true
 ---
 
@@ -114,3 +114,8 @@ Domain docs: [single-context | multi-context], see CONTEXT.md[/CONTEXT-MAP.md]. 
 Tell the user setup is complete: every label in step 3 exists, native blocking is confirmed, domain docs
 are in place, and the root doc carries the `## DAG suite` block. Re-running this skill is only needed to
 change the label set or domain layout later.
+
+**Then hand back to the door — `/dag:plan` — and name nothing else.** Never route the user to a planning
+step like `/dag:grill` or `/dag:chart`: which step comes next is `/dag:plan`'s judgement, read off the
+chart's state, and naming one here teaches the user a model the suite spends the rest of its time undoing.
+Two doors is the whole interface.

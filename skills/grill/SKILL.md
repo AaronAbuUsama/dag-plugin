@@ -37,25 +37,91 @@ confirms.
 
 ## The rubric-grill — the load-bearing move
 
-**A question the user cannot judge from what is on screen is a failed question.** Before *any* decision
-goes to them, lay out the tradeoff in the concrete, in this order:
+**A question the user cannot judge from what is on screen is a failed question.** Every decision goes to
+them in the five parts below, in this order, with no exceptions and no preamble.
 
-1. **The problem, in the concrete.** The actual code at issue — `file:line` plus the real snippet, not a
-   paraphrase of it. Reach for a diagram instead only when the shape (a data flow, a state machine, a
-   dependency web) lands faster that way.
-2. **What it touches.** Zoom out one level: the surrounding code, its callers and dependents, and the
-   blast radius of changing it. Show what the choice actually moves.
-3. **The options, in the concrete.** Each candidate as real code or a diff sketch — or a diagram — never
-   a prose description of an approach.
-4. **Graded against a rubric that fits the occasion.** Score the options on the axes that matter here —
-   floor-first (ships the real thing now, not a promise of it), reversibility, blast radius,
-   correctness/integrity, parallelizability, fit with what's already there. Then give your recommendation
-   and why.
-5. **The ask.** Only now, having shown all of the above, pose the question — with your recommended answer.
+<rubric-grill-order>
+
+**1 — The problem, as code or a diagram. First thing on screen.**
+
+Open with the artifact, not with narration. No "I read the board", no "before the questions", no summary
+of what you found — the first thing under the question's heading is a fenced block or a diagram:
+
+````
+```ts packages/installation/src/managed-config-store.ts:35-40
+export const seedManagedConfig = async (db: Database, cfg: ManagedConfig) => { … }
+```
+````
+
+Always tag the fence with its language so it renders highlighted, and always label it `file:line`. Reach
+for a diagram instead when the shape is a flow, a state machine, or a dependency web — those land faster
+drawn than quoted. Prose comes *after* the artifact, and only to say what the artifact means.
+
+**2 — What it touches. Assume they have read none of it.**
+
+The reader has not read the surrounding code, and will not go and read it. So zoom out and put the
+context on screen: the callers, the dependents, the sibling that consumes the same shape, the blast
+radius of changing it. Every file you reference gets a `file:line` and enough of a quote to judge from.
+A reference to code you did not show is a reference they cannot use.
+
+**3 — The rubric, stated as a rubric.**
+
+Name the axes before you score anything, so the scoring can be argued with. Write them out — a list or a
+table, but visible and separate from the prose:
+
+| Axis | What it means here |
+|---|---|
+| floor-first | ships the real thing now, not a promise of it |
+| reversibility | how cheaply this is undone if wrong |
+| blast radius | how much has to change, and what breaks if it does |
+| correctness / integrity | what invariant this protects or gives up |
+| parallelizability | can this run beside other work, or does it serialise |
+| fit | how well it sits with what is already there |
+
+Pick the axes that fit *this* occasion — those six are the usual set, not a fixed one. A rubric buried
+inside a sentence of prose is not a rubric.
+
+**4 — The options, each as code or a diagram.**
+
+Every candidate gets its own artifact: the real code, a diff sketch, or a diagram. Never a prose
+description of an approach.
+
+````
+```diff packages/installation/src/configuration.ts
+- export const readManagedConfig = async (path) => readPrivateJson(path, Schema);
++ export const readManagedConfig = async (db) => store.current();
+```
+````
+
+Then score them against the rubric from part 3 — a table, one row per option, one column per axis, so the
+comparison is read rather than reconstructed. Close with your recommendation and the one-line reason.
+
+**5 — The ask, through `AskUserQuestion`.**
+
+Put the question through the **`AskUserQuestion` tool**, one question per decision, the recommended
+option first and marked `(Recommended)`. Never end a round with the ask buried in prose — a decision
+typed into chat as a paragraph is a decision that has to be re-found.
+
+The grounding from parts 1–4 goes in your message *before* the tool call; the tool carries only the
+choice.
+
+</rubric-grill-order>
+
+## Make it readable, or it will not be read
+
+The grounding only works if it can be taken in at a glance. This is part of the job, not polish:
+
+- **Every code block tagged with its language**, so it syntax-highlights. An untagged fence is a wall of
+  grey.
+- **Tables for anything compared** — options against axes, before against after. Never a paragraph that
+  makes the reader hold six values in their head.
+- **Diagrams for shapes** — flows, state machines, dependency webs. Draw them.
+- **One heading per decision**, so a round of four questions reads as four blocks and not one essay.
+- **Bold the load-bearing clause** in a long paragraph, so the eye finds the thing that decides it.
 
 The user reads the actual tradeoff off the page and rules on it; they never reconstruct it from a
-summary. Removing that reconstruction is the entire reason this skill exists — every abstract question
-you skip smuggles it back in.
+summary. Removing that reconstruction is the entire reason this skill exists — every abstract question,
+every untagged block, and every rubric hidden in prose smuggles it back in.
 
 ## Tone
 

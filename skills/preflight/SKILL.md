@@ -73,3 +73,8 @@ Any node with a **re-plan** verdict or a **stop** proof contract goes back to th
 Wave 1 begins — it is not dispatchable. Pre-flight is signed only when every remaining node is
 **satisfies**-or-resolved-**at-risk**, fully design-checkable, edge-audited, and carries a proof
 contract. Only a signed pre-flight clears the DAG for dispatch.
+
+**Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add
+the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:map`
+reads it from any context window and hands the DAG to `/dag:run`. Sending any node back to CREATE later
+removes the label until pre-flight is re-signed.

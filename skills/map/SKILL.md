@@ -1,62 +1,67 @@
 ---
 name: map
-description: Router over the DAG-execution suite — names each skill and when to reach for it. User-invoked index for building, validating, running, and proving a DAG of work.
+description: The one entry point — run it from anywhere and it reads the chart's state, tells you where you are, and drives the next step. Stateful across context windows; routes both the planning and execution phases.
 disable-model-invocation: true
 ---
 
-# The DAG suite — map
+# Map — where you are, and the next move
 
-Turning a plan into proven-done work runs through one pipeline. This skill is the index; the terms
-below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
+**The single entry point to the whole suite.** Run `/dag:map` from any context window, at any point. It
+finds the **chart** on GitHub, reads its state, and drives the next step — so neither you (planning) nor
+the orchestrator (executing) ever has to know which skill to reach for. Terms are defined once in
+[`../../GLOSSARY.md`](../../GLOSSARY.md).
+
+**Why it works across sessions:** the state lives on the tracker, not in the conversation. The chart —
+the `dag:map` issue, its child **nodes**, their readiness labels, their native blocking **edges**, and
+the `dag:preflighted` signature — *is* the memory. A fresh window running `/dag:map` reads the same state
+and continues exactly where the last one stopped.
+
+## 1. Locate the chart
+
+Find the `dag:map` issue on the repo's tracker. If GitHub isn't configured yet, run `/dag:setup` first.
+
+- **No `dag:map` issue** → there is no chart yet. You are at the start: go to *Planning*, first move
+  `/dag:grill`.
+
+## 2. Read the state
+
+With a chart, read these off GitHub — no memory of prior turns needed:
+
+- The open **nodes** and their readiness labels (`needs-grilling` / `needs-research` / `needs-prototype`;
+  no label = **clear**).
+- The **frontier**: open nodes whose every blocking node is closed.
+- Whether the map carries the `dag:preflighted` label (the pre-flight **signature**).
+
+## 3. Drive the next move
+
+Route by state. The pre-flight signature is the line between the two drivers — **planning is yours,
+execution is the orchestrator's** — and the conductor behaves accordingly.
+
+| Chart state | Next move | Driver |
+|---|---|---|
+| No chart | `/dag:grill` to settle the plan, then `/dag:chart` to lay it down | **you** (human-in-the-loop) |
+| Frontier has a `needs-grilling` node | `/dag:grill` (or `/dag:grill-deep` if it warrants written ADRs) | **you** |
+| Frontier has a `needs-research` / `needs-prototype` node | `/dag:research` / `/dag:prototype` — these self-dispatch | agent, you review |
+| Chart complete, no `dag:preflighted` label | `/dag:preflight` | handoff |
+| Map labelled `dag:preflighted` | `/dag:run` — it self-drives the ladder → `/dag:diagnose` | **orchestrator** |
+| Every node done-clean and closed | The DAG is done. | — |
+
+**Before the signature — planning, human-in-the-loop.** Propose the single next planning move, run it
+*with* the user, and stop. One move per turn; the user drives the decisions, you never pick them alone.
+
+**After the signature — execution, orchestrator-driven.** Hand off to `/dag:run` and let it drive:
+wave dispatch, the merge gate, and the ladder (which reaches `/dag:diagnose` on its own). You do not
+step back in per-node; `run` owns the loop until a rung-3 stop or the DAG is done.
+
+## First time here?
+
+With no chart, `/dag:map` is also the tour. The pipeline, once:
 
 ```
-   CREATE ──► PRE-FLIGHT ──► RUN ──►（DIAGNOSE）──► PROVE ──► CLOSE
-   (your          dag:         dag:     dag:          your      dag:
-   ticketing)   preflight      run    diagnose       rig/proof   run
+GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►（DIAGNOSE）──► done-clean
+   settle the plan    onto     gate it        walk it   find the nest
+   & de-fog it        GitHub                            when a class recurs
 ```
 
-## Reach for
-
-- **Building the plan** → your own ticketing/spec flow. This suite starts once a **DAG** of nodes with
-  **edges** exists.
-- **Before dispatching any node** → **`/dag:preflight`**. Walk every node against its invariants, its
-  own acceptance criteria, its edges, and its **proof contract**. Nothing dispatches until pre-flight is
-  signed. This is the cheapest place to catch an architecture violation — skip it and you pay for it
-  later, in review, at its most expensive.
-- **Executing the DAG** → **`/dag:run`**. Wave-by-wave dispatch behind the **merge gate**, carrying the
-  **ladder**, the **fix-completeness** check, the **proof ledger**, and close-on-proof. This is the
-  loop you live in until the DAG is done.
-- **A bug-class keeps recurring** → **`/dag:diagnose`** (usually invoked *by* `/dag:run` automatically
-  when a trigger fires — see the ladder). Find the **nest** behind a **cluster**; return a consolidating
-  fix or an escalation. You rarely call this by hand.
-- **Proving a node on real infrastructure** → your project's proof/deploy skill (e.g. `rig`). The
-  **proof contract** defined at pre-flight is what you satisfy here. `/dag:run` gates merge on it.
-
-## The one knob: autonomy level
-
-`/dag:run` defaults to **autonomous** — when a bug-class recurs it diagnoses the **nest** and applies
-the consolidating fix on its own (the **inner loop**), and only escalates to you (the **outer loop**)
-when the node's *premise* is wrong, the proof can't be gathered, or the fix costs more than it's worth
-— and even then it arrives *pre-validated*: here is the nest, here is my confidence, here is whether the
-fix unblocks. Set the level when you start a run:
-
-- **autonomous** (default) — diagnose and fix the nest without checking in; escalate only the three
-  outer-loop cases above, pre-validated.
-- **supervised** — diagnose the nest autonomously, but come back with the validated diagnosis *before*
-  applying a consolidating fix.
-
-The point of the suite is to run without a human in the loop. Prefer **autonomous**; reach for
-**supervised** only when a subsystem is high-stakes enough that you want eyes on a restructure before it
-lands.
-
-## The non-negotiables (why this suite exists)
-
-Three rules the suite enforces because their absence is what makes rollouts expensive:
-
-- **Proof is never deferred.** A node's **proof contract** is a pre-flight deliverable; a node that
-  can't be proven is a **stop**, not a merge. `triage-clean` (reviews pass) is not `done-clean` (proof
-  satisfied).
-- **A recurring bug-class means stop patching and diagnose.** Patching symptoms in an undiagnosed
-  subsystem spawns **fix-induced** defects. The ladder makes the switch to diagnosis automatic.
-- **Every fix — including a consolidating one — passes fix-completeness.** Enumerate every branch and
-  caller before "done".
+The three rules the suite exists to hold: **proof is never deferred**; **a recurring bug-class means
+stop patching and diagnose**; **every fix passes fix-completeness**. Run `/dag:grill` to begin.

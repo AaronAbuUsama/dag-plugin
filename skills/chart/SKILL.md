@@ -1,0 +1,127 @@
+---
+name: chart
+description: Turn a grilled or specced plan into a chart — a DAG of GitHub issues, buildable vertical-slice nodes joined by native blocking edges, each node's readiness classified and de-risked before it reaches the frontier.
+disable-model-invocation: true
+---
+
+# Chart — plan into a walkable DAG
+
+Take a plan that is already grilled or specced and lay it down as a **chart**: a **map** parent issue on
+GitHub indexing child **node** issues, joined by the tracker's **native blocking** so the **frontier**
+renders visually. The suite then walks it from `/dag:preflight` onward. Terms are defined once in
+[`../../GLOSSARY.md`](../../GLOSSARY.md); this skill uses them without redefining.
+
+The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. GitHub is the
+tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.
+
+**Default posture: wayfinding-light.** The grilling already burned off the fog — your job is to
+decompose a known plan into buildable nodes and wire their edges, not to rediscover the route. Chart what
+you can specify now. Only when the effort is genuinely huge *and* still foggy — you can't yet slice whole
+regions into nodes — escalate to full fog-of-war (see [Escalation](#escalation-full-fog-of-war)); it is
+an option, not the path.
+
+## Refer by name
+
+Every map and node is an issue with a **title**. In everything the human reads — narration, the map's
+index — name it by that title, never a bare `#42`. A wall of numbers is illegible; the id rides inside
+the name's link, never stands in for it.
+
+## The chart's shape
+
+- **Map** — one issue labelled `dag:map`, the canonical artifact. An **index**, not a store: it lists
+  each node once and links to it; detail lives in the node, never restated on the map.
+- **Node** — a child issue of the map: one tracer-bullet vertical slice (see below), its body carrying
+  what-to-build, acceptance criteria, and its blocking edges. One node = one agent = one PR.
+- **Edge** — the tracker's native blocking relationship, not prose. A node is on the **frontier** when
+  every node blocking it is closed.
+
+The map body and node body templates, and the create-then-wire GitHub mechanics, live in
+[`node-template.md`](node-template.md) — read it before step 4.
+
+## Nodes are tracer bullets
+
+<vertical-slice-rules>
+
+- Each node cuts a narrow but COMPLETE path through every layer (schema → logic → UI → tests) — vertical,
+  never a horizontal slice of one layer.
+- A completed node is demoable or verifiable on its own.
+- Each node is sized to fit one fresh context window.
+- Prefactoring ("make the change easy, then make the easy change") is its own node, first.
+
+</vertical-slice-rules>
+
+**Wide refactors are the exception.** A mechanical change whose **blast radius** fans across the codebase
+— rename a shared symbol, retype a column — can't land green as one vertical slice. Sequence it
+**expand → migrate-in-batches → contract**: expand adds the new form beside the old (nothing breaks);
+each migrate batch (per package/dir) is its own node blocked by expand, CI green throughout because the
+old form survives; contract deletes the old form, blocked by every batch. If batches can't stay green
+alone, share an integration branch that all block a final integrate-and-verify node — green promised only
+there.
+
+## Readiness routes each node
+
+Classify every node's **readiness** while charting, then wire its de-fog move as a blocking node so the
+unknown is settled *before* the build reaches the frontier:
+
+- **clear** — spec it and build. No de-fog node; it sits on the frontier or blocked only by build edges.
+- **needs-grilling** — a decision is still open. Add a grilling node (`/dag:grill`) that blocks the build
+  node.
+- **needs-research** — a fact must be found first. Add a research node (`/dag:research`) that blocks the
+  build node; fire its subagent in step 5.
+- **needs-prototype** — not knowable on paper. Emit a **spike**: a throwaway-prototype node
+  (`/dag:prototype`) that blocks the build node until it resolves. This is how the not-knowable gets
+  de-risked cheaply before the real build commits.
+
+A de-fog node is a real child issue with its own blocking edge into the build node — so the frontier
+never surfaces a build node whose premise is still unsettled.
+
+## Process
+
+### 1. Gather the plan
+
+Work from the grilling/spec already in context. If the user passed a reference (spec path, issue URL),
+fetch its full body and comments. Explore the codebase enough to name nodes in the project's glossary
+vocabulary and spot prefactoring opportunities.
+
+*Done when:* you can state the destination and every buildable region of the plan in one pass.
+
+### 2. Draft the vertical-slice nodes
+
+Decompose the plan into tracer-bullet nodes per the rules above, prefactoring first, wide refactors
+sequenced as expand/contract. For each node name its build-order blocking edges — the nodes that must
+merge before it can start.
+
+*Done when:* every buildable slice of the plan is a named node with its build edges listed, and no node
+is a horizontal single-layer slice.
+
+### 3. Classify readiness and add de-fog nodes
+
+Give every build node one readiness verdict. For each non-**clear** node, add its de-fog node
+(grilling / research / spike) and record that it blocks the build node.
+
+*Done when:* every node carries a readiness verdict, and every needs-grilling / needs-research /
+needs-prototype node has a de-fog node blocking it — no build node left resting on an unsettled premise.
+
+### 4. Create, then wire
+
+Create the map, then every node as a child issue — **first pass creates, second pass wires the blocking
+edges** (issues need ids before they can reference each other). Follow the mechanics in
+[`node-template.md`](node-template.md).
+
+*Done when:* the map indexes every node, and every build and de-fog edge exists as a native blocking
+link — the frontier renders correctly in GitHub's UI.
+
+### 5. Fire research and hand off
+
+Spin up a `/dag:research` subagent for each research node so they resolve in parallel, each capturing
+findings back on its issue. Then hand the chart to `/dag:preflight`.
+
+*Done when:* every research node has a running subagent, and the chart is handed to `/dag:preflight`.
+
+## Escalation: full fog-of-war
+
+When the effort is genuinely huge and still foggy — whole regions you can't yet slice into nodes — don't
+force premature nodes. Chart only what's specifiable now and write the rest into a **Not yet specified**
+section on the map: the dim, un-ticketable view toward the destination. As upstream de-fog nodes resolve,
+**graduate** each patch that has become specifiable into fresh nodes, clearing it from Not yet specified.
+This is wayfinder's fog-of-war apparatus; reach for it only when the plan can't be fully sliced up front.

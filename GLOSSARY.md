@@ -81,3 +81,39 @@ how freely the inner loop runs before the outer loop is allowed to fire — auto
 wrong → consolidate and continue (rung 2, autonomous). **node-wrong**: the node's spec or premise was
 wrong → stop and re-plan (rung 3). A third outcome, **independent**: no nest, the findings are genuinely
 unrelated → resume patching, with confidence.
+
+---
+
+## Planning — turning intent into the DAG
+
+**design tree** — the plan seen as decisions, each branching into the decisions that hang off it.
+Grilling walks it in **rounds**, not depth-first.
+
+**frontier** — the set of decisions whose prerequisites are already settled: the questions you can ask
+*now* without guessing at answers you haven't heard yet. (The same word names the executable edge of a
+**chart**: the open, unblocked, unclaimed nodes.)
+
+**round** — one batched pass over the whole **frontier**. Ask every frontier question at once — numbered,
+each with a recommended answer — then recompute the frontier from the answers. The cure for
+one-question-at-a-time slowness.
+
+**rubric-grill** — how a question is put, so it is never asked in the abstract. Before any decision goes
+to the human, show: (1) the **problem**, in code (`file:line` + real snippets) or a diagram — whichever
+fits the occasion; (2) **what it touches** — surrounding code, callers, blast radius; (3) the **options**,
+each as concrete code / a diff sketch or diagram; (4) graded against a **rubric that fits the occasion**
+(floor-first, reversibility, blast radius, correctness, parallelizability, fit), with a recommendation.
+*Only then* ask. Facts are the agent's job — dispatch a subagent for anything lookable-up, never ask the
+human for it; the **decisions** are the human's.
+
+**readiness** — how knowable a node is, decided while charting. **clear** (spec it and build) /
+**needs-grilling** (a decision to settle first) / **needs-prototype** (not knowable on paper) /
+**needs-research** (a fact to find first). Readiness routes a node to the right de-fogging move before it
+is buildable.
+
+**spike** — a throwaway **prototype** (code that answers a design question, then is discarded) raised as
+its own node that **blocks** a `needs-prototype` build node until it resolves. De-risks the unknowable
+cheaply, before the real build commits.
+
+**chart** — the DAG embodied on the issue tracker: a `map` parent issue indexing child **node** issues
+joined by the tracker's **native blocking** relationship, so the **frontier** renders visually in the
+tracker's own UI. Charting is turning a grilled/prototyped plan into this graph; the suite then walks it.

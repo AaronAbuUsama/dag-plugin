@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dag",
-  "displayName": "DAG — provable wave execution",
-  "version": "0.1.0",
-  "description": "Run a DAG of provable work slices to done-clean. Pre-flight the plan against its own invariants before dispatch, execute wave-by-wave behind a merge gate, and escalate from patching symptoms to diagnosing the nest the moment a bug-class recurs — autonomously by default.",
+  "displayName": "DAG Engineering",
+  "version": "0.2.0",
+  "description": "One way to turn intent into a graph of provable work and walk it. Grill a plan (batched, grounded in code), prototype the unknowable, chart it onto GitHub as a DAG of issues, then pre-flight, run, and diagnose it to done-clean — autonomously by default.",
   "author": {
     "name": "Aaron Abu Usama",
     "email": "aaron@capxul.com"

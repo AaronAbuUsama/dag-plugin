@@ -16,6 +16,21 @@ they're open child issues found by query. The map only gists and links.
 
 <domain; skills every node should consult; standing preferences for this effort.>
 
+## Proof profile
+
+<!-- What this repo can prove with. Written once; every node's proof contract is drawn from it.
+     List only the rungs that genuinely exist here — an absent rung is stated as absent, never faked. -->
+
+| rung | exists here? | how it is reached |
+|---|---|---|
+| 1 mechanical | yes | `<the repo's test/typecheck/build command>` |
+| 2 integrated | yes/no | `<command>` |
+| 3 live | yes/no | `<how the exact head gets deployed and driven, or "none — no deploy target">` |
+| 4 readback | yes/no | `<the durable store and how it is queried>` |
+| 5 observed | yes/no | `<the event/error collector and how it is queried, or "none">` |
+
+Receipts are committed to `docs/receipts/<node>-<date>/`.
+
 ## Nodes
 
 <!-- one line per node: title (linked) — readiness — one-line gist. -->
@@ -39,6 +54,24 @@ The end-to-end behaviour this node makes work, from the user's perspective — n
 
 - [ ] Criterion 1
 - [ ] Criterion 2
+
+## Proof
+
+<!-- Written NOW, before any code — never left for the implementing agent to invent.
+     Surface: what this node touches (UI / backend / API / CLI / messaging), which fixes the evidence form. -->
+
+**Surface:** <ui | backend | api | cli | messaging>
+
+| rung | what proves this node | evidence form |
+|---|---|---|
+| 1 mechanical | <the checks that must pass> | command + result |
+| 3 live | <the real thing happening> | <screenshot + video / durable delta / transcript> |
+| 4 readback | <the record that must exist afterwards> | <query + exact ids> |
+
+<!-- Include only the rungs in the map's proof profile. If a rung in the profile does not apply to
+     this node, keep the row and write "N/A — <reason>"; silent omission reads as coverage. -->
+
+**Nonce:** <the token this run will carry through every rung>
 
 ## Readiness
 

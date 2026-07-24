@@ -50,16 +50,26 @@ edges against the nodes it shares a contract with — new edges added where foun
 
 ## 4. Proof contract, per node
 
-For each node, define its concrete, runnable **proof contract**: which proof layers, what nonce, what
-receipt establishes this node is **done-clean**. The proof contract is a pre-flight deliverable.
+Each node's **proof contract** was written into its issue when the node was created. Here you validate
+it — you are not inventing it now, and neither will the agent that builds the node.
 
-**The hard rule:** a node whose proof contract you cannot even *define* here does not pass pre-flight.
-"Prove it after deploy" is banned — an undefined proof is a **stop** signal before work starts, sent
-back to CREATE to reshape the node into something provable. A design that admits no proof is a design
-no one can call done.
+For each node, check its contract against the map's **proof profile**:
 
-*Done when:* every node carries a written, runnable proof contract — or is marked **stop** and returned
-to CREATE.
+- Its **rungs** exist in this repo and each names the command or query that reaches it.
+- Its **evidence form** matches its **surface** — a UI node yields screenshots and a video, a backend
+  node a durable delta with exact ids, a CLI node its captured output. Every node has a surface, so no
+  node is exempt.
+- The evidence is *reachable* — the states are observable and the records readable once the node is
+  built. If satisfying the contract would need something the node doesn't build, add it to the node.
+- A **nonce** ties the evidence to its run.
+
+**The hard rule:** a node whose contract cannot be run as written does not pass pre-flight. "Prove it
+after deploy" is banned — it is a **stop**, sent back to reshape the node into something provable, or to
+a **spike** when whether it can be observed at all is itself the unknown. A design that admits no proof
+is a design no one can call done.
+
+*Done when:* every node's contract is validated against the profile — rungs reachable, evidence form
+matching its surface, nonce present — or the node is marked **stop** and returned to CREATE.
 
 ## Sign the pre-flight
 

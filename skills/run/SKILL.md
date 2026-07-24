@@ -29,11 +29,12 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 ## 1. Open the run
 
 Fix the **autonomy level** for this run. Seed the **proof ledger**: one row per node carrying the
-**proof contract** pre-flight signed, every row marked unsatisfied. The ledger is the single record that
-keeps **triage-clean** (reviews pass) from ever passing for **done-clean** (proof gathered).
+**proof contract** pre-flight signed — its **rungs**, **evidence form**, and **nonce** — every rung
+marked unsatisfied. The ledger is the single record that keeps **triage-clean** (reviews pass) from ever
+passing for **done-clean** (proof gathered, in the PR).
 
-*Done when:* the autonomy level is fixed, and every node in the DAG has a ledger row with its proof
-contract and an unsatisfied mark.
+*Done when:* the autonomy level is fixed, and every node in the DAG has a ledger row carrying its proof
+contract's rungs, each unsatisfied.
 
 ## 2. Dispatch the wave
 
@@ -97,14 +98,22 @@ finding is still being patched after a trigger has fired.
 ## 5. Finish the node
 
 Triage-clean clears the node to merge; it does not make the node done. Carry it through, in one sitting:
-merge → deploy (you, never the agent) → satisfy the **proof contract** live, gathering the node's nonce
-and receipt into its ledger row → **done-clean**. **Proof is never deferred** — you never merge a node
-whose live proof you already know can't be gathered (that is a rung-3 stop), and you never leave a merged
-node's proof for "post-deploy" or "later." The instant the proof contract is satisfied, close the node's
-issue in the same step — close-on-proof, so the recorded state never drifts from the real one.
+merge → deploy (you, never the agent) → **`/dag:prove`** the node, which runs its **proof contract** at
+each **rung**, captures the evidence in the form its surface calls for, commits the **receipt**, and posts
+the rung table and the evidence **into the PR** → **done-clean**.
 
-*Done when:* the node is deployed, its proof contract is satisfied live with the receipt in its ledger
-row, and its issue is closed — or the node is a rung-3 stop and its ledger row says so.
+The contract was written when the node was created, so nothing here is invented now: the agent that built
+the node never chose its own bar, and you are checking evidence against a bar set before the code existed.
+
+**Proof is never deferred, and never merely asserted.** You never merge a node whose proof you already
+know can't be gathered (that is a rung-3 stop), you never leave a merged node's proof for "later," and a
+rung with no evidence in the PR is `NOT PROVEN` — never promoted from a rung that was reached. Record each
+rung's verdict in the ledger row. The instant the contract is satisfied, close the node's issue in the
+same step — close-on-proof, so the recorded state never drifts from the real one.
+
+*Done when:* the node is deployed, `/dag:prove` has returned a verdict for every rung in its contract with
+the evidence posted to the PR and the receipt committed, and its issue is closed — or the node is a rung-3
+stop and its ledger row says which rung failed and why.
 
 ## 6. Advance the DAG
 

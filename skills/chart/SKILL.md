@@ -102,6 +102,30 @@ Give every build node one readiness verdict. For each non-**clear** node, add it
 *Done when:* every node carries a readiness verdict, and every needs-grilling / needs-research /
 needs-prototype node has a de-fog node blocking it — no build node left resting on an unsettled premise.
 
+### 3b. Write each node's proof contract
+
+Proof is decided here, at issue-creation, **not** by whoever builds the node later. An implementing agent
+that invents its own bar picks the bar it can clear — so the bar is written down before the code exists.
+
+First settle the **proof profile** for this effort and put it on the map: which **rungs** genuinely exist
+in this repo and the command or query that reaches each. Take it from the repo (its test command, whether
+anything is deployed anywhere, where durable records live, whether errors and events are collected
+somewhere queryable) and confirm it with the user. Rungs this repo doesn't have are recorded as absent.
+
+Then, per node: name its **surface** — that fixes the **evidence form** — and fill its proof table from
+the profile, plus the **nonce** the run will carry. Every node has a surface and so has an evidence form:
+a backend node proves itself with a durable delta and exact ids, a CLI node with its captured output, a
+UI node with screenshots and a video.
+
+**When a node's proof can't be defined, do not chart it as buildable.** That is a de-fog signal, exactly
+like readiness — route it: a decision about *what would even count* as proof → **needs-grilling**; nobody
+knows yet whether the thing can be observed at all → **needs-prototype**, and the spike's goal is to find
+out. A node whose proof stays undefinable is reshaped until it is provable, or it doesn't get built.
+
+*Done when:* the map carries the proof profile, every build node's issue body carries a proof table whose
+rungs are drawn from that profile plus a nonce, and every node whose proof could not be defined has a
+de-fog node blocking it instead of a proof table.
+
 ### 4. Create, then wire
 
 Create the map, then every node as a child issue — **first pass creates, second pass wires the blocking

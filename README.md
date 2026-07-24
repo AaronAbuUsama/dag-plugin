@@ -50,12 +50,18 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
 | | `/dag:chart` | Lays the plan down as a GitHub DAG — nodes + native blocking, each node's readiness de-risked first. |
 | **build** | `/dag:preflight` | The gate: every node checked against its invariants, criteria, edges, and a runnable proof contract before any dispatch. |
 | | `/dag:run` | Wave execution behind the merge gate, the escalation ladder, no proof deferral, close-on-proof. |
+| | `/dag:prove` | Captures a node's evidence and posts it **into the PR** — screenshots and video for a UI, the durable delta for a backend, the transcript for a CLI — plus a committed receipt. |
 | | `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster. `run` reaches it automatically. |
 
-## The three non-negotiables
+## The non-negotiables
 
-- **Proof is never deferred.** A node's proof contract is a pre-flight deliverable; a node that can't be
-  proven is a *stop*, not a merge. Reviews-clean ≠ done.
+- **Verification is king.** A claim you can't verify isn't a result. Tests verify the code against
+  itself; only reality verifies it against the world — so a node is done when the real system was
+  observed doing the real thing, not when the suite is green.
+- **Proof is defined before the code.** Every node's proof contract — which rungs, what evidence, what
+  nonce — is written when the issue is created. The agent that builds it never picks its own bar.
+- **Proof is never deferred, and never merely asserted.** It is *shown*, in the pull request, in the
+  form the surface calls for. A node that can't be proven is a *stop*, not a merge. Reviews-clean ≠ done.
 - **A recurring bug-class means stop patching and diagnose.** Patching an undiagnosed subsystem spawns
   new defects; the ladder switches to diagnosis automatically (same class twice, or round 4).
 - **Every fix passes fix-completeness** — enumerate every branch and caller before "done", including a

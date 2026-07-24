@@ -43,7 +43,8 @@ execution is the orchestrator's** — and the conductor behaves accordingly.
 | Frontier has a `needs-grilling` node | `/dag:grill` (or `/dag:grill-deep` if it warrants written ADRs) | **you** |
 | Frontier has a `needs-research` / `needs-prototype` node | `/dag:research` / `/dag:prototype` — these self-dispatch | agent, you review |
 | Chart complete, no `dag:preflighted` label | `/dag:preflight` | handoff |
-| Map labelled `dag:preflighted` | `/dag:run` — it self-drives the ladder → `/dag:diagnose` | **orchestrator** |
+| Map labelled `dag:preflighted` | `/dag:run` — it self-drives the ladder → `/dag:diagnose`, and `/dag:prove` on each merged node | **orchestrator** |
+| A merged node whose proof isn't in its PR | `/dag:prove` — capture the evidence and post it | **orchestrator** |
 | Every node done-clean and closed | The DAG is done. | — |
 
 **Before the signature — planning, human-in-the-loop.** Propose the single next planning move, run it
@@ -63,5 +64,8 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
    & de-fog it        GitHub                            when a class recurs
 ```
 
-The three rules the suite exists to hold: **proof is never deferred**; **a recurring bug-class means
-stop patching and diagnose**; **every fix passes fix-completeness**. Run `/dag:grill` to begin.
+The rules the suite exists to hold: **verification is king** — a claim you can't verify isn't a result,
+and only reality verifies code against the world; **proof is defined before the code**, at issue-creation,
+so no agent ever picks its own bar; **proof is never deferred and never merely asserted** — it is shown,
+in the pull request; **a recurring bug-class means stop patching and diagnose**; **every fix passes
+fix-completeness**. Run `/dag:grill` to begin.

@@ -14,8 +14,8 @@ wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-
 whose verdict is *posted to the PR* + your own cold read) → merge → deploy → satisfy the **proof
 contract** live → close the issue.
 
-**The one shape, everywhere:** one agent = one node = one worktree = one PR. You own deploy and live
-proof; agents never touch the live box.
+**The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the team
+lead; you own deploy and live proof, and the live box is yours alone.
 
 **The one knob — autonomy level** (set at step 1, from the router):
 - **autonomous** (default) — the **inner loop** (diagnose the nest, apply the consolidating fix,
@@ -38,14 +38,27 @@ contract's rungs, each unsatisfied.
 
 ## 2. Dispatch the wave
 
-Compute the ready set: every unstarted node whose blocking **edges** have all merged. Dispatch each as
-one agent in its own worktree with a **self-contained brief** — the fields and the shape constraint are
-in [`dispatch-brief.md`](dispatch-brief.md). Hold in-flight nodes under a small concurrency ceiling, so
-each runs in a fresh context and you can cold-read every diff yourself.
+Compute the ready set: every unstarted node whose blocking **edges** have all merged. Give each ready
+node to one **teammate**, working in its own worktree from a **self-contained brief** — the fields and
+the shape constraint are in [`dispatch-brief.md`](dispatch-brief.md).
 
-*Done when:* every ready node has a dispatched agent whose brief carries its acceptance criteria, proof
-contract, consumed edges, and the fix-completeness rule; nothing over the ceiling; and every in-flight
-node's edges are all merged.
+**The team is how a wave runs, and its mechanics shape the work:**
+
+- A teammate inherits the repo's own context and its brief — **never your conversation**. The brief is
+  its whole world, which is why self-contained is a hard requirement rather than a style.
+- The team's shared task list unblocks a task the moment its blockers complete — the same **frontier**
+  you compute here, kept live. Let it, and re-derive the frontier from GitHub rather than from memory.
+- **Size the team from the frontier, not the DAG**: three focused teammates beat five scattered ones, and
+  a wave of four ready nodes wants about four. Stay under the **concurrency cap** so each node runs in a
+  fresh context and you can cold-read every diff yourself.
+- One worktree each keeps two teammates off the same file.
+- A teammate cannot spawn teammates, so a node is sized to be carried by one.
+- A resumed session does not restore teammates. That costs you the spawns and nothing else — the chart
+  is on GitHub, so re-read the state and give the open nodes to fresh teammates.
+
+*Done when:* every ready node has a teammate whose brief carries its acceptance criteria, proof contract,
+consumed edges, and the fix-completeness rule; the team is within the concurrency cap; and every
+in-flight node's edges are all merged.
 
 ## 3. Work the merge gate
 

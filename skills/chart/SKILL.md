@@ -31,7 +31,7 @@ the name's link, never stands in for it.
 - **Map** — one issue labelled `dag:map`, the canonical artifact. An **index**, not a store: it lists
   each node once and links to it; detail lives in the node, never restated on the map.
 - **Node** — a child issue of the map: one tracer-bullet vertical slice (see below), its body carrying
-  what-to-build, acceptance criteria, and its blocking edges. One node = one agent = one PR.
+  what-to-build, acceptance criteria, and its blocking edges. One node = one **teammate** = one PR.
 - **Edge** — the tracker's native blocking relationship, not prose. A node is on the **frontier** when
   every node blocking it is closed.
 

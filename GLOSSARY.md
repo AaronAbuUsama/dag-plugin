@@ -10,7 +10,7 @@ skills use it without re-defining.
 until it merges). Built upstream by a ticketing skill; this suite validates it, runs it, and closes it.
 
 **node** — one work slice: a narrow-but-complete vertical path (schema→logic→tests) sized for a single
-fresh context, demoable on its own. One node = one agent = one worktree = one PR.
+fresh context, demoable on its own. One node = one **teammate** = one worktree = one PR.
 
 **pre-flight** — the checklist you run *before the wheels leave the ground*. A whole-DAG gate, run once
 before any dispatch: every node checked against the architecture invariants, its own acceptance
@@ -87,6 +87,12 @@ if the evidence can't be gathered — never a shrug.
 proof step: which **rungs** exist here, the command or query that reaches each, and where receipts are
 committed. This is the whole of the suite's per-repo configuration — the skills stay generic, the repo
 supplies its own reality.
+
+**agent team** — how a wave is executed: you are the team lead, and each ready **node** goes to one
+**teammate** — a separate session with its own context window that inherits the repo's context and its
+brief, never the lead's conversation. Teammates share a task list that unblocks work as its blockers
+complete, so the team mirrors the **frontier**. Sized from the frontier and held under the concurrency
+cap. It is the suite's one runner; there is no second way to walk a DAG.
 
 **merge gate** — the three signals that must all be clean before a node merges: CI, an independent
 review (bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), and the

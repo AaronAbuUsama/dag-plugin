@@ -132,9 +132,15 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-Remove `dag:preflighted` from the map before you surface it — `gh issue edit <map> --remove-label
-dag:preflighted` — or the next fresh window resumes autonomous execution over a DAG you just halted.
-The node then goes back to `/dag:plan`, which re-charts it and re-signs pre-flight.
+**Unsign the DAG before you surface the stop**, or the next fresh window reads the signature and resumes
+autonomous execution over a graph you just halted:
+
+```bash
+gh issue edit <map-number> --remove-label dag:preflighted
+```
+
+The node then goes back to `/dag:plan`, which routes it to a grill, a spike, or a re-chart, and
+pre-flight is re-signed before execution resumes.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix

@@ -118,7 +118,7 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-The node goes back to CREATE / pre-flight.
+The node goes back to `/dag:plan`, which re-charts it and re-signs pre-flight.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix
@@ -159,4 +159,4 @@ Recompute the ready set (step 2) and run the next wave. The DAG is done when eve
 satisfied-and-closed or a recorded stop.
 
 *Done when:* every node in the DAG is done-clean with a closed issue, or is an open rung-3 stop returned
-to CREATE — no node left in an in-between state.
+to planning — no node left in an in-between state.

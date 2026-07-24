@@ -7,7 +7,8 @@ skills use it without re-defining.
 ---
 
 **DAG** — the plan as a graph of **nodes** (work slices) joined by **edges** (a node blocks another
-until it merges). Built upstream by a ticketing skill; this suite validates it, runs it, and closes it.
+until it merges). Laid down by `/dag:chart` from a grilled plan; the suite then validates it, walks it,
+and closes it.
 
 **node** — one work slice: a narrow-but-complete vertical path (schema→logic→tests) sized for a single
 fresh context, demoable on its own. One node = one **teammate** = one worktree = one PR.

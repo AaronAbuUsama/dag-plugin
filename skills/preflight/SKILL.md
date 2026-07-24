@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Pre-flight — validate the DAG
 
-Run this **once**, after a **DAG** of **nodes** and **edges** exists (from your ticketing flow) and
+Run this **once**, after a **DAG** of **nodes** and **edges** exists (laid down by `/dag:chart`) and
 before Wave 1 dispatch. It is the whole-DAG conformance gate: catch every architecture violation here,
 against the *design*, where it is cheap — not later, in review, against the *code*, where it is most
 expensive. Terms below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
@@ -72,7 +72,7 @@ later" is banned — it is a **stop**, sent back to reshape the node into someth
 is a design no one can call done.
 
 *Done when:* every node's contract is validated against the profile — tiers reachable, evidence form
-matching its surface, nonce present — or the node is marked **stop** and returned to CREATE.
+matching its surface, nonce present — or the node is marked **stop** and returned to planning.
 
 ## Sign the pre-flight
 
@@ -82,12 +82,12 @@ Emit one table, one row per node:
 |------|-------------------|---------------------|-------|----------------|
 | … | satisfies / at-risk / re-plan | all design-checkable? | confirmed (+ hidden found) | the runnable contract, or **stop** |
 
-Any node with a **re-plan** verdict or a **stop** proof contract goes back to the CREATE stage before
-Wave 1 begins — it is not dispatchable. Pre-flight is signed only when every remaining node is
-**satisfies**-or-resolved-**at-risk**, fully design-checkable, edge-audited, and carries a proof
-contract. Only a signed pre-flight clears the DAG for dispatch.
+Any node with a **re-plan** verdict or a **stop** proof contract is not dispatchable. It goes back to
+planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart. Pre-flight is
+signed only when every remaining node is **satisfies**-or-resolved-**at-risk**, fully design-checkable,
+edge-audited, and carries a proof contract. Only a signed pre-flight clears the DAG for dispatch.
 
 **Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add
 the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:plan`
-reads it from any context window and hands the DAG to `/dag:execute`. Sending any node back to CREATE
+reads it from any context window and hands the DAG to `/dag:execute`. Sending any node back to planning
 later removes the label until pre-flight is re-signed.

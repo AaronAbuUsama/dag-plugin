@@ -24,7 +24,7 @@ checked at pre-flight against the *design*, not discovered in review against the
 verify the code against itself; only reality verifies the code against the world. Everything below
 exists to keep those two from being confused.
 
-**proof rung** — proof ordered by how close it gets to reality. A higher rung never substitutes for a
+**proof tier** — proof ordered by how close it gets to reality. A higher tier never substitutes for a
 lower one, and a lower one never *promotes* into a higher one:
 
 1. **mechanical** — types, lint, build, unit tests. The code agrees with itself.
@@ -34,13 +34,13 @@ lower one, and a lower one never *promotes* into a higher one:
 5. **observed** — what the run emitted: events, and especially **errors**, queried from wherever this
    repo collects them.
 
-Which rungs exist is a property of the repo, not of the suite — declared once on the **map** (see
-**proof profile**). A repo with no deploy target has no rung 3; a repo with no error/event collector has
-no rung 5. Absent rungs are stated as absent, never faked and never quietly skipped.
+Which tiers exist is a property of the repo, not of the suite — declared once on the **map** (see
+**proof profile**). A repo with no deploy target has no tier 3; a repo with no error/event collector has
+no tier 5. Absent tiers are stated as absent, never faked and never quietly skipped.
 
-**verdict** — the status of one rung, in exactly one word: **PROVEN** / **NOT PROVEN** / **BLOCKED**.
+**verdict** — the status of one tier, in exactly one word: **PROVEN** / **NOT PROVEN** / **BLOCKED**.
 `BLOCKED` is reserved for a genuine external or authorization gate; anything we could fix ourselves is
-`NOT PROVEN` plus work. Never say green, ready, proven, works, or deployed without naming the rung in
+`NOT PROVEN` plus work. Never say green, ready, proven, works, or deployed without naming the tier in
 the same sentence. Understating is recoverable; overstating is how a rollout ships nothing.
 
 **evidence form** — *what the proof looks like*, which follows the **surface** the node touches. The
@@ -55,7 +55,7 @@ discipline is identical; only the artifact changes:
 Every node has a surface, so **every node has an evidence form** — "backend, so nothing to show" is not
 a thing.
 
-**proof contract** — the concrete, runnable evidence that one node is done: which **rungs** it must
+**proof contract** — the concrete, runnable evidence that one node is done: which **tiers** it must
 reach, the **evidence form** for each, and the **nonce** that ties the evidence to this run. Written
 into the node's issue **when the node is created** — before any code — and validated at pre-flight.
 **A node whose proof contract cannot be defined does not get built**: that is a **stop**, routed back to
@@ -63,13 +63,13 @@ a grill (a decision is open) or a **spike** (nobody knows yet whether it can be 
 
 **nonce** — a unique token minted per proof run and carried through the evidence, so a receipt can only
 belong to *this* run. Its absence must be established first: show the nonce appears nowhere before the
-run, then show it appearing at each rung.
+run, then show it appearing at each tier.
 
 **receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
 exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.
 
 **chain of evidence** — the short argument that the artifacts actually prove the claim: the same nonce
-appearing at independent rungs (live *and* readback *and* observed), so the proof is convergence, not a
+appearing at independent tiers (live *and* readback *and* observed), so the proof is convergence, not a
 single screenshot taken on trust.
 
 **proof ledger** — the running record of each node's proof contract and whether it is satisfied. Makes
@@ -84,7 +84,7 @@ be proven, that is a **stop** signal — before work starts if the contract can'
 if the evidence can't be gathered — never a shrug.
 
 **proof profile** — what *this repo* can prove with, declared once in the map's Notes and read by every
-proof step: which **rungs** exist here, the command or query that reaches each, and where receipts are
+proof step: which **tiers** exist here, the command or query that reaches each, and where receipts are
 committed. This is the whole of the suite's per-repo configuration — the skills stay generic, the repo
 supplies its own reality.
 

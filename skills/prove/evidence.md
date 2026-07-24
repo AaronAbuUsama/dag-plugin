@@ -5,7 +5,7 @@ Reached from `SKILL.md` steps 3 and 4. Terms are in [`../../GLOSSARY.md`](../../
 ## Capture, by surface
 
 **UI / browser.** Drive the real app in a real browser — the deployed head, not a local dev server unless
-the profile says local *is* the live rung. Take a **full-frame** screenshot at every state the contract
+the profile says local *is* the live tier. Take a **full-frame** screenshot at every state the contract
 names (not a cropped element: the surrounding page is where clipped text and stuck spinners show up), and
 record the journey as video. Where the repo already has a browser harness, reuse it; where it doesn't,
 drive the browser directly. Name files by state, in order: `01-<state>.png`, `02-<state>.png`.
@@ -27,7 +27,7 @@ screenshot is fine too, and is often more convincing for anything with progressi
 **messaging / external surface.** The message as the real recipient saw it — a screenshot of the actual
 client — plus the provider's message id, so it can be correlated with the durable record.
 
-**observed rung (events and errors).** Query the repo's collector for the run's UTC window filtered to the
+**observed tier (events and errors).** Query the repo's collector for the run's UTC window filtered to the
 nonce or the run's ids, and capture the rows. Errors matter as much as events: an empty error result for
 the window is itself evidence, and a non-empty one is a finding. Query the raw records rather than reading
 a dashboard — a dashboard is a configuration, not an observation.
@@ -62,7 +62,7 @@ An embed that 404s is an unproven claim. On GitHub:
 One directory at the profile's receipt path, e.g. `docs/receipts/<node>-<date>/`:
 
 ```
-README.md      the gallery — rung table, exact identifiers, chain of evidence,
+README.md      the gallery — tier table, exact identifiers, chain of evidence,
                irreversible footprint, redaction note, artifacts embedded with
                RELATIVE paths so they always render
 artifacts/     the screenshots, video, query outputs, transcripts
@@ -76,7 +76,7 @@ was proven, against which head, with which identifiers.
 ```markdown
 ## Proof
 
-| rung | verdict | evidence |
+| tier | verdict | evidence |
 |---|---|---|
 | 1 mechanical | PROVEN | `<command>` — <counts>, at `<sha>` |
 | 3 live | PROVEN | journey run <UTC window> against `<deployed head>` — screenshots below, [video](blob-url) |
@@ -85,7 +85,7 @@ was proven, against which head, with which identifiers.
 
 <screenshots, inline>
 
-**Chain of evidence.** <how the same nonce at independent rungs makes this convergence, not one trusting screenshot.>
+**Chain of evidence.** <how the same nonce at independent tiers makes this convergence, not one trusting screenshot.>
 
 **Irreversible footprint.** <durable records, messages, published artifacts this run created.>
 

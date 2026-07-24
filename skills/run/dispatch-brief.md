@@ -10,8 +10,8 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
   and its boundary: what is in, and what belongs to a sibling node so the agent doesn't reach into it.
 - **Acceptance criteria.** The node's written criteria, verbatim from its spec — the bar its own work
   and the merge gate both judge against.
-- **Proof contract.** From the ledger, verbatim: the node's **surface**, its **rungs**, the **evidence
-  form** each rung takes, and the **nonce**. This was fixed when the node was created and **is not the
+- **Proof contract.** From the ledger, verbatim: the node's **surface**, its **tiers**, the **evidence
+  form** each tier takes, and the **nonce**. This was fixed when the node was created and **is not the
   agent's to choose, lower, or reinterpret** — the agent builds so it is satisfiable (leaving the states
   observable and the records readable), and the orchestrator captures it after merge via `/dag:prove`.
   An agent that finds the contract unsatisfiable says so and stops; it never substitutes a bar it can

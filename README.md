@@ -58,7 +58,7 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
 - **Verification is king.** A claim you can't verify isn't a result. Tests verify the code against
   itself; only reality verifies it against the world — so a node is done when the real system was
   observed doing the real thing, not when the suite is green.
-- **Proof is defined before the code.** Every node's proof contract — which rungs, what evidence, what
+- **Proof is defined before the code.** Every node's proof contract — which tiers, what evidence, what
   nonce — is written when the issue is created. The agent that builds it never picks its own bar.
 - **Proof is never deferred, and never merely asserted.** It is *shown*, in the pull request, in the
   form the surface calls for. A node that can't be proven is a *stop*, not a merge. Reviews-clean ≠ done.

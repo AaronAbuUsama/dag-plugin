@@ -19,9 +19,9 @@ they're open child issues found by query. The map only gists and links.
 ## Proof profile
 
 <!-- What this repo can prove with. Written once; every node's proof contract is drawn from it.
-     List only the rungs that genuinely exist here — an absent rung is stated as absent, never faked. -->
+     List only the tiers that genuinely exist here — an absent tier is stated as absent, never faked. -->
 
-| rung | exists here? | how it is reached |
+| tier | exists here? | how it is reached |
 |---|---|---|
 | 1 mechanical | yes | `<the repo's test/typecheck/build command>` |
 | 2 integrated | yes/no | `<command>` |
@@ -62,16 +62,16 @@ The end-to-end behaviour this node makes work, from the user's perspective — n
 
 **Surface:** <ui | backend | api | cli | messaging>
 
-| rung | what proves this node | evidence form |
+| tier | what proves this node | evidence form |
 |---|---|---|
 | 1 mechanical | <the checks that must pass> | command + result |
 | 3 live | <the real thing happening> | <screenshot + video / durable delta / transcript> |
 | 4 readback | <the record that must exist afterwards> | <query + exact ids> |
 
-<!-- Include only the rungs in the map's proof profile. If a rung in the profile does not apply to
+<!-- Include only the tiers in the map's proof profile. If a tier in the profile does not apply to
      this node, keep the row and write "N/A — <reason>"; silent omission reads as coverage. -->
 
-**Nonce:** <the token this run will carry through every rung>
+**Nonce:** <the token this run will carry through every tier>
 
 ## Readiness
 

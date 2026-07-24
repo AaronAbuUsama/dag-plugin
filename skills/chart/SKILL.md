@@ -107,10 +107,10 @@ needs-prototype node has a de-fog node blocking it — no build node left restin
 Proof is decided here, at issue-creation, **not** by whoever builds the node later. An implementing agent
 that invents its own bar picks the bar it can clear — so the bar is written down before the code exists.
 
-First settle the **proof profile** for this effort and put it on the map: which **rungs** genuinely exist
+First settle the **proof profile** for this effort and put it on the map: which **tiers** genuinely exist
 in this repo and the command or query that reaches each. Take it from the repo (its test command, whether
 anything is deployed anywhere, where durable records live, whether errors and events are collected
-somewhere queryable) and confirm it with the user. Rungs this repo doesn't have are recorded as absent.
+somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as absent.
 
 Then, per node: name its **surface** — that fixes the **evidence form** — and fill its proof table from
 the profile, plus the **nonce** the run will carry. Every node has a surface and so has an evidence form:
@@ -123,7 +123,7 @@ knows yet whether the thing can be observed at all → **needs-prototype**, and 
 out. A node whose proof stays undefinable is reshaped until it is provable, or it doesn't get built.
 
 *Done when:* the map carries the proof profile, every build node's issue body carries a proof table whose
-rungs are drawn from that profile plus a nonce, and every node whose proof could not be defined has a
+tiers are drawn from that profile plus a nonce, and every node whose proof could not be defined has a
 de-fog node blocking it instead of a proof table.
 
 ### 4. Create, then wire

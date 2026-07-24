@@ -55,7 +55,7 @@ it — you are not inventing it now, and neither will the agent that builds the 
 
 For each node, check its contract against the map's **proof profile**:
 
-- Its **rungs** exist in this repo and each names the command or query that reaches it.
+- Its **tiers** exist in this repo and each names the command or query that reaches it.
 - Its **evidence form** matches its **surface** — a UI node yields screenshots and a video, a backend
   node a durable delta with exact ids, a CLI node its captured output. Every node has a surface, so no
   node is exempt.
@@ -68,7 +68,7 @@ after deploy" is banned — it is a **stop**, sent back to reshape the node into
 a **spike** when whether it can be observed at all is itself the unknown. A design that admits no proof
 is a design no one can call done.
 
-*Done when:* every node's contract is validated against the profile — rungs reachable, evidence form
+*Done when:* every node's contract is validated against the profile — tiers reachable, evidence form
 matching its surface, nonce present — or the node is marked **stop** and returned to CREATE.
 
 ## Sign the pre-flight

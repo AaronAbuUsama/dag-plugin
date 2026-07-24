@@ -29,12 +29,12 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 ## 1. Open the run
 
 Fix the **autonomy level** for this run. Seed the **proof ledger**: one row per node carrying the
-**proof contract** pre-flight signed — its **rungs**, **evidence form**, and **nonce** — every rung
+**proof contract** pre-flight signed — its **tiers**, **evidence form**, and **nonce** — every tier
 marked unsatisfied. The ledger is the single record that keeps **triage-clean** (reviews pass) from ever
 passing for **done-clean** (proof gathered, in the PR).
 
 *Done when:* the autonomy level is fixed, and every node in the DAG has a ledger row carrying its proof
-contract's rungs, each unsatisfied.
+contract's tiers, each unsatisfied.
 
 ## 2. Dispatch the wave
 
@@ -112,21 +112,21 @@ finding is still being patched after a trigger has fired.
 
 Triage-clean clears the node to merge; it does not make the node done. Carry it through, in one sitting:
 merge → deploy (you, never the agent) → **`/dag:prove`** the node, which runs its **proof contract** at
-each **rung**, captures the evidence in the form its surface calls for, commits the **receipt**, and posts
-the rung table and the evidence **into the PR** → **done-clean**.
+each **tier**, captures the evidence in the form its surface calls for, commits the **receipt**, and posts
+the tier table and the evidence **into the PR** → **done-clean**.
 
 The contract was written when the node was created, so nothing here is invented now: the agent that built
 the node never chose its own bar, and you are checking evidence against a bar set before the code existed.
 
 **Proof is never deferred, and never merely asserted.** You never merge a node whose proof you already
 know can't be gathered (that is a rung-3 stop), you never leave a merged node's proof for "later," and a
-rung with no evidence in the PR is `NOT PROVEN` — never promoted from a rung that was reached. Record each
-rung's verdict in the ledger row. The instant the contract is satisfied, close the node's issue in the
+tier with no evidence in the PR is `NOT PROVEN` — never promoted from a tier that was reached. Record each
+tier's verdict in the ledger row. The instant the contract is satisfied, close the node's issue in the
 same step — close-on-proof, so the recorded state never drifts from the real one.
 
-*Done when:* the node is deployed, `/dag:prove` has returned a verdict for every rung in its contract with
+*Done when:* the node is deployed, `/dag:prove` has returned a verdict for every tier in its contract with
 the evidence posted to the PR and the receipt committed, and its issue is closed — or the node is a rung-3
-stop and its ledger row says which rung failed and why.
+stop and its ledger row says which tier failed and why.
 
 ## 6. Advance the DAG
 

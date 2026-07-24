@@ -21,19 +21,19 @@ Read the node's proof contract and the profile. Mint the **nonce** if the contra
 show it appears **nowhere yet** — query the durable store and the event/error collector for it and record
 the empty result. A receipt whose nonce was already present proves nothing about this run.
 
-*Done when:* every rung the contract names has a reach command from the profile, and the nonce's absence
+*Done when:* every tier the contract names has a reach command from the profile, and the nonce's absence
 is recorded with the query that established it.
 
-## 2. Run the proof at each rung
+## 2. Run the proof at each tier
 
-Work the contract's rungs in order, against the **exact committed head** that is deployed — never a local
-build, never a rebuilt tree. Record for each rung: the command or query run, its result, the UTC window,
+Work the contract's tiers in order, against the **exact committed head** that is deployed — never a local
+build, never a rebuilt tree. Record for each tier: the command or query run, its result, the UTC window,
 and the exact identifiers it produced.
 
 **Never weaken an assertion to manufacture green.** A failing proof is a finding about the product, not a
 problem with the proof — take it to step 5.
 
-*Done when:* every rung in the contract has been run and carries a **verdict** with its identifiers, and
+*Done when:* every tier in the contract has been run and carries a **verdict** with its identifiers, and
 no assertion was loosened, skipped, or retried into passing.
 
 ## 3. Capture the evidence in the node's form
@@ -52,7 +52,7 @@ The **evidence form** follows the node's surface — the mechanics for each are 
 Redact **before** capturing, never after: mask secrets, credentials, tokens, and personal data at the
 source so no artifact ever contains them. Review every artifact before it is attached.
 
-*Done when:* each rung's evidence exists in the form its surface calls for, you have inspected every
+*Done when:* each tier's evidence exists in the form its surface calls for, you have inspected every
 artifact rather than trusting the assertion that produced it, and no artifact contains a secret or
 personal datum.
 
@@ -62,26 +62,26 @@ Both, in that order — the committed **receipt** outlives the PR page and is th
 media doesn't render.
 
 **Commit the receipt** to the profile's receipt path: a self-contained gallery holding the artifacts, the
-exact identifiers, the rung table, and the **chain of evidence**.
+exact identifiers, the tier table, and the **chain of evidence**.
 
-**Post into the PR** — the body carries the rung table with one **verdict** per rung; the evidence
+**Post into the PR** — the body carries the tier table with one **verdict** per tier; the evidence
 (screenshots inline, video and receipt linked) goes in the body or a comment. Follow the URL rules in
 [`evidence.md`](evidence.md), then **look at the rendered PR page** and confirm the images actually
 loaded and the links resolve — a broken embed is an unproven claim.
 
 Close with the two lines that keep the report honest:
 
-- **Chain of evidence** — how the same nonce appearing at independent rungs makes this convergence
+- **Chain of evidence** — how the same nonce appearing at independent tiers makes this convergence
   rather than one screenshot taken on trust.
 - **Irreversible footprint** — the durable records, messages, emails, and published artifacts this run
   created.
 
-*Done when:* the receipt is committed, the PR carries the rung table and the evidence, you have confirmed
+*Done when:* the receipt is committed, the PR carries the tier table and the evidence, you have confirmed
 on the rendered page that every image and link resolves, and both closing lines are present.
 
-## 5. When a rung fails
+## 5. When a tier fails
 
-A failed rung is the proof working. Diagnose from the artifacts you just captured — never from
+A failed tier is the proof working. Diagnose from the artifacts you just captured — never from
 guesswork — cheapest first: the failure-instant snapshot, then the video frames, then the collector's
 events and **errors** for the run's window, then the logs. Classify what you find:
 
@@ -96,9 +96,9 @@ recorded stop with the failure evidence attached.
 
 ## 6. Report
 
-Return the rung table with a verdict per rung, the receipt link, the chain of evidence, and the
-irreversible footprint. State plainly what this run proves **and what it does not** — an unreached rung
+Return the tier table with a verdict per tier, the receipt link, the chain of evidence, and the
+irreversible footprint. State plainly what this run proves **and what it does not** — an unreached tier
 is reported as `NOT PROVEN`, never promoted into one that was reached.
 
-*Done when:* every rung in the contract carries a verdict, and no rung's evidence is used to speak for
+*Done when:* every tier in the contract carries a verdict, and no tier's evidence is used to speak for
 another.

@@ -129,8 +129,10 @@ like readiness — route it: a decision about *what would even count* as proof �
 knows yet whether the thing can be observed at all → **needs-prototype**, and the spike's goal is to find
 out. A node whose proof stays undefinable is reshaped until it is provable, or it doesn't get built.
 
-Write the **run profile** onto the map too — concurrency, models, autonomy. Defaults are fine; stating
-them is what keeps a fresh context window running the DAG the same way.
+Write the **run profile** onto the map too — concurrency, models, autonomy — and the **Skills** line:
+what a teammate consults while building, and which review its PR gets. The suite delegates who does
+the work and owns only what they are told, so a skill left unnamed here is a teammate guessing.
+Defaults are fine; stating them is what keeps a fresh context window running the DAG the same way.
 
 *Done when:* the map carries the proof profile and the run profile, every build node's issue body carries a proof table whose
 tiers are drawn from that profile plus a nonce, and every node whose proof could not be defined has a

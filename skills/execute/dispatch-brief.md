@@ -21,10 +21,15 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
 - **Ground already laid.** The merged nodes this one builds on and the exact contract/shape/name it
   consumes from each (the hidden-edge couplings pre-flight surfaced) — so it targets what exists, not a
   guess.
+- **Skills for this effort.** The map's **Skills** line, verbatim — what this teammate consults while
+  building, and which review its PR gets. The suite does not supply an implementation method of its
+  own; it names the ones this effort has chosen, and the brief is the only place the teammate can learn
+  them.
 - **Fix-completeness rule.** Stated to the teammate for its own work: before any change is "done",
   enumerate every branch and caller the change's reasoning touches, and cover each.
-- **Review handoff.** The teammate opens one PR and requests the independent review; the review **verdict
-  posts to the PR** as a comment, so the artifact records its own review.
+- **Review handoff.** The teammate opens one PR and requests the review the map named, handing it the
+  packet in [`review-brief.md`](review-brief.md); the review **verdict posts to the PR** as a comment,
+  so the artifact records its own review.
 
 ## The shape constraint (state it in every brief)
 

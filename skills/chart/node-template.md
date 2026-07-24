@@ -15,7 +15,12 @@ and links.
 
 ## Notes
 
-<domain; skills every node should consult; standing preferences for this effort.>
+<domain; standing preferences for this effort.>
+
+**Skills** — build: `<what a teammate consults while building>` · review: `<the skill, agent, or bot
+that reviews its PR>`. Both are copied verbatim into every dispatch brief, so a teammate never guesses
+what this effort builds and reviews with. The suite delegates *who* does the work; it only owns what
+they are told.
 
 ## Proof profile
 

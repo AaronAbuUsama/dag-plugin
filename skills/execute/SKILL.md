@@ -75,10 +75,11 @@ in-flight node's edges are all merged.
 
 ## 3. Work the merge gate
 
-A node merges only when every signal is clean: CI green; an **independent review** — bot or subagent —
-whose **verdict is posted to the PR as a comment**, never left in a transcript; your own cold read of
-the full diff; and — wherever the **proof profile** says tier 3 is reachable from a branch — the node's
-**proof contract** satisfied by `/dag:prove`, with the evidence in the PR. Each review round returns
+A node merges only when every signal is clean: CI green; an **independent review** — whichever the map's
+Skills line names, briefed with [`review-brief.md`](review-brief.md) and its **verdict posted to the PR
+as a comment**, never left in a transcript; your own cold read of the full diff; and — wherever the
+**proof profile** says tier 3 is reachable from a branch — the node's **proof contract** satisfied by
+`/dag:prove`, with the evidence in the PR. Each review round returns
 findings; every round's findings feed the ladder (step 4), and the fix goes back through every signal.
 
 **Proof belongs at this gate whenever it can be reached from the branch.** The open PR is the one moment

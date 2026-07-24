@@ -36,6 +36,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run build
+        # A project site is served from /<repo>; local dev serves from the root.
+        env:
+          BASE_PATH: /dag-plugin
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/dist

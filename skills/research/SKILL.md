@@ -16,5 +16,11 @@ Its job:
    APIs — not a secondary write-up of them. Follow every claim back to the source that owns it.
 2. Write the findings to a single Markdown file, citing each claim's source.
 3. Save it where the repo already keeps such notes; match the existing convention, and if there is none,
-   put it somewhere sensible and say where. If the repo has no tracker or chart set up yet to record the
-   resulting decision against, run [`/dag:setup`](../setup/SKILL.md) first.
+   put it somewhere sensible and say where.
+4. **Post the answer on the node's issue** when the question came from a `dag:needs-research` node — the
+   finding itself, not just a path to it, plus a link to the file. That comment is what the next
+   `/dag:plan` window reads to close the node and unblock what it was blocking. A finding that lives
+   only in a file is a finding the router cannot see, and the node it de-fogs stays blocked forever.
+
+*Done when:* the question is answered against primary sources with each claim cited, the file is saved
+and its location stated, and — for a `needs-research` node — the answer is a comment on that issue.

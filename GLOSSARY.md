@@ -7,7 +7,7 @@ skills use it without re-defining.
 ---
 
 **DAG** — the plan as a graph of **nodes** (work slices) joined by **edges** (a node blocks another
-until it merges). Laid down by `/dag:chart` from a grilled plan; the suite then validates it, walks it,
+until it closes — and under close-on-proof it closes when its proof lands, not when it merges). Laid down by `/dag:chart` from a grilled plan; the suite then validates it, walks it,
 and closes it.
 
 **node** — one work slice: a narrow-but-complete vertical path (schema→logic→tests) sized for a single
@@ -43,10 +43,17 @@ which is rare — "no deploy target" is not that: if you can run it, you can pro
 error/event collector has no tier 5. Absent tiers are stated as absent, never faked and never quietly
 skipped.
 
-**verdict** — the status of one tier, in exactly one word: **PROVEN** / **NOT PROVEN** / **BLOCKED**.
+**verdict** — a judgement returned in one word from a fixed vocabulary, so it cannot be hedged. Each
+judging step has its own, and every one of them is issued by the grader, never by the party being
+graded:
+
+- a **proof tier** — **PROVEN** / **NOT PROVEN** / **BLOCKED**
+- pre-flight, on a node's invariants — satisfies / at-risk / re-plan
+- diagnosis, on a cluster — code-wrong / node-wrong / independent
+
 `BLOCKED` is reserved for a genuine external or authorization gate; anything we could fix ourselves is
-`NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming the tier in
-the same sentence. Understating is recoverable; overstating is how a rollout ships nothing.
+`NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming which verdict, of
+what, in the same sentence. Understating is recoverable; overstating is how a rollout ships nothing.
 
 **evidence form** — *what the proof looks like*, which follows the **surface** the node touches. The
 discipline is identical; only the artifact changes:
@@ -72,6 +79,14 @@ the *value* is minted at run time, never written into the issue — a value reco
 already in the repo and can never be shown absent. And it must travel **through the behaviour the
 acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
 the feature worked. Its absence is established first, at each tier the contract names.
+
+**primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
+code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every
+claim back to one; a secondary account is where stale facts come from.
+
+**database id** — GitHub's internal issue id, which every dependency and sub-issue endpoint takes, and
+which is *not* the `#number` a human sees. Read it with `gh api repos/<owner>/<repo>/issues/<n> --jq
+.id`. Passing the number where the id belongs is the single most common way a chart wires itself wrong.
 
 **receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
 exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.

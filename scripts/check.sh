@@ -77,6 +77,39 @@ else
   note "all used"
 fi
 
+echo "== shared vocabulary is defined in the glossary =="
+# A bolded term used across two or more skills is vocabulary, not emphasis — and vocabulary
+# the glossary never defines reads as shared meaning while actually being one file's invention.
+python3 - <<'PY2' > "$tmp/undefined"
+import re, pathlib, collections
+
+def norm(s):
+    s = s.strip().lower().removeprefix("the ")
+    return s.rstrip("s")
+
+# GLOSSARY *is* the vocabulary file, so a term bolded anywhere in it counts as defined.
+defined = set()
+for m in re.findall(r"\*\*([^*]+)\*\*", pathlib.Path("GLOSSARY.md").read_text()):
+    for part in re.split(r" vs |/", m):
+        defined.add(norm(part))
+
+where = collections.defaultdict(set)
+for f in sorted(pathlib.Path("skills").rglob("*.md")):
+    for term in set(re.findall(r"\*\*([a-z][a-z -]{2,24})\*\*", f.read_text())):
+        where[norm(term)].add(f.parent.name)
+
+EMPHASIS = {"bold", "not", "never", "always", "every", "all", "one", "now", "before", "after"}
+
+for term, files in sorted(where.items()):
+    if len(files) >= 2 and term not in defined and term not in EMPHASIS:
+        print(f"{term}  (used in: {', '.join(sorted(files))})")
+PY2
+if [ -s "$tmp/undefined" ]; then
+  while read -r l; do bad "shared term never defined: $l"; done < "$tmp/undefined"
+else
+  note "all defined"
+fi
+
 echo "== no vendor residue =="
 if git ls-files -z -- '*.md' '*.mdx' '*.json' | xargs -0 grep -niE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" | grep -v '"email"' | grep -q .; then
   bad "vendor residue found"

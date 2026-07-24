@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build a throwaway prototype (a spike) to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like — or when routing a needs-prototype node that must be de-risked before it can be built.
+description: Build a throwaway spike to answer a design question. Use when a node's readiness is needs-prototype, or when a state model, logic, or UI has to be felt before it can be specified.
 ---
 
 # Prototype

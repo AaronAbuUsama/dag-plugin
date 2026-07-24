@@ -42,7 +42,7 @@ Compute the ready set: every unstarted node whose blocking **edges** have all me
 node to one **teammate**, working in its own worktree from a **self-contained brief** — the fields and
 the shape constraint are in [`dispatch-brief.md`](dispatch-brief.md).
 
-**The team is how a wave runs, and its mechanics shape the work:**
+**An agent team is how a wave runs, and its mechanics shape the work:**
 
 - A teammate inherits the repo's own context and its brief — **never your conversation**. The brief is
   its whole world, which is why self-contained is a hard requirement rather than a style.

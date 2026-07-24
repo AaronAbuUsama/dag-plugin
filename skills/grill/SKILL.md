@@ -12,10 +12,14 @@ Terms in **bold** (**design tree**, **frontier**, **round**, **rubric-grill**, *
 
 Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
 
-1. **Compute the frontier.** List every decision whose prerequisites are already settled — the questions answerable *now* without guessing at answers you haven't heard. A decision that depends on another still-open decision belongs to a *later* **round**, not this one. Done when you have that list and can name what each item is blocked on (nothing) or blocks.
-2. **Resolve every fact yourself.** For each frontier item, dispatch a subagent (see `/dag:research`) to look up anything findable in the code or environment — call sites, current behaviour, what a type already guarantees. Never ask the user a question the codebase can answer. Done when no frontier item is waiting on a fact you could have looked up.
-3. **Put the whole frontier to the user as one round.** Number the questions. Each one is a **rubric-grill** (below) — no exceptions. Then stop and wait for answers. Done when every frontier question is presented grounded and you have handed the round over.
-4. **Fold the answers back in.** Each answer settles a decision, which pushes the frontier outward and unblocks what depended on it. Update the **design tree**, recompute, and run the next round. Done when the answers are recorded and the next frontier is computed.
+1. **Compute the frontier.** List every decision whose prerequisites are already settled — the questions answerable *now* without guessing at answers you haven't heard. A decision that depends on another still-open decision belongs to a *later* **round**, not this one.
+   *Done when:* you have that list and can name what each item is blocked on (nothing) or blocks.
+2. **Resolve every fact yourself.** For each frontier item, dispatch a subagent (see `/dag:research`) to look up anything findable in the code or environment — call sites, current behaviour, what a type already guarantees. Every question you put to the user is one only the user can answer.
+   *Done when:* no frontier item is waiting on a fact you could have looked up.
+3. **Put the whole frontier to the user as one round.** Number the questions. Each one is a **rubric-grill** (below) — no exceptions. Then stop and wait for answers.
+   *Done when:* every frontier question is presented grounded and you have handed the round over.
+4. **Fold the answers back in.** Each answer settles a decision, which pushes the frontier outward and unblocks what depended on it. Update the **design tree**, recompute, and run the next round.
+   *Done when:* the answers are recorded and the next frontier is computed.
 
 When the frontier is empty, every branch has been visited and nothing is silently assumed. State the shared understanding and each node's **readiness**, then stop. Do not start building until the user confirms.
 

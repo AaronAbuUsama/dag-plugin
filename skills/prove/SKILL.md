@@ -1,6 +1,6 @@
 ---
 name: prove
-description: Capture a node's proof and put it in the pull request — run the live evidence, take the artifacts its surface calls for, commit the receipt, and post the matrix and evidence so a human reviewer can see it, not take it on trust.
+description: Put a node's proof in the pull request — the evidence its surface calls for, a committed receipt, and a tier table a reviewer can check. Use when a merged node owes its proof, when a PR asserts behaviour it does not show, or when browser evidence (screenshots, video) belongs in a PR.
 ---
 
 # Prove — show it, don't claim it
@@ -26,7 +26,7 @@ is recorded with the query that established it.
 
 ## 2. Run the proof at each tier
 
-Work the contract's tiers in order, against the **exact committed head** that is deployed — never a local
+Work the contract's **proof tiers** in order, against the **exact committed head** that is deployed — never a local
 build, never a rebuilt tree. Record for each tier: the command or query run, its result, the UTC window,
 and the exact identifiers it produced.
 

@@ -1,6 +1,6 @@
 ---
 name: research
-description: Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when a node's readiness is needs-research, a planning skill needs a fact settled before it can proceed, or the user wants a topic, docs, or API researched and the legwork delegated to a background agent.
+description: Settle a question against primary sources and capture the findings as a Markdown file in the repo. Use when a node's readiness is needs-research, or when a fact must be found before a decision can be made.
 ---
 
 Spin up a **background agent** to do the research, so the caller keeps working while it reads. This is the AFK fact-finder other planning skills in the [`dag`](../../GLOSSARY.md) suite dispatch whenever a decision is blocked on a fact rather than a choice — a `needs-research` node exists precisely because something is knowable but not yet known.

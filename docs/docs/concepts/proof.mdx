@@ -106,9 +106,22 @@ a thing.
 
 ## Nonce, receipt, chain of evidence
 
-A **nonce** is a unique token minted per proof run and carried through the evidence, so a receipt can
-only belong to *this* run. Its absence is established first — show it appears nowhere before the run,
-then show it appearing at each tier the contract names.
+A **nonce** is a unique token carried through the evidence, so a receipt can only belong to *this* run.
+Its absence is established first — show it appears nowhere before the run, then show it appearing at
+each tier the contract names.
+
+Two rules make it worth anything, and both exist because the obvious version is trivially gameable:
+
+**The value is minted at run time, never written into the issue.** The contract fixes *where* the nonce
+enters and which path it travels; the token itself is generated when the proof runs. A value written
+down at issue-creation is already in the repo before the run — and every committed receipt carries every
+previous one — so it can never be shown absent, and the absence check becomes theatre.
+
+**It must travel through the behaviour the acceptance criteria name.** Not past it. One line at the top
+of a handler that prints the token, writes it to a row, and fires an event would produce textbook
+convergence across three independent channels while the feature underneath does nothing at all. A token
+the code emits *alongside* the feature proves the code ran. Only one that travelled the path the
+criteria name proves the feature worked.
 
 A **receipt** is the durable, reviewer-openable record of a satisfied contract, committed to the repo so
 it outlives the PR page.
@@ -134,6 +147,23 @@ same sentence — understating is recoverable, overstating is how a rollout ship
 ## Who proves what
 
 The teammate that built the node runs it and captures the evidence its contract names. It never grades
-that evidence — the verdict belongs to the orchestrator.
+that evidence — it reports **what it observed**, and the **verdict** for each tier is issued by the
+orchestrator at the merge gate, reading what came back.
 
 Capture parallelises across a wave; judgement does not. **Nobody grades their own homework.**
+
+## What you have to declare
+
+Two things the suite delegates rather than owns, both declared on the map and both required before
+`/dag:execute` can finish a node:
+
+- **The proof profile** — which tiers exist here, the command or query that reaches each, whether tier 3
+  is reachable from a branch, and where receipts are committed. `/dag:chart` settles this with you.
+- **The Skills line** — what a teammate consults while building, and **which review its PR gets**. The
+  suite ships no reviewer of its own: it names what you already trust and tells it what to judge
+  against. Leave this blank and the merge gate has a signal that can never go clean.
+
+The reviewer is handed the node's acceptance criteria, its proof contract, and its invariants, and asked
+two questions: does the diff meet the criteria, and does it leave the proof contract **satisfiable** —
+states observable, records readable. That second question runs *before* the evidence is gathered, because
+a node whose behaviour nobody can observe is cheapest to catch while it is still a diff.

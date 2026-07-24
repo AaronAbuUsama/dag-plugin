@@ -45,9 +45,13 @@ Most skills are **user-invoked**: only you, typing the name, can start them. Fou
 **model-invoked**, because another skill has to be able to reach them:
 
 <CardGroup cols={2}>
-  <Card title="research · prototype">
-    `chart` dispatches these when it classifies a node's readiness, so a de-fog move resolves in
-    parallel with the rest of the charting.
+  <Card title="research">
+    `chart` fires one subagent per research node as it lays the chart down, so those facts resolve in
+    parallel with the rest of the charting. Each posts its finding back to its own issue.
+  </Card>
+  <Card title="prototype">
+    Model-invoked so a de-fog move can reach it, but in practice `/dag:plan` hands it to **you** — a
+    spike is something you drive and judge, not something that resolves in the background.
   </Card>
   <Card title="prove · diagnose">
     `execute` reaches these on its own — `prove` at the merge gate, `diagnose` when the ladder climbs to

@@ -73,6 +73,32 @@ endpoints take an issue's **database id**, not its number. Replaced with the RES
 live. `chart` also now applies the `dag:needs-*` readiness labels it never applied, so the planning
 router can fire at all.
 
+## The planning loop actually terminates
+
+The readiness router could never fire. The `dag:needs-*` label went on the **build** node, which is
+blocked by its de-fog node and therefore never on the frontier the router reads — while the de-fog node
+that *was* on the frontier carried no label at all. Nothing closed a de-fog node either, and nothing
+removed a label.
+
+The label now goes on the de-fog node, and `/dag:plan` closes that node when its answer lands. That one
+close unblocks the build node, retires the label without any remove-label call, and terminates the loop.
+
+`/dag:research` used to write its finding to a file "somewhere sensible"; it now posts it to its own
+issue, which is the only place the router looks.
+
+## The nonce proves the feature worked, not that the code ran
+
+Its value is minted at run time rather than written into the issue — a value recorded before the run is
+already in the repo (every committed receipt carries every previous one) and can never be shown absent.
+And the contract now names the **path** it must travel, because nothing previously stopped three log
+lines from producing textbook convergence over a feature that does nothing.
+
+## Capture is not a verdict
+
+The teammate ran `/dag:prove` on its own node and `prove` returned a verdict per tier — so the party
+that wrote the code graded its own work. `prove` now reports what it **observed**; the verdict is the
+orchestrator's at the merge gate.
+
 ## check.sh can fail
 
 Its orphan-term check set a flag inside a pipeline subshell and always exited 0; four other checks were

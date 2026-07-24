@@ -32,21 +32,28 @@ issue-dependency relation, which no other tracker renders.
 /dag:setup
 ```
 
-It confirms your remote is GitHub, verifies on *this* repo that a real blocking link can be created and
-read back, creates the label vocabulary, and lays out the domain docs. Re-run it only to change the
-label set or the doc layout.
+**What it will do to your repo**, so none of it is a surprise:
 
-The labels it creates:
+- **Opens two throwaway issues**, links one as blocked by the other, reads the relation back, then
+  deletes the link and closes both. It refuses to assume GitHub's dependency relation works here — it
+  proves it. Two issue numbers get used up.
+- **Creates five labels** (below).
+- **Writes `CONTEXT.md` and `docs/adr/`** at your repo root, if they don't exist.
+- **Edits your `CLAUDE.md`** — or `AGENTS.md` — to add a `## DAG suite` block. It shows you the draft
+  first.
 
-| Label | Meaning |
-| --- | --- |
-| `dag:map` | The parent **map** issue that indexes a chart's nodes. |
-| `dag:preflighted` | On the map: pre-flight is signed, the DAG is cleared to execute. |
-| `dag:needs-grilling` | A node whose readiness is needs-grilling — a decision is still open. |
-| `dag:needs-research` | A node waiting on a fact. |
-| `dag:needs-prototype` | A node that isn't knowable on paper; a spike blocks it. |
+Re-run it only to change the label set or the doc layout.
 
-A node with none of the three readiness labels is **clear**.
+| Label | Goes on | Meaning |
+| --- | --- | --- |
+| `dag:map` | the map issue | The parent issue indexing this chart's nodes. |
+| `dag:preflighted` | the map issue | Pre-flight is signed; the DAG is cleared for `/dag:execute`. |
+| `dag:needs-grilling` | a **de-fog** node | A decision is still open. |
+| `dag:needs-research` | a **de-fog** node | A fact must be found first. |
+| `dag:needs-prototype` | a **de-fog** node | Not knowable on paper; a spike answers it. |
+
+The three `dag:needs-*` labels go on the de-fog node, never on the build node it blocks — that's the
+node `/dag:plan` can actually see. A build node with no de-fog node blocking it is **clear**.
 
 ## Plan
 
@@ -92,11 +99,17 @@ PR, your own cold read of the diff, and (wherever the branch can run the code) t
 contract satisfied with the evidence in the PR. Findings feed the **escalation ladder**; a bug-class
 recurring twice stops the patching and calls `/dag:diagnose`.
 
-:::tip
-You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a
-hard stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of
-whether fixing it unblocks anything.
+:::warning
+**`/dag:execute` merges to your base branch and closes the issues, on its own.** That is the point of
+the signature — once pre-flight is signed you are not in the loop per node, and it merges each node once
+every gate signal is clean. Run it on a branch you are willing to have written to, and read the run
+profile on your map (concurrency, models, autonomy) before you start.
 :::
+
+You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a hard
+stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of whether
+fixing it unblocks anything. When it stops, it removes `dag:preflighted` from the map, so the DAG is
+back in planning and no fresh window can resume execution over a graph you halted.
 
 ## What "done" means
 

@@ -61,8 +61,16 @@ node `/dag:plan` can actually see. A build node with no de-fog node blocking it 
 /dag:plan
 ```
 
-This is where you live until the plan is signed. Run it from any window: it finds the chart, reads its
-state, and names the single next move. With no chart yet, that move is `/dag:grill`.
+With no chart yet it says so, and names the first move — `/dag:grill`. From then on, every time you run it
+you get one sentence about where you are and one command to run.
+
+**You should see** something of this shape:
+
+> No `dag:map` issue on this repo, so there's no chart yet. You're at the start.
+> **Next move: `/dag:grill`** — I'll interview you until the plan is settled, then `/dag:chart` lays it
+> down as issues.
+
+If instead it can't find the labels, `/dag:setup` didn't finish — re-run it.
 
 A typical sequence, one move per turn:
 
@@ -93,6 +101,9 @@ A typical sequence, one move per turn:
 
 It checks the signature first and refuses to dispatch without it. Then it walks the graph wave by wave:
 one teammate per ready node, each in its own worktree, each opening one PR.
+
+**You should see** the ready set named before anything is dispatched, then one PR appear per node. If it
+stops immediately saying the DAG isn't signed, pre-flight hasn't run — go back to `/dag:plan`.
 
 Per node it works the **merge gate** — CI green, an independent review whose verdict is posted to the
 PR, your own cold read of the diff, and (wherever the branch can run the code) the node's proof

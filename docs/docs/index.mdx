@@ -7,70 +7,74 @@ description: An agent told to make the tests pass will make the tests pass. This
 so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
 whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
 
-DAG Engineering closes that gap. It is a Claude Code plugin that turns an idea into a graph of work on
-GitHub where **every slice carries its evidence bar before any code exists** — then walks that graph and
-refuses to close anything until the real system was seen doing the real thing, with the receipt in the
-pull request.
+DAG Engineering is a Claude Code plugin that closes that gap. You describe what you want; it breaks the
+work into slices on GitHub, writes down **what would convince you each slice works before any code
+exists**, and then builds them — refusing to close anything until it has captured that evidence and put
+it in the pull request.
 
-It encodes the lessons of a real multi-wave rollout where one node took **11 review rounds** and half
-its findings were introduced by earlier fixes. Every rule here was paid for.
+## Two commands
+
+```
+/dag:plan       # settle the plan, chart it, sign it off
+/dag:execute    # walk the signed graph until every slice is done
+```
+
+`/dag:plan` is where you live until the plan is signed. Run it from any window: it reads the state off
+GitHub, tells you where you are, and names the single next move — so you never work out which command to
+run, only run the one it names. When it tells you the plan is signed, `/dag:execute` takes it from there
+on its own.
+
+## Is this for you?
+
+<CardGroup cols={2}>
+  <Card title="Worth it when">
+    The work is more than one sitting, several slices could run in parallel, and you'd be embarrassed to
+    find out later that "done" meant "tests passed". Especially when agents are doing the building.
+  </Card>
+  <Card title="Overkill when">
+    It's a one-file fix, an exploration where you don't yet know what you want, or anything where writing
+    down the evidence bar costs more than the change itself. Just do the work.
+  </Card>
+</CardGroup>
+
+It also assumes GitHub. The dependency graph is GitHub's own issue-blocking relation, not prose links in
+issue bodies — that's what lets any window pick up where the last one stopped, and no other tracker
+provides it.
 
 ## What it forces
 
-Three things, none of them optional:
+Three things, and they're the whole design:
 
 <Steps>
-  <Step title="Reality contact before anything is called done">
-    A node is done when the real system was observed doing the real thing — not when the suite is green.
+  <Step title="The bar is written before the work">
+    When a slice becomes an issue, its issue says what evidence would prove it — which checks, what to
+    capture, and how. Whoever builds it later cannot choose a bar they can clear, because the bar already
+    exists.
   </Step>
-  <Step title="Evidence visible to someone who wasn't there">
-    The proof lands in the pull request, which doubles as the forensic trail when it breaks later.
+  <Step title="Nothing closes without that evidence">
+    Not "tests green". The actual artifact — the screenshots, the record with its ids, the captured
+    output — posted to the pull request where a reviewer will see it.
   </Step>
-  <Step title="The bar fixed before the work">
-    A node's proof contract is written when its issue is created, so whoever builds it cannot pick a bar
-    they can clear.
+  <Step title="The evidence must survive someone else reading it">
+    It goes in the PR and a committed receipt, so the person who wasn't there can check it, and so it's
+    still there when the thing breaks in a month.
   </Step>
 </Steps>
-
-## Two doors
-
-```
-        YOU drive                    │        THE ORCHESTRATOR drives
-  grill · prototype · chart          │   execute · prove · diagnose
-  settle the plan, fix the proof     │   walk the graph, gather the evidence
-────────────── /dag:plan ───────────►│◄──────────── /dag:execute ───────────
-                          the pre-flight signature
-```
-
-**Planning is human-in-the-loop.** `/dag:plan` reads the chart's state off GitHub, tells you where you
-are, and names the single next move. You make the decisions.
-
-**Execution is not.** Once pre-flight is signed, `/dag:execute` walks the graph on its own — dispatching
-a teammate per node, climbing the escalation ladder when findings recur, and proving each node before it
-closes.
-
-The signature is the door between them. It lives on GitHub as a label, so `/dag:execute` refuses to
-start without it, and a hard stop hands the graph back to `/dag:plan`.
-
-:::note
-The state lives on GitHub, not in the conversation. The chart — a `dag:map` issue, its child node
-issues, their blocking edges, the signature — *is* the memory, so a fresh context window picks up
-exactly where the last one stopped.
-:::
 
 ## Where to go next
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" href="/quickstart">
-    Install it, configure a repo, and run your first chart.
+  <Card title="Quickstart" href="/quickstart" icon="rocket">
+    Install it and configure a repo. Ten minutes.
   </Card>
-  <Card title="Proof" href="/concepts/proof">
-    Tiers, the proof profile, contracts, and what counts as evidence.
+  <Card title="Walkthrough" href="/walkthrough" icon="footprints">
+    One small effort end to end, with the real issue bodies, commands and PR comment. **Start here if
+    you'd rather see it than read about it.**
   </Card>
-  <Card title="The DAG" href="/concepts/the-dag">
-    Nodes, edges, the frontier, and how readiness routes work.
+  <Card title="When it goes wrong" href="/troubleshooting" icon="life-buoy">
+    Stops, deadlocks, resuming after a crash, and what it does to your repo.
   </Card>
-  <Card title="Skills" href="/reference/skills">
-    All eleven commands and what each one does.
+  <Card title="Concepts" href="/concepts/proof" icon="book-open">
+    Proof tiers, the graph, and the escalation ladder — once you want the reasoning.
   </Card>
 </CardGroup>

@@ -14,7 +14,7 @@ renders visually. The suite then walks it from `/dag:preflight` onward. Terms ar
 The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. GitHub is the
 tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.
 
-**Default posture: wayfinding-light.** The grilling already burned off the fog — your job is to
+**Default posture: decompose, don't rediscover.** The grilling already burned off the fog — your job is to
 decompose a known plan into buildable nodes and wire their edges, not to rediscover the route. Chart what
 you can specify now. Only when the effort is genuinely huge *and* still foggy — you can't yet slice whole
 regions into nodes — escalate to full fog-of-war (see [Escalation](#escalation-full-fog-of-war)); it is
@@ -158,4 +158,4 @@ When the effort is genuinely huge and still foggy — whole regions you can't ye
 force premature nodes. Chart only what's specifiable now and write the rest into a **Not yet specified**
 section on the map: the dim, un-ticketable view toward the destination. As upstream de-fog nodes resolve,
 **graduate** each patch that has become specifiable into fresh nodes, clearing it from Not yet specified.
-This is wayfinder's fog-of-war apparatus; reach for it only when the plan can't be fully sliced up front.
+Reach for this only when the plan genuinely can't be fully sliced up front.

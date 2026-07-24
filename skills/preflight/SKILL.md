@@ -41,9 +41,10 @@ and each code-only criterion names why it resists a design check.
 
 For each declared blocking **edge**, confirm it is real: node B genuinely cannot proceed until node A
 merges. Then hunt **hidden edges** — a node depending on another's *specific implementation choice*, not
-merely its merge. The motivating case: S1↔S2's `surfaceRepositories` coupling, where S2 relied on a
-shape S1 chose internally and the original edges never recorded it. For every pair that shares a
-contract, a shape, or a name one side defines and the other consumes, add the missing edge now.
+merely its merge. The motivating case: one node consumed a data shape a sibling had chosen internally,
+and the declared edges recorded only the merge dependency, never the shape — so the coupling was
+invisible until review. For every pair that shares a contract, a shape, or a name one side defines and
+the other consumes, add the missing edge now.
 
 *Done when:* every declared edge is confirmed-or-removed, and every node has been checked for hidden
 edges against the nodes it shares a contract with — new edges added where found.

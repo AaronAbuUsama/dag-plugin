@@ -56,9 +56,9 @@ from step 2 (or, for **independent**, at why the shapes differ).
 
 Design the **one consolidating fix** that closes the nest — the shared primitive, guard, or invariant
 enforcement that every member of the cluster routes through. Then apply **fix-completeness** *to the
-consolidation itself*. This is where the motivating round-11 fix failed: a shared `verifyLiveContinuation`
-primitive closed four of six cluster members but missed the `ensureBranch` call site, and that sixth mole
-reached merge unresolved. Do not repeat it.
+consolidation itself*. This is where the motivating round-11 fix failed: a shared guard closed five of
+the cluster's six members but missed one call site, and that sixth mole reached merge unresolved. Do not
+repeat it.
 
 *Done when — the exhaustive criterion:* you have enumerated **every** call site and **every** branch in
 the subsystem where the nest's assumption is relied on — found by grepping the whole subsystem for the

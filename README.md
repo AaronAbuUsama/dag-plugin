@@ -11,8 +11,9 @@ here is paid for.
 
 ## Quick start (60 seconds)
 
-```bash
-claude --plugin-dir /path/to/dag-plugin      # load it
+```
+/plugin marketplace add AaronAbuUsama/dag-plugin
+/plugin install dag@dag-engineering
 ```
 
 ```
@@ -24,6 +25,22 @@ claude --plugin-dir /path/to/dag-plugin      # load it
 GitHub, tells you where you are, and runs the next step — so you never have to remember which skill to
 reach for. Early on it grills you and charts the plan; once the plan is signed off it runs and proves the
 work on its own. You just keep running `/dag:map`.
+
+## Two phases, one door
+
+```
+        YOU drive                    │        THE ORCHESTRATOR drives
+  grill · prototype · chart          │   run · prove · diagnose
+  settle the plan, fix the proof     │   walk the graph, gather the evidence
+────────────────────────────────────►│◄────────────────────────────────────
+                          the pre-flight signature
+```
+
+**Planning is human-in-the-loop**: `/dag:map` proposes one move at a time and runs it *with* you — you
+make the decisions. **Execution is not**: once pre-flight is signed, `/dag:run` walks the graph on its
+own, dispatching an **agent team** (one teammate = one node = one worktree = one PR), climbing the
+escalation ladder, and proving each node before closing it. The signed pre-flight is the door between
+them, and it lives on GitHub as a label — which is how one command can serve both sides.
 
 ## Why one command is enough
 
@@ -75,6 +92,8 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
 
 ## Install & update
 
-Load locally with `--plugin-dir` while iterating. To use it across machines, publish this repo as a
-plugin marketplace and `/plugin install` it; bump `version` in `.claude-plugin/plugin.json` to release
-an update. Everything here is yours — no external skill dependencies.
+Install from the marketplace as above, or load a working copy with
+`claude --plugin-dir /path/to/dag-plugin` while iterating. `scripts/check.sh` runs the suite's own
+consistency checks. No external skill dependencies.
+
+MIT licensed. Changes in [`CHANGELOG.md`](CHANGELOG.md).

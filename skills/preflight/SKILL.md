@@ -14,6 +14,12 @@ expensive. Terms below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.
 Inputs: the DAG, the project's architecture-**invariant** doc, and each node's written spec (its
 acceptance criteria). Work the four steps in order; each produces one column of the signed table.
 
+**Judge the open build nodes only.** De-fog nodes — grilling, research, spike — are planning moves, not
+dispatchable work: they carry no proof contract by design, and `/dag:plan` closes each one as its answer
+lands. A de-fog node still open here means planning isn't finished, and that is a stop before pre-flight
+rather than a node to validate. If the repo has no architecture-invariant doc, say so and judge against
+whatever design record exists rather than blocking on a file the suite never creates.
+
 ## 1. Invariant conformance, per node
 
 For each node, read its spec and name which architecture **invariants** it touches. For each invariant

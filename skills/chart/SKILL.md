@@ -75,6 +75,11 @@ unknown is settled *before* the build reaches the frontier:
 A de-fog node is a real child issue with its own blocking edge into the build node — so the frontier
 never surfaces a build node whose premise is still unsettled.
 
+**The `dag:needs-*` label goes on the de-fog node, not the build node.** The de-fog node is the one
+sitting on the frontier with work to do; the build node is blocked and invisible to the router by
+definition. A label on a blocked node is a label nothing ever reads. The label says what *kind* of
+de-fogging this node is, so `/dag:plan` can route it without opening it.
+
 ## Process
 
 ### 1. Gather the plan
@@ -99,14 +104,15 @@ is a horizontal single-layer slice.
 Give every build node one readiness verdict. For each non-**clear** node, add its de-fog node
 (grilling / research / spike) and record that it blocks the build node.
 
-The verdict is what routes the node later, so it lands as a **label** — `dag:needs-grilling`,
-`dag:needs-research`, or `dag:needs-prototype`, and none at all for a **clear** node. Apply it when the
-issue is created (step 4). `/dag:plan` routes off these labels and reads nothing else; a verdict recorded
-only in the body is a verdict the router never sees.
+The verdict routes the work later, so it lands as a **label on the de-fog node** — `dag:needs-grilling`,
+`dag:needs-research`, or `dag:needs-prototype`. A **clear** node has no de-fog node and no label at all.
+Apply it when the de-fog issue is created (step 4). `/dag:plan` routes off these labels and reads nothing
+else, and it only ever sees the frontier — so a label on the blocked build node is a label no router
+will ever read.
 
-*Done when:* every node carries a readiness verdict in its body and, unless it is clear, the matching
-`dag:needs-*` label; and every needs-grilling / needs-research / needs-prototype node has a de-fog node
-blocking it — no build node left resting on an unsettled premise.
+*Done when:* every build node carries a readiness verdict in its body; every non-clear one has a de-fog
+node blocking it; and every de-fog node carries the `dag:needs-*` label matching what it is for — no
+build node left resting on an unsettled premise, and no label stranded on a blocked node.
 
 ### 3b. Write each node's proof contract
 

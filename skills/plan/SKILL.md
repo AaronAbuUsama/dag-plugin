@@ -59,6 +59,15 @@ you hand the move over rather than firing it — the user never has to work out 
 makes the decisions; you never pick them alone. `research` and `prototype` are the exception — they
 dispatch their own agents, and the user reviews what comes back.
 
+**Close the de-fog node when its move lands.** Record the answer as a comment on that node — the
+decision a grill settled, the fact research found, the verdict a spike returned — then close it. That
+close is the whole mechanism: it unblocks the build node onto the frontier, and it retires the
+`dag:needs-*` label without anyone removing one, because a closed node is never on the frontier. A
+de-fog move whose node stays open leaves its build node blocked forever.
+
+*Done when:* the move's answer is a comment on its de-fog node and that node is closed, or the move is
+still in flight and you have said so.
+
 **A node sent back after the signature lands here again.** When `/dag:execute` returns a rung-3 stop, the
 map's `dag:preflighted` label comes off and the DAG is back in planning until pre-flight is re-signed.
 

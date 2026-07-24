@@ -27,8 +27,8 @@ Find the `dag:map` issue on the repo's tracker. If GitHub isn't configured yet, 
 
 With a chart, read these off GitHub — no memory of prior turns needed:
 
-- The open **nodes** and their readiness labels (`needs-grilling` / `needs-research` / `needs-prototype`;
-  no label = **clear**).
+- The open **nodes** — the map's sub-issues — and their readiness labels (`dag:needs-grilling` /
+  `dag:needs-research` / `dag:needs-prototype`; no label = **clear**).
 - The **frontier**: open nodes whose every blocking node is closed.
 - Whether the map carries the `dag:preflighted` label (the pre-flight **signature**).
 
@@ -40,8 +40,8 @@ execution is the orchestrator's** — and the conductor behaves accordingly.
 | Chart state | Next move | Driver |
 |---|---|---|
 | No chart | `/dag:grill` to settle the plan, then `/dag:chart` to lay it down | **you** (human-in-the-loop) |
-| Frontier has a `needs-grilling` node | `/dag:grill` (or `/dag:grill-deep` if it warrants written ADRs) | **you** |
-| Frontier has a `needs-research` / `needs-prototype` node | `/dag:research` / `/dag:prototype` — these self-dispatch | agent, you review |
+| Frontier has a `dag:needs-grilling` node | `/dag:grill` (or `/dag:grill-deep` if it warrants written ADRs) | **you** |
+| Frontier has a `dag:needs-research` / `dag:needs-prototype` node | `/dag:research` / `/dag:prototype` — these self-dispatch | agent, you review |
 | Chart complete, no `dag:preflighted` label | `/dag:preflight` | handoff |
 | Map labelled `dag:preflighted` | `/dag:run` — it self-drives the ladder → `/dag:diagnose`, and `/dag:prove` on each merged node | **orchestrator** |
 | A merged node whose proof isn't in its PR | `/dag:prove` — capture the evidence and post it | **orchestrator** |

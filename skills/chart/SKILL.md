@@ -99,8 +99,14 @@ is a horizontal single-layer slice.
 Give every build node one readiness verdict. For each non-**clear** node, add its de-fog node
 (grilling / research / spike) and record that it blocks the build node.
 
-*Done when:* every node carries a readiness verdict, and every needs-grilling / needs-research /
-needs-prototype node has a de-fog node blocking it — no build node left resting on an unsettled premise.
+The verdict is what routes the node later, so it lands as a **label** — `dag:needs-grilling`,
+`dag:needs-research`, or `dag:needs-prototype`, and none at all for a **clear** node. Apply it when the
+issue is created (step 4). `/dag:map` routes off these labels and reads nothing else; a verdict recorded
+only in the body is a verdict the router never sees.
+
+*Done when:* every node carries a readiness verdict in its body and, unless it is clear, the matching
+`dag:needs-*` label; and every needs-grilling / needs-research / needs-prototype node has a de-fog node
+blocking it — no build node left resting on an unsettled premise.
 
 ### 3b. Write each node's proof contract
 

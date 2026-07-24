@@ -109,7 +109,8 @@ a sub-issue. The map already exists by then, so each node is parented as it is c
 
 ```bash
 gh issue create --title "map: <destination>" --label dag:map --body-file map.md
-gh issue create --title "<node title>" --body-file node-NN.md          # repeat per node
+gh issue create --title "<node title>" --body-file node-NN.md \
+  --label dag:needs-research                                          # readiness label; omit if clear
 NODE=$(gh api repos/<owner>/<repo>/issues/<node-number> --jq .id)      # the database id
 gh api -X POST repos/<owner>/<repo>/issues/<map-number>/sub_issues -F sub_issue_id=$NODE
 ```

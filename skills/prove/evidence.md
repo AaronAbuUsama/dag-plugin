@@ -86,7 +86,7 @@ was proven, against which head, with which identifiers.
 
 <screenshots, inline>
 
-**Chain of evidence.** <how the same nonce at independent tiers makes this convergence, not one trusting screenshot.>
+**Chain of evidence.** <convergence — the same nonce at independent tiers — or, where this repo has no corroborating tier, the observation itself and why the artifact carries it.>
 
 **Irreversible footprint.** <durable records, messages, published artifacts this run created.>
 

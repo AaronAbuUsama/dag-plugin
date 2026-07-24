@@ -19,11 +19,12 @@ Inputs: the node's issue (its proof table, surface, and nonce), the map's **proo
 ## 1. Establish the baseline
 
 Read the node's proof contract and the profile. Mint the **nonce** if the contract left it open, then
-show it appears **nowhere yet** — query the durable store and the event/error collector for it and record
-the empty result. A receipt whose nonce was already present proves nothing about this run.
+show it appears **nowhere yet** — establish its absence at each tier the contract names, using that
+tier's own reach command from the profile, and record the empty result. A receipt whose nonce was
+already present proves nothing about this run.
 
 *Done when:* every tier the contract names has a reach command from the profile, and the nonce's absence
-is recorded with the query that established it.
+at each of them is recorded with the query that established it.
 
 ## 2. Run the proof at each tier
 
@@ -72,8 +73,8 @@ loaded and the links resolve — a broken embed is an unproven claim.
 
 Close with the two lines that keep the report honest:
 
-- **Chain of evidence** — how the same nonce appearing at independent tiers makes this convergence
-  rather than one screenshot taken on trust.
+- **Chain of evidence** — convergence where this repo has corroborating tiers (the same nonce at each),
+  or, where it has none, the observation itself and why the artifact carries it.
 - **Irreversible footprint** — the durable records, messages, emails, and published artifacts this run
   created.
 

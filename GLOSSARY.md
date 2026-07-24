@@ -72,9 +72,12 @@ run, then show it appearing at each tier.
 **receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
 exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.
 
-**chain of evidence** — the short argument that the artifacts actually prove the claim: the same nonce
-appearing at independent tiers (live *and* readback *and* observed), so the proof is convergence, not a
-single screenshot taken on trust.
+**chain of evidence** — the short argument that the artifacts actually prove the claim. Where the repo
+has corroborating tiers, that argument is **convergence**: the same **nonce** at independent tiers (live
+*and* readback *and* observed), each a channel you didn't write. Where it has none, the argument rests
+on the observation itself — which is exactly why that observation must be an artifact a reviewer can
+open, never an assertion that it happened. Say which of the two this is: a chain claiming a convergence
+it doesn't have is worse than one that states it has none.
 
 **proof ledger** — the running record of each node's proof contract and whether it is satisfied. Makes
 the difference between the two done-states impossible to blur:

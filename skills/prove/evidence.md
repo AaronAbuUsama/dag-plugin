@@ -49,9 +49,11 @@ An embed that 404s is an unproven claim. On GitHub:
 
 - **Absolute URLs only** in PR bodies and comments — relative paths resolve on a committed file's page,
   never on the PR page.
-- **Images**: link through the repo's `raw` path — `https://github.com/<owner>/<repo>/raw/<branch>/<path>`.
-  On a **private** repo the `raw.githubusercontent.com` host will not render in a PR comment, because
-  GitHub's image proxy can't fetch private media.
+- **Images**: `https://github.com/<owner>/<repo>/raw/<branch>/<path>` **302-redirects to**
+  `raw.githubusercontent.com` — the two spellings are one host, so choosing between them changes
+  nothing. On a **public** repo it renders. On a **private** repo it does not, because GitHub's image
+  proxy can't fetch private media, and no rewriting of the URL gets around that. On a private repo the
+  committed receipt *is* the proof; treat an inline embed as a bonus and never as the evidence.
 - **Video**: link the **blob** page — `https://github.com/<owner>/<repo>/blob/<branch>/<path>.mp4` —
   where GitHub renders a player. Do not try to embed a video as an image.
 - **Lead with the receipt link** as the guaranteed fallback: inside the committed receipt, *relative*

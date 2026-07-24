@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "dag",
+  "displayName": "DAG — provable wave execution",
+  "version": "0.1.0",
+  "description": "Run a DAG of provable work slices to done-clean. Pre-flight the plan against its own invariants before dispatch, execute wave-by-wave behind a merge gate, and escalate from patching symptoms to diagnosing the nest the moment a bug-class recurs — autonomously by default.",
+  "author": {
+    "name": "Aaron Abu Usama",
+    "email": "aaron@capxul.com"
+  },
+  "keywords": ["orchestration", "dag", "code-review", "diagnosis", "skills"]
+}

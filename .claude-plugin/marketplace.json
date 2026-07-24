@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "DAG Engineering — turn intent into a graph of provable work and walk it.",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "plugins": [
     {
@@ -14,7 +14,14 @@
       "source": "./",
       "description": "Grill a plan, chart it onto GitHub as a DAG of issues whose proof is fixed before any code, then pre-flight, run, prove and diagnose it to done-clean.",
       "category": "workflow",
-      "keywords": ["orchestration", "dag", "planning", "proof", "code-review", "agent-teams"]
+      "keywords": [
+        "orchestration",
+        "dag",
+        "planning",
+        "proof",
+        "code-review",
+        "agent-teams"
+      ]
     }
   ]
 }

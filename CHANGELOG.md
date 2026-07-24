@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.4.0
+
+**The running model, and two doors.** Tier 3 stops meaning *deployed* and starts meaning *running and
+observed* — which is what it was always trying to say.
+
+- **Tier 3 is the exact committed head running, observed doing the real thing.** Where it runs is a
+  repo detail the **proof profile** answers. A run nobody watched is not tier 3, wherever it happened;
+  "we have no deploy target" no longer means "we have no tier 3". No runner, command, or host is named
+  anywhere in the suite.
+- **Proof runs at the merge gate** wherever the profile says tier 3 is reachable from a branch — it is
+  the fourth gate signal, satisfied on the open PR, so *proof is never deferred* is now literally true
+  and a node reaches done-clean before it lands. Where tier 3 needs the merged head, the profile says
+  so and proof follows the merge as before.
+- **The teammate gathers its own evidence; the orchestrator grades it.** "The live box is yours alone"
+  was a shared-server assumption, not a rule. What was load-bearing in it survives: nobody grades their
+  own homework.
+- **The chain of evidence degrades honestly** — convergence where the repo has corroborating tiers, and
+  otherwise the observation itself. A repo with only tiers 1 and 3 could previously never satisfy it.
+- **`/dag:plan` and `/dag:execute` replace the former `map` and `run` doors.** One door could not open
+  any of its rooms — every planning target was user-invoked, so the promised handoff could never fire.
+  Two doors match the two phases, and the pre-flight signature is the line between them: `execute` refuses
+  to start without it. The `dag:map` issue and label are unchanged.
+- **The GitHub mechanics are real.** Every command for creating a blocking edge or a sub-issue was
+  invented and would have failed on any repo. Replaced with the REST endpoints, tested live. `chart`
+  now applies the `dag:needs-*` readiness labels it never applied, so the planning router can fire.
+- **`scripts/check.sh` can fail.** Its orphan-term check set a flag inside a pipeline subshell and
+  always exited 0; four other checks were narrower than they read. Every check is now
+  fault-injection-proven, and one new check keeps foreign skills from shipping inside the plugin.
+
 ## 0.3.0
 
 **The proof layer.** Verification is the suite's first principle: a claim that cannot be verified is

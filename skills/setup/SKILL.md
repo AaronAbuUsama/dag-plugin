@@ -30,13 +30,23 @@ whether domain docs already exist.
 
 ### 2. Confirm native blocking
 
-`chart` renders the **frontier** from GitHub's real issue-blocking relation (Issues → Development panel,
-or `gh issue edit --add-blocked-by` where available) — not from checklists or "blocked by #12" prose.
-Verify it, don't assume it: open two throwaway issues, link one as blocked by the other, confirm the
-relation shows in the UI or `gh issue view --json`, then close both.
+`chart` renders the **frontier** from GitHub's real issue-dependency relation — not from checklists or
+"blocked by #12" prose. It is a REST endpoint rather than a `gh issue` flag, and it takes the issue's
+**database id**, never its `#number`:
 
-*Done when:* you have confirmed, on this repo, that a real blocking link can be created and read back —
-not just that the repo has Issues enabled.
+```bash
+gh api repos/<owner>/<repo>/issues/<n> --jq .id                       # the database id
+gh api -X POST repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by \
+  -F issue_id=<blocker-database-id>
+gh api repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by        # read the blockers back
+```
+
+Verify it on this repo rather than assuming it: open two throwaway issues, link one as blocked by the
+other, read the relation back, then close both. The read carries each blocker's `state`, which is what
+lets the frontier be computed with one query per node.
+
+*Done when:* a blocking link has been created and read back on this repo with the commands above — not
+merely that the repo has Issues enabled.
 
 ### 3. Create the label vocabulary
 

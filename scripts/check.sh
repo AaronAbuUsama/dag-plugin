@@ -70,7 +70,7 @@ else
 fi
 
 echo "== no vendor residue =="
-if grep -rniE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" --include="*.md" --include="*.json" . | grep -vE "^\./?docs/" | grep -v '"email"' | grep -q .; then
+if grep -rniE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" --include="*.md" --include="*.json" . | grep -v '"email"' | grep -q .; then
   bad "vendor residue found"
 else
   note "clean"

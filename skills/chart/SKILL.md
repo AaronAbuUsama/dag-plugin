@@ -114,9 +114,10 @@ Proof is decided here, at issue-creation, **not** by whoever builds the node lat
 that invents its own bar picks the bar it can clear — so the bar is written down before the code exists.
 
 First settle the **proof profile** for this effort and put it on the map: which **tiers** genuinely exist
-in this repo and the command or query that reaches each. Take it from the repo (its test command, whether
-anything is deployed anywhere, where durable records live, whether errors and events are collected
-somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as absent.
+in this repo and the command or query that reaches each. Take it from the repo (its test command, how it
+runs its code and how a run is watched, where durable records live, whether errors and events are
+collected somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as
+absent — but "we don't deploy anywhere" is not one of them: if the repo can run its code, it has tier 3.
 
 Then, per node: name its **surface** — that fixes the **evidence form** — and fill its proof table from
 the profile, plus the **nonce** the run will carry. Every node has a surface and so has an evidence form:

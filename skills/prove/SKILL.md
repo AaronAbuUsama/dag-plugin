@@ -26,9 +26,9 @@ is recorded with the query that established it.
 
 ## 2. Run the proof at each tier
 
-Work the contract's **proof tiers** in order, against the **exact committed head** that is deployed — never a local
-build, never a rebuilt tree. Record for each tier: the command or query run, its result, the UTC window,
-and the exact identifiers it produced.
+Work the contract's **proof tiers** in order against the **exact committed head**, running as the
+**proof profile** says this repo runs it — never a rebuilt tree, never uncommitted changes. Record for
+each tier: the command or query run, its result, the UTC window, and the exact identifiers it produced.
 
 **Never weaken an assertion to manufacture green.** A failing proof is a finding about the product, not a
 problem with the proof — take it to step 5.

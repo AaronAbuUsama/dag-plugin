@@ -4,8 +4,9 @@ Reached from `SKILL.md` steps 3 and 4. Terms are in [`../../GLOSSARY.md`](../../
 
 ## Capture, by surface
 
-**UI / browser.** Drive the real app in a real browser — the deployed head, not a local dev server unless
-the profile says local *is* the live tier. Take a **full-frame** screenshot at every state the contract
+**UI / browser.** Drive the real app in a real browser, running the exact committed head — however the
+**proof profile** says this repo runs it. What makes it tier 3 is the running head and the watching, not
+where it runs. Take a **full-frame** screenshot at every state the contract
 names (not a cropped element: the surrounding page is where clipped text and stuck spinners show up), and
 record the journey as video. Where the repo already has a browser harness, reuse it; where it doesn't,
 drive the browser directly. Name files by state, in order: `01-<state>.png`, `02-<state>.png`.
@@ -79,7 +80,7 @@ was proven, against which head, with which identifiers.
 | tier | verdict | evidence |
 |---|---|---|
 | 1 mechanical | PROVEN | `<command>` — <counts>, at `<sha>` |
-| 3 live | PROVEN | journey run <UTC window> against `<deployed head>` — screenshots below, [video](blob-url) |
+| 3 live | PROVEN | journey run <UTC window> against running head `<sha>` — screenshots below, [video](blob-url) |
 | 4 readback | PROVEN | `<query>` → record `<exact id>`, nonce `<nonce>` |
 | 5 observed | NOT PROVEN | no collector configured for this repo |
 

@@ -29,18 +29,22 @@ lower one, and a lower one never *promotes* into a higher one:
 
 1. **mechanical** — types, lint, build, unit tests. The code agrees with itself.
 2. **integrated** — the real components wired together, still hermetic. No mocks at the seam under test.
-3. **live** — the exact committed head, deployed, doing the real thing in the real system.
+3. **live** — the exact committed head **running**, observed doing the real thing. Where and how it runs
+   is a repo detail the **proof profile** answers; what makes it tier 3 is that the head is running and
+   someone is watching it. A run nobody observed is not tier 3, wherever it happened.
 4. **readback** — the system's own durable record of *that same event*, read back independently.
 5. **observed** — what the run emitted: events, and especially **errors**, queried from wherever this
    repo collects them.
 
 Which tiers exist is a property of the repo, not of the suite — declared once on the **map** (see
-**proof profile**). A repo with no deploy target has no tier 3; a repo with no error/event collector has
-no tier 5. Absent tiers are stated as absent, never faked and never quietly skipped.
+**proof profile**). Tier 3 is absent only when the code genuinely cannot be run and watched at all,
+which is rare — "no deploy target" is not that: if you can run it, you can prove it. A repo with no
+error/event collector has no tier 5. Absent tiers are stated as absent, never faked and never quietly
+skipped.
 
 **verdict** — the status of one tier, in exactly one word: **PROVEN** / **NOT PROVEN** / **BLOCKED**.
 `BLOCKED` is reserved for a genuine external or authorization gate; anything we could fix ourselves is
-`NOT PROVEN` plus work. Never say green, ready, proven, works, or deployed without naming the tier in
+`NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming the tier in
 the same sentence. Understating is recoverable; overstating is how a rollout ships nothing.
 
 **evidence form** — *what the proof looks like*, which follows the **surface** the node touches. The
@@ -85,8 +89,9 @@ if the evidence can't be gathered — never a shrug.
 
 **proof profile** — what *this repo* can prove with, declared once in the map's Notes and read by every
 proof step: which **tiers** exist here, the command or query that reaches each, and where receipts are
-committed. This is the whole of the suite's per-repo configuration — the skills stay generic, the repo
-supplies its own reality.
+committed. For tier 3 that means **how this repo runs its code**, and how a run is driven and observed.
+This is the whole of the suite's per-repo configuration — the skills stay generic, the repo supplies its
+own reality.
 
 **agent team** — how a wave is executed: you are the team lead, and each ready **node** goes to one
 **teammate** — a separate session with its own context window that inherits the repo's context and its

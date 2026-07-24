@@ -26,7 +26,7 @@ and links.
 |---|---|---|
 | 1 mechanical | yes | `<the repo's test/typecheck/build command>` |
 | 2 integrated | yes/no | `<command>` |
-| 3 live | yes/no | `<how the exact head gets deployed and driven, or "none — no deploy target">` |
+| 3 live | yes/no | `<how this repo runs its code, and how the run is driven and observed>` |
 | 4 readback | yes/no | `<the durable store and how it is queried>` |
 | 5 observed | yes/no | `<the event/error collector and how it is queried, or "none">` |
 

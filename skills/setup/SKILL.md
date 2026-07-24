@@ -17,7 +17,8 @@ present, confirm, then write.
 
 - `git remote -v` — confirm this repo's remote is GitHub. The suite is GitHub-native: `chart`'s **edges**
   are the tracker's real blocking relationship, not prose links, and no other tracker renders that.
-- `gh auth status` — confirmed and scoped to this repo.
+- `gh auth status` — authenticated, and the token carries `repo`. It reports the host and scopes,
+  not per-repo access, so confirm that separately with a read against this repo.
 - `gh label list` — which of the suite's labels (below) already exist.
 - `CLAUDE.md` / `AGENTS.md` at the repo root — does either exist, and is there already a `## DAG suite`
   section?

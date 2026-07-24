@@ -1,23 +1,23 @@
 ---
 title: Introduction
-description: One way to turn intent into a graph of provable work and walk it — from a loose idea to shipped, proven, closed.
+description: An agent told to make the tests pass will make the tests pass. This makes it prove the software works instead.
 ---
 
-DAG Engineering is a Claude Code plugin. It takes an idea, grills it into a plan, lays that plan onto
-GitHub as a graph of issues, then walks the graph — building each slice, proving it against reality, and
-closing it only once the evidence exists.
+**"Tests pass" is not evidence that anything works.** Tests check code against your *model* of the code,
+so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
+whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
+
+DAG Engineering closes that gap. It is a Claude Code plugin that turns an idea into a graph of work on
+GitHub where **every slice carries its evidence bar before any code exists** — then walks that graph and
+refuses to close anything until the real system was seen doing the real thing, with the receipt in the
+pull request.
 
 It encodes the lessons of a real multi-wave rollout where one node took **11 review rounds** and half
-its findings were introduced by earlier fixes — the signature of patching without diagnosis. Every rule
-here was paid for.
+its findings were introduced by earlier fixes. Every rule here was paid for.
 
-## The problem it exists to solve
+## What it forces
 
-Tests check code against your *model* of the code. If the model is wrong, the tests are wrong the same
-way — confidently. And agents optimise for the signal they are judged on, so "make the tests pass"
-reliably produces passing tests rather than working software.
-
-So the suite forces three things:
+Three things, none of them optional:
 
 <Steps>
   <Step title="Reality contact before anything is called done">

@@ -21,9 +21,14 @@ and continues exactly where the last one stopped.
 
 ## 1. Locate the chart
 
-Find the `dag:map` issue on the repo's tracker. If GitHub isn't configured yet, run `/dag:setup` first.
+```bash
+gh issue list --label dag:map --state open --json number,title
+```
 
 - **No `dag:map` issue** → there is no chart yet. You are at the start: the first move is `/dag:grill`.
+  If GitHub isn't configured yet, run `/dag:setup` first.
+- **More than one** → name them and ask which effort this is. Two open charts in one repo is two
+  efforts, and every step below reads a single map.
 
 ## 2. Read the state
 
@@ -35,11 +40,14 @@ With a chart, read these off GitHub — no memory of prior turns needed:
 - Whether the map carries the `dag:preflighted` label — the **signature**.
 
 ```bash
-gh api repos/<owner>/<repo>/issues/<map-number>/sub_issues      # every node
-gh api repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by  # one node's blockers, each with .state
+R=<owner>/<repo>
+gh api --paginate repos/$R/issues/<map-number>/sub_issues --jq '.[] | {number, title, state}'
+gh api --paginate repos/$R/issues/<n>/dependencies/blocked_by --jq '.[] | {number, state}'
 ```
 
-The blocker read carries each blocker's `state`, so the frontier costs one query per node and no more.
+`--paginate` is not optional: both endpoints return 30 per page by default, and a truncated read looks
+exactly like a smaller DAG rather than an error. The blocker read carries each blocker's `state`, so the
+frontier costs one query per node and no more.
 
 ## 3. Name the next move
 
@@ -68,8 +76,14 @@ de-fog move whose node stays open leaves its build node blocked forever.
 *Done when:* the move's answer is a comment on its de-fog node and that node is closed, or the move is
 still in flight and you have said so.
 
-**A node sent back after the signature lands here again.** When `/dag:execute` returns a rung-3 stop, the
-map's `dag:preflighted` label comes off and the DAG is back in planning until pre-flight is re-signed.
+**A node sent back after the signature lands here again.** `/dag:execute` removes `dag:preflighted` from
+the map when it raises a rung-3 stop, so the chart arrives here unsigned and this router picks it up like
+any other planning state. If you find a stopped node while the label is still on, take it off yourself —
+that label is what lets a fresh window resume autonomous execution over a DAG a human already halted:
+
+```bash
+gh issue edit <map-number> --remove-label dag:preflighted
+```
 
 ## First time here?
 

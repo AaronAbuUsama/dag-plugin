@@ -116,25 +116,37 @@ the id alongside the number as you go.
 **Pass 1 — create and parent.** Create the map issue, then create each node and attach it to the map as
 a sub-issue. The map already exists by then, so each node is parented as it is created.
 
+`gh issue create` prints the new issue's **URL**, not its number — so capture and parse it rather than
+assuming a number you never bound:
+
 ```bash
-gh issue create --title "map: <destination>" --label dag:map --body-file map.md
-gh issue create --title "<node title>" --body-file node-NN.md \
-  --label dag:needs-research                                          # readiness label; omit if clear
-NODE=$(gh api repos/<owner>/<repo>/issues/<node-number> --jq .id)      # the database id
-gh api -X POST repos/<owner>/<repo>/issues/<map-number>/sub_issues -F sub_issue_id=$NODE
+R=<owner>/<repo>
+MAP=$(gh issue create -R $R --title "map: <destination>" --label dag:map --body-file map.md \
+      | grep -oE '[0-9]+$')
+
+# repeat per node; a de-fog node carries its readiness label, a build node carries none
+N=$(gh issue create -R $R --title "<node title>" --body-file node-NN.md \
+    --label dag:needs-research | grep -oE '[0-9]+$')
+NID=$(gh api repos/$R/issues/$N --jq .id)                     # the database id, not the number
+gh api -X POST repos/$R/issues/$MAP/sub_issues -F sub_issue_id=$NID
 ```
 
 **Pass 2 — wire.** Now that every node has an id, add the blocking edges — for each node, link the nodes
 that block it (build edges and its de-fog node).
 
 ```bash
-gh api -X POST repos/<owner>/<repo>/issues/<blocked-number>/dependencies/blocked_by \
-  -F issue_id=<blocker-database-id>
+BLOCKER_ID=$(gh api repos/$R/issues/<blocker-number> --jq .id)
+gh api -X POST repos/$R/issues/<blocked-number>/dependencies/blocked_by -F issue_id=$BLOCKER_ID
 ```
 
 Wiring sorts nodes into the **frontier** (no open blockers) and the blocked. Read both back to confirm
-what you wired: `.../issues/<map-number>/sub_issues` lists every node, and
-`.../issues/<n>/dependencies/blocked_by` lists one node's blockers, each carrying its `state`.
+what you wired — **always paginated**, because both endpoints default to 30 per page and a truncated
+read looks exactly like a smaller DAG:
+
+```bash
+gh api --paginate repos/$R/issues/$MAP/sub_issues --jq '.[] | {number, title}'
+gh api --paginate repos/$R/issues/<n>/dependencies/blocked_by --jq '.[] | {number, state}'
+```
 
 *Done when:* every node is a sub-issue of the map, every build and de-fog edge is a real dependency
 link, and both readbacks return exactly what you wired.

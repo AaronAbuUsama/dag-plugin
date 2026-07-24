@@ -24,11 +24,12 @@ export default defineConfig({
     mode: "system",
   },
 
-  // GitHub Pages project site: served from a subpath, so `base` must match the
-  // repo name and `site` must be set — Pages exposes no origin to detect.
+  // A GitHub Pages *project* site is served from /<repo>, so the CI build sets
+  // BASE_PATH. Local dev sets nothing and serves from the root — the base is a
+  // deploy detail and should never make `dev` land on a blank page.
   deployment: {
     output: "static",
     site: "https://aaronabuusama.github.io",
-    base: "/dag-plugin",
+    ...(process.env.BASE_PATH ? { base: process.env.BASE_PATH } : {}),
   },
 });

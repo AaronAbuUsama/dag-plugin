@@ -95,5 +95,5 @@ edge-audited, and carries a proof contract. Only a signed pre-flight clears the 
 
 **Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add
 the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:plan`
-reads it from any context window and hands the DAG to `/dag:execute`. Sending any node back to planning
-later removes the label until pre-flight is re-signed.
+reads it from any context window and hands the DAG to `/dag:execute`. Whoever sends a node back to planning later
+removes that label in the same step, and pre-flight must be re-signed before execution resumes.

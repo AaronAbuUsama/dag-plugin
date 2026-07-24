@@ -1,9 +1,12 @@
 # DAG Engineering
 
-One way to turn intent into a **graph of provable work** and walk it — from a first loose idea all the
-way to shipped, proven, closed. Grill a plan (batched, grounded in real code), prototype whatever isn't
-knowable on paper, chart it onto GitHub as a DAG of issues, then pre-flight, execute, prove, and diagnose
-it to *done-clean*.
+**"Tests pass" is not evidence that anything works.** Tests check code against your *model* of the code,
+so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
+whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
+
+DAG Engineering closes that gap. It turns an idea into a **graph of work on GitHub where every slice
+carries its evidence bar before any code exists** — then walks that graph and refuses to close anything
+until the real system was seen doing the real thing, with the receipt in the pull request.
 
 It encodes the lessons of a real multi-wave rollout where one node took 11 review rounds and **half its
 findings were introduced by earlier fixes** — the signature of patching without diagnosis. Every rule
@@ -106,8 +109,7 @@ consistency checks. No external skill dependencies.
 
 **What it needs.** GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's
 own issue-dependency relation, so `gh` authenticated against the repo is a hard requirement.
-`/dag:execute` runs a wave as an **agent team**, which is experimental and env-gated. `/dag:prove`
-needs whatever its **evidence form** calls for — a browser to drive a UI, `ffmpeg` to pull a still out
-of a journey video — and `scripts/check.sh` needs `python3`.
+`/dag:execute` runs a wave as an **agent team**. `/dag:prove` needs whatever its **evidence form** calls
+for — a browser to drive a UI, `ffmpeg` to pull a still out of a journey video.
 
 MIT licensed. Changes in [`CHANGELOG.md`](CHANGELOG.md).

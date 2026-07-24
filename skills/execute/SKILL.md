@@ -51,8 +51,11 @@ because the signature is absent.
 
 ## 2. Dispatch the wave
 
-Compute the ready set: every unstarted node whose blocking **edges** have all merged. Give each ready
-node to one **teammate**, working in its own worktree from a **self-contained brief** — the fields and
+Compute the ready set: every unstarted node whose blocking **edges** are all **closed** — the same
+predicate `chart`, `plan` and GitHub's own UI use, so the frontier you dispatch is the frontier the
+tracker renders. Under close-on-proof a blocker closes when its proof lands, not when it merges.
+
+Give each ready node to one **teammate**, working in its own worktree from a **self-contained brief** — the fields and
 the shape constraint are in [`dispatch-brief.md`](dispatch-brief.md).
 
 **An agent team is how a wave runs, and its mechanics shape the work:**
@@ -71,7 +74,7 @@ the shape constraint are in [`dispatch-brief.md`](dispatch-brief.md).
 
 *Done when:* every ready node has a teammate whose brief carries its acceptance criteria, proof contract,
 consumed edges, and the fix-completeness rule; the team is within the concurrency cap; and every
-in-flight node's edges are all merged.
+in-flight node's edges are all closed.
 
 ## 3. Work the merge gate
 
@@ -79,8 +82,7 @@ A node merges only when every signal is clean: CI green; an **independent review
 Skills line names, briefed with [`review-brief.md`](review-brief.md) and its **verdict posted to the PR
 as a comment**, never left in a transcript; your own cold read of the full diff; and — wherever the
 **proof profile** says tier 3 is reachable from a branch — the node's **proof contract** satisfied by
-`/dag:prove`, with the evidence in the PR. Each review round returns
-findings; every round's findings feed the ladder (step 4), and the fix goes back through every signal.
+`/dag:prove`, with the evidence in the PR. Each review round returns findings; every round's findings feed the ladder (step 4), and the fix goes back through every signal.
 
 **Proof belongs at this gate whenever it can be reached from the branch.** The open PR is the one moment
 a reviewer is actually reading, and a node whose proof can't be gathered has not earned a merge — far
@@ -119,7 +121,9 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-The node goes back to `/dag:plan`, which re-charts it and re-signs pre-flight.
+Remove `dag:preflighted` from the map before you surface it — `gh issue edit <map> --remove-label
+dag:preflighted` — or the next fresh window resumes autonomous execution over a DAG you just halted.
+The node then goes back to `/dag:plan`, which re-charts it and re-signs pre-flight.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix

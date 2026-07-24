@@ -1,18 +1,15 @@
 # DAG Engineering
 
-**"Tests pass" is not evidence that anything works.** Tests check code against your *model* of the code,
-so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
-whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
+A Claude Code plugin that makes an agent **prove its work** instead of reporting that the tests passed.
 
-DAG Engineering closes that gap. It turns an idea into a **graph of work on GitHub where every slice
-carries its evidence bar before any code exists** — then walks that graph and refuses to close anything
-until the real system was seen doing the real thing, with the receipt in the pull request.
+You describe what you want. It breaks the work into slices as GitHub issues, writes down what would
+convince you each slice works *before any code exists*, then builds them — and refuses to close anything
+until it has captured that evidence and put it in the pull request.
 
-It encodes the lessons of a real multi-wave rollout where one node took 11 review rounds and **half its
-findings were introduced by earlier fixes** — the signature of patching without diagnosis. Every rule
-here is paid for.
+**[Read the docs →](docs/)** — the [walkthrough](docs/docs/02-walkthrough.mdx) shows one effort end to
+end, with the real issue bodies and the PR comment.
 
-## Quick start (60 seconds)
+## Quick start
 
 ```
 /plugin marketplace add AaronAbuUsama/dag-plugin

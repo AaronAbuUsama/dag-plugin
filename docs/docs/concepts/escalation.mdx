@@ -6,9 +6,12 @@ sidebar:
   order: 3
 ---
 
-Patching an undiagnosed subsystem spawns new defects. The motivating rollout proved it: one node reached
-**11 review rounds**, and half its findings were **fix-induced** — introduced by earlier fixes rather
-than present in the original code. That statistic is the fingerprint of missing diagnosis.
+Review finds something. You fix it. Review finds something else. Fix that. Four rounds later you are
+still fixing, and some of what you're fixing was introduced by your own earlier fixes.
+
+That's the failure this page exists to stop. The signal is not the round count — it's **the same kind of
+bug showing up twice**. When that happens, the next patch is worse than useless, because you're patching
+a subsystem you haven't understood and each patch can spawn the next defect.
 
 ## Triage vs diagnosis
 
@@ -49,15 +52,13 @@ branch, or checkpoint. A shared *file* is not a shared shape; a shared **shape**
 nest.
 
 :::tip
-The load-bearing move in diagnosis is reading the **whole subsystem, not the diff**. The diff shows you
-where a mole surfaced; it never shows you the nest. In the motivating failure, six stale-state findings
-were patched one diff at a time across rounds 3→11, and nobody read the subsystem as a whole until round
-11 — five rounds late.
+The load-bearing move is reading the **whole subsystem, not the diff**. The diff shows where a mole
+surfaced; it never shows the nest. Skip this and you patch the symptom again, one call site further along.
 :::
 
-You have read enough when you can write the nest in one sentence: *"every consumer of live PR state
-assumes it is fresh, but nothing re-reads it after the window opens."* If you can't write that sentence,
-keep reading.
+The test for having read enough is being able to write the nest as one sentence — something like *"every
+consumer of this state assumes it is fresh, but nothing re-reads it after the window opens."* No sentence
+means not enough reading yet.
 
 ## Three verdicts
 
@@ -72,13 +73,13 @@ keep reading.
 Before any fix is done, enumerate **every branch and caller** its reasoning touches, and cover each.
 This binds every fix on every rung — including the consolidating one.
 
-It is the discipline that kills the narrow-fix regression class, and it is exactly what the motivating
-round-11 consolidation failed: a shared guard closed five of the cluster's six members but missed one
-call site, and that sixth mole reached merge unresolved.
+This is the step consolidating fixes fail at. A shared guard that covers five of six call sites has not
+closed the class — it has hidden five sixths of it, and the sixth reaches merge looking unrelated.
 
 :::warning
-Half a consolidation reopens the class it was meant to close. Find the call sites by grepping the whole
-subsystem for the shared state or invariant — not by listing only the sites the findings named.
+Half a consolidation reopens the class it was meant to close. The call sites are found by searching the
+subsystem for the shared state or invariant, not by re-reading the list of findings — the findings only
+ever name the sites that happened to surface.
 :::
 
 ## Autonomy

@@ -21,8 +21,8 @@ not a result, and only reality verifies code against the world.
 
 ## 0.2.0
 
-The full plan→build suite behind one stateful entry point, `/dag:map`: setup, grill, grill-deep,
-research, prototype, chart, preflight, run, diagnose.
+The full plan→build suite behind one stateful entry point (then named `map`, since split into `plan` and
+`execute`): setup, grill, grill-deep, research, prototype, chart, preflight, run, diagnose.
 
 ## 0.1.0
 

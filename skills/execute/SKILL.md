@@ -1,10 +1,10 @@
 ---
-name: run
-description: Execution loop for a signed-off DAG of work — dispatches each node behind the merge gate, climbs the escalation ladder on findings, and drives every node to done-clean, wave by wave.
+name: execute
+description: The execution door — walks a pre-flight-signed DAG, dispatching each node behind the merge gate, climbing the escalation ladder on findings, and driving every node to done-clean, wave by wave.
 disable-model-invocation: true
 ---
 
-# Run — drive the DAG to done-clean
+# Execute — walk the signed DAG to done-clean
 
 The loop you live in from a signed **pre-flight** until the **DAG** is done. It runs the DAG **wave by
 wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-completeness**, the
@@ -34,13 +34,20 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 
 ## 1. Open the run
 
-Read the **run profile** off the map. Seed the **proof ledger**: one row per node carrying the
+**Check the signature before anything else.** The map must carry the `dag:preflighted` label. That label
+*is* the door between the two halves: planning is `/dag:plan`'s, execution is yours, and the signature is
+what moved the DAG across. Without it, this DAG is not cleared for dispatch — say so plainly and hand
+back to `/dag:plan`, which routes to `/dag:preflight`. A wave dispatched off an unsigned DAG is the
+whole failure the gate exists to prevent.
+
+Then read the **run profile** off the map. Seed the **proof ledger**: one row per node carrying the
 **proof contract** pre-flight signed — its **tiers**, **evidence form**, and **nonce** — every tier
 marked unsatisfied. The ledger is the single record that keeps **triage-clean** (reviews pass) from ever
 passing for **done-clean** (proof gathered, in the PR).
 
-*Done when:* the run profile is read, and every node in the DAG has a ledger row carrying its proof
-contract's tiers, each unsatisfied.
+*Done when:* the map carries `dag:preflighted`, the run profile is read, and every node in the DAG has a
+ledger row carrying its proof contract's tiers, each unsatisfied — or you have stopped and handed back
+because the signature is absent.
 
 ## 2. Dispatch the wave
 

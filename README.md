@@ -2,8 +2,8 @@
 
 One way to turn intent into a **graph of provable work** and walk it — from a first loose idea all the
 way to shipped, proven, closed. Grill a plan (batched, grounded in real code), prototype whatever isn't
-knowable on paper, chart it onto GitHub as a DAG of issues, then pre-flight, run, and diagnose it to
-*done-clean*.
+knowable on paper, chart it onto GitHub as a DAG of issues, then pre-flight, execute, prove, and diagnose
+it to *done-clean*.
 
 It encodes the lessons of a real multi-wave rollout where one node took 11 review rounds and **half its
 findings were introduced by earlier fixes** — the signature of patching without diagnosis. Every rule
@@ -18,47 +18,52 @@ here is paid for.
 
 ```
 /dag:setup      # once per repo — configures the GitHub tracker + labels
-/dag:map        # every time after — it drives everything
+/dag:plan       # settle the plan, chart it, sign it off
+/dag:execute    # walk the signed graph to done-clean
 ```
 
-**That's the whole interface: `/dag:map`.** Run it from any window, at any point. It reads the state off
-GitHub, tells you where you are, and runs the next step — so you never have to remember which skill to
-reach for. Early on it grills you and charts the plan; once the plan is signed off it runs and proves the
-work on its own. You just keep running `/dag:map`.
+**Two doors, one for each half.** `/dag:plan` is where you live until the plan is signed: run it from any
+window and it reads the state off GitHub, tells you where you are, and names the single next move — so
+you never have to work out which skill to reach for. When it says the DAG is signed, you run
+`/dag:execute` once and it drives the rest on its own.
 
-## Two phases, one door
+## Two phases, two doors
 
 ```
         YOU drive                    │        THE ORCHESTRATOR drives
-  grill · prototype · chart          │   run · prove · diagnose
+  grill · prototype · chart          │   execute · prove · diagnose
   settle the plan, fix the proof     │   walk the graph, gather the evidence
-────────────────────────────────────►│◄────────────────────────────────────
+────────────── /dag:plan ───────────►│◄──────────── /dag:execute ───────────
                           the pre-flight signature
 ```
 
-**Planning is human-in-the-loop**: `/dag:map` proposes one move at a time and runs it *with* you — you
-make the decisions. **Execution is not**: once pre-flight is signed, `/dag:run` walks the graph on its
-own, dispatching an **agent team** (one teammate = one node = one worktree = one PR), climbing the
-escalation ladder, and proving each node before closing it. The signed pre-flight is the door between
-them, and it lives on GitHub as a label — which is how one command can serve both sides.
+**Planning is human-in-the-loop**: `/dag:plan` names one move at a time and runs it *with* you — you make
+the decisions. **Execution is not**: once pre-flight is signed, `/dag:execute` walks the graph on its own,
+dispatching an **agent team** (one teammate = one node = one worktree = one PR), climbing the escalation
+ladder, and proving each node before closing it. The signed pre-flight is the door between them, and it
+lives on GitHub as a label — so `/dag:execute` refuses to start without it, and a rung-3 stop hands the
+DAG back to `/dag:plan`.
 
-## Why one command is enough
+## Why two commands are enough
 
 The state lives on **GitHub**, not in the conversation — the chart (a `dag:map` issue, its child node
 issues, their blocking edges, the pre-flight signature) *is* the memory. So a fresh context window
-running `/dag:map` picks up exactly where the last one left off. Stateful by construction.
+running either door picks up exactly where the last one left off. Stateful by construction.
 
 ## The pipeline
 
 ```
-GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►（DIAGNOSE）──► done-clean
-  settle the plan     onto      gate it        walk it   find the nest when
-  & de-fog it         GitHub                             a bug-class recurs
+GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──►(DIAGNOSE)──► done-clean
+  settle the plan     onto      sign it        walk it     find the nest when
+  & de-fog it         GitHub                               a bug-class recurs
+
+  └─────────────── /dag:plan ──────────────┘   └────────── /dag:execute ─────────┘
 ```
 
 | Phase | Skill | What it does |
 |---|---|---|
-| **entry** | `/dag:map` | The one command — reads state, drives the next move. Start here. |
+| **entry** | `/dag:plan` | The planning door — reads state, names the next move, through to the signature. |
+| | `/dag:execute` | The execution door — walks the signed graph to done-clean. |
 | **setup** | `/dag:setup` | One-time: GitHub tracker + the suite's labels. |
 | **plan** | `/dag:grill` | Batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
 | | `/dag:grill-deep` | `grill` + writes ADRs and a glossary as decisions settle. |
@@ -66,9 +71,9 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
 | | `/dag:prototype` | A throwaway spike to answer what isn't knowable on paper. |
 | | `/dag:chart` | Lays the plan down as a GitHub DAG — nodes + native blocking, each node's readiness de-risked first. |
 | **build** | `/dag:preflight` | The gate: every node checked against its invariants, criteria, edges, and a runnable proof contract before any dispatch. |
-| | `/dag:run` | Wave execution behind the merge gate, the escalation ladder, no proof deferral, close-on-proof. |
+| | `/dag:execute` | Wave execution behind the merge gate, the escalation ladder, no proof deferral, close-on-proof. |
 | | `/dag:prove` | Captures a node's evidence and posts it **into the PR** — screenshots and video for a UI, the durable delta for a backend, the transcript for a CLI — plus a committed receipt. |
-| | `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster. `run` reaches it automatically. |
+| | `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster. `execute` reaches it automatically. |
 
 ## The non-negotiables
 
@@ -86,7 +91,7 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► RUN ──►�
 
 ## Go deeper
 
-- **The guided tour** is just `/dag:map` with no chart yet — it orients you and starts.
+- **The guided tour** is just `/dag:plan` with no chart yet — it orients you and starts.
 - **The vocabulary** — every **bold term** in the skills — lives in [`GLOSSARY.md`](GLOSSARY.md).
 - **Each skill** reads as a standalone playbook under [`skills/`](skills/).
 

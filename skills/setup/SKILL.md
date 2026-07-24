@@ -1,13 +1,13 @@
 ---
 name: setup
-description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart/run rely on, and lays out domain docs. Run once before /dag:chart.
+description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once before /dag:chart.
 disable-model-invocation: true
 ---
 
 # Setup — configure this repo for the DAG suite
 
 Scaffold the three things the rest of the suite assumes exist: a **tracker** that supports native
-blocking, the **label vocabulary** `chart` and `run` read and write, and a **domain doc** layout. Terms
+blocking, the **label vocabulary** `chart` and `execute` read and write, and a **domain doc** layout. Terms
 are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md). Prompt-driven, not a script: explore,
 present, confirm, then write.
 
@@ -56,14 +56,14 @@ Create every label below with `gh label create <name> --color <hex> --descriptio
 | Label | Meaning |
 |---|---|
 | `dag:map` | Marks the parent **map** issue that indexes a chart's nodes. |
-| `dag:preflighted` | On the map issue: pre-flight is signed and the DAG is cleared for `run`. The conductor reads it. |
+| `dag:preflighted` | On the map issue: pre-flight is signed and the DAG is cleared for `execute`. The conductor reads it. |
 | `dag:needs-grilling` | Node's **readiness** is needs-grilling — a decision is still open. |
 | `dag:needs-research` | Node's readiness is needs-research — a fact must be found first. |
 | `dag:needs-prototype` | Node's readiness is needs-prototype — not knowable on paper; a spike blocks it. |
 
 A node with none of the three readiness labels is **clear** — spec it and build, no de-fog node needed.
 Don't add a "ready" or "blocked" label: that state is native, not a label — a node is on the frontier when
-every issue blocking it is closed, and GitHub's UI already shows blocked/unblocked. `run` closes each
+every issue blocking it is closed, and GitHub's UI already shows blocked/unblocked. `execute` closes each
 node's issue itself the moment its proof contract is satisfied (close-on-proof) — no closing label either.
 
 *Done when:* `gh label list` shows all five labels present with the descriptions above.
@@ -91,7 +91,7 @@ Issues live on GitHub; native blocking is confirmed working. Labels: `dag:map` (
 `dag:preflighted` (pre-flight signed), `dag:needs-grilling` / `dag:needs-research` /
 `dag:needs-prototype` (readiness — absent means clear).
 Domain docs: [single-context | multi-context], see CONTEXT.md[/CONTEXT-MAP.md]. See `GLOSSARY.md` and
-`/dag:map` for the suite's terms and skills.
+`/dag:plan` for the suite's terms and skills.
 ```
 
 *Done when:* the block is written (or updated) in the chosen root doc.

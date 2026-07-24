@@ -87,6 +87,6 @@ Wave 1 begins — it is not dispatchable. Pre-flight is signed only when every r
 contract. Only a signed pre-flight clears the DAG for dispatch.
 
 **Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add
-the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:map`
-reads it from any context window and hands the DAG to `/dag:run`. Sending any node back to CREATE later
-removes the label until pre-flight is re-signed.
+the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:plan`
+reads it from any context window and hands the DAG to `/dag:execute`. Sending any node back to CREATE
+later removes the label until pre-flight is re-signed.

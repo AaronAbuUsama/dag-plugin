@@ -60,8 +60,13 @@ you hand the move over rather than firing it — the user never has to work out 
 | Frontier has a `dag:needs-grilling` node | `/dag:grill` — or `/dag:grill-deep` if it warrants written ADRs |
 | Frontier has a `dag:needs-research` node | `/dag:research` — it dispatches its own agent; you review what returns |
 | Frontier has a `dag:needs-prototype` node | `/dag:prototype` — the spike that de-risks the node |
-| Chart complete, no `dag:preflighted` label | `/dag:preflight` — the last planning move |
+| Chart complete (below), no `dag:preflighted` label | `/dag:preflight` — the last planning move |
 | Map labelled `dag:preflighted` | Planning is done. Run `/dag:execute`; it owns the DAG from here. |
+
+**Chart complete** means every de-fog node is closed — no `dag:needs-*` label is left on an open
+issue anywhere in the chart. Not "the frontier looks clear": a de-fog node buried behind build edges
+still has an unanswered question in it, and pre-flight signed over the top of one is the premature
+dispatch the gate exists to prevent.
 
 **Planning is human-in-the-loop.** Name one move per turn, run it *with* the user, and stop. The user
 makes the decisions; you never pick them alone. `research` and `prototype` are the exception — they

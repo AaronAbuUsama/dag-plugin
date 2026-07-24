@@ -84,9 +84,15 @@ matching its surface, nonce present — or the node is marked **stop** and retur
 
 Emit one table, one row per node:
 
-| node | invariant verdict | acceptance criteria | edges | proof contract |
-|------|-------------------|---------------------|-------|----------------|
-| … | satisfies / at-risk / re-plan | all design-checkable? | confirmed (+ hidden found) | the runnable contract, or **stop** |
+| node | invariants touched | invariant verdict | acceptance criteria | edges + couplings | proof contract |
+|---|---|---|---|---|---|
+| … | the invariants, named | satisfies / at-risk / re-plan | all design-checkable? | confirmed, plus the exact contract/shape/name each hidden edge carries | the runnable contract, or **stop** |
+
+**Name the invariants and the couplings, don't just grade them.** Both the dispatch brief and the
+review brief quote this table per node — "invariants touched, as pre-flight named them" and "the
+exact contract/shape/name it consumes". A verdict word alone leaves those fields to be reconstructed
+from the pre-flight author's context window, which is the one place the suite says state must never
+live.
 
 Any node with a **re-plan** verdict or a **stop** proof contract is not dispatchable. It goes back to
 planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart. Pre-flight is

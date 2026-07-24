@@ -40,14 +40,25 @@ what moved the DAG across. Without it, this DAG is not cleared for dispatch — 
 back to `/dag:plan`, which routes to `/dag:preflight`. A wave dispatched off an unsigned DAG is the
 whole failure the gate exists to prevent.
 
-Then read the **run profile** off the map. Seed the **proof ledger**: one row per node carrying the
-**proof contract** pre-flight signed — its **tiers**, **evidence form**, and **nonce** — every tier
-marked unsatisfied. The ledger is the single record that keeps **triage-clean** (reviews pass) from ever
-passing for **done-clean** (proof gathered, in the PR).
+Then read the run's inputs **off GitHub**, not off memory — this window may be the second one:
 
-*Done when:* the map carries `dag:preflighted`, the run profile is read, and every node in the DAG has a
-ledger row carrying its proof contract's tiers, each unsatisfied — or you have stopped and handed back
-because the signature is absent.
+```bash
+R=<owner>/<repo>
+gh issue view <map-number> --json body,labels          # run profile, proof profile, Skills line
+gh issue view <map-number> --comments --json comments  # the signed pre-flight table
+gh api --paginate repos/$R/issues/<map-number>/sub_issues --jq '.[] | {number,title,state}'
+```
+
+**Derive the proof ledger; never store it in this conversation.** One row per open node — its **proof
+contract** from the node's own issue body, and whichever tiers already carry a recorded result in that
+issue's comments. The ledger is the record that keeps **triage-clean** (reviews pass) from ever passing
+for **done-clean** (proof gathered, in the PR), so it has to survive a crashed window: as each tier's
+result lands, post it to that node's issue. A ledger held only in context is a ledger that resumes as an
+empty one, and a merged-but-unproven node then looks exactly like a done-clean one.
+
+*Done when:* the map carries `dag:preflighted`, the run profile and signed table have been read off
+GitHub, and every open node has a ledger row derived from its issue — or you have stopped and handed
+back because the signature is absent.
 
 ## 2. Dispatch the wave
 

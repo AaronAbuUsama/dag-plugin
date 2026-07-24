@@ -43,8 +43,15 @@ gh api repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by        # read the
 ```
 
 Verify it on this repo rather than assuming it: open two throwaway issues, link one as blocked by the
-other, read the relation back, then close both. The read carries each blocker's `state`, which is what
-lets the frontier be computed with one query per node.
+other, read the relation back, then **delete the link and close both** — a probe that leaves a live
+dependency between two junk issues has changed the tracker it was only meant to test.
+
+```bash
+gh api -X DELETE repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by/<blocker-database-id>
+```
+
+The read carries each blocker's `state`, which is what lets the frontier be computed with one query per
+node.
 
 *Done when:* a blocking link has been created and read back on this repo with the commands above — not
 merely that the repo has Issues enabled.
@@ -54,13 +61,18 @@ merely that the repo has Issues enabled.
 Create every label below with `gh label create <name> --color <hex> --description "<text>" --force`
 (idempotent — safe to re-run):
 
-| Label | Meaning |
+GitHub renders a label description as plain text and caps it at 100 characters, so these are written
+without markup and short enough to survive:
+
+| Label | Description to set |
 |---|---|
-| `dag:map` | Marks the parent **map** issue that indexes a chart's nodes. |
-| `dag:preflighted` | On the map issue: pre-flight is signed and the DAG is cleared for `execute`. The conductor reads it. |
-| `dag:needs-grilling` | Node's **readiness** is needs-grilling — a decision is still open. |
-| `dag:needs-research` | Node's readiness is needs-research — a fact must be found first. |
-| `dag:needs-prototype` | Node's readiness is needs-prototype — not knowable on paper; a spike blocks it. |
+| `dag:map` | `The parent map issue indexing this chart's nodes` |
+| `dag:preflighted` | `Pre-flight signed; this DAG is cleared for /dag:execute` |
+| `dag:needs-grilling` | `De-fog node: a decision is still open` |
+| `dag:needs-research` | `De-fog node: a fact must be found first` |
+| `dag:needs-prototype` | `De-fog node: not knowable on paper; a spike answers it` |
+
+The three `dag:needs-*` labels go on **de-fog** nodes, which is where `/dag:plan` reads them.
 
 A node with none of the three readiness labels is **clear** — spec it and build, no de-fog node needed.
 Don't add a "ready" or "blocked" label: that state is native, not a label — a node is on the frontier when

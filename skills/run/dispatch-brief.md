@@ -12,10 +12,11 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
   and the merge gate both judge against.
 - **Proof contract.** From the ledger, verbatim: the node's **surface**, its **tiers**, the **evidence
   form** each tier takes, and the **nonce**. This was fixed when the node was created and **is not the
-  agent's to choose, lower, or reinterpret** — the agent builds so it is satisfiable (leaving the states
-  observable and the records readable), and the orchestrator captures it after merge via `/dag:prove`.
-  An agent that finds the contract unsatisfiable says so and stops; it never substitutes a bar it can
-  clear.
+  agent's to choose, lower, or reinterpret**. Where the profile says tier 3 is reachable from a branch,
+  the agent runs its node and captures the evidence onto its own PR via `/dag:prove`, before the gate;
+  where it isn't, the agent builds so the contract stays satisfiable — states observable, records
+  readable — and the orchestrator captures it after merge. An agent that finds the contract
+  unsatisfiable says so and stops; it never substitutes a bar it can clear.
 - **Invariants touched.** The architecture invariants this node's design must hold, named at pre-flight.
 - **Ground already laid.** The merged nodes this one builds on and the exact contract/shape/name it
   consumes from each (the hidden-edge couplings pre-flight surfaced) — so it targets what exists, not a
@@ -27,8 +28,9 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
 
 ## The shape constraint (state it in every brief)
 
-One agent = one node = one worktree = one PR. The agent works in its own worktree and never touches the
-live box — deploy and live proof are the orchestrator's, gathered after merge.
+One agent = one node = one worktree = one PR. The agent runs its own node in its own worktree and
+captures the evidence its contract names; it never grades that evidence — the **verdict** is the
+orchestrator's. Any tier the profile puts behind a shared environment is the orchestrator's to reach.
 
 *Self-contained test:* read the brief cold as if you were the agent. If any acceptance criterion, edge
 dependency, or proof requirement forces a round-trip to the orchestrator to understand, the brief isn't

@@ -16,7 +16,10 @@ the **proof profile** says tier 3 is reachable from a branch) → merge → clos
 needs the merged head instead, proof runs straight after the merge and the issue closes on it.
 
 **The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the team
-lead; you own deploy and live proof, and the live box is yours alone.
+lead: each teammate runs its own node and captures the evidence its contract names, and you grade what
+comes back. Nobody grades their own homework — the contract was fixed before the code existed, and the
+**verdict** is yours. Where the profile puts a tier behind a shared environment, that tier is yours to
+reach as well.
 
 **How this run behaves comes from the map's run profile** — the concurrency cap, the model per role,
 and the **autonomy level** — not from this conversation, so a fresh context window runs the DAG the way

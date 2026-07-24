@@ -4,8 +4,9 @@ Reached from `SKILL.md` step 4. Terms are defined in [`../../GLOSSARY.md`](../..
 
 ## Map body (issue labelled `dag:map`)
 
-The whole chart at low resolution — the index, loaded once per session. Nodes aren't listed by hand;
-they're open child issues found by query. The map only gists and links.
+The whole chart at low resolution — the index, loaded once per session. The map's nodes are its
+sub-issues, found with `gh api repos/<owner>/<repo>/issues/<map-number>/sub_issues`. The map only gists
+and links.
 
 ```markdown
 ## Destination
@@ -99,20 +100,31 @@ De-fog node bodies (grilling / research / prototype) hold just the question or s
 
 ## Create, then wire — two passes
 
-Issues must exist before they can reference each other, so create everything first, wire second.
+Issues must exist before they can reference each other, so create everything first, wire second. Both
+relationships are REST endpoints that take an issue's **database id**, never its `#number` — so capture
+the id alongside the number as you go.
 
-**Pass 1 — create.** Create the map issue (label `dag:map`). Then create every node and de-fog node as a
-child (sub-issue) of the map. Capture each returned issue number.
+**Pass 1 — create and parent.** Create the map issue, then create each node and attach it to the map as
+a sub-issue. The map already exists by then, so each node is parented as it is created.
 
 ```bash
 gh issue create --title "map: <destination>" --label dag:map --body-file map.md
-gh issue create --title "<node title>" --body-file node-NN.md   # repeat per node; note each number
+gh issue create --title "<node title>" --body-file node-NN.md          # repeat per node
+NODE=$(gh api repos/<owner>/<repo>/issues/<node-number> --jq .id)      # the database id
+gh api -X POST repos/<owner>/<repo>/issues/<map-number>/sub_issues -F sub_issue_id=$NODE
 ```
 
-**Pass 2 — wire.** Now that every node has an id, add the native blocking edges — for each node, link the
-nodes that block it (build edges and its de-fog node). Use GitHub's sub-issue / blocked-by relationship
-(the `gh` sub-issue commands or the issue's Relationships UI) so the frontier renders visually; fall back
-to a "Blocked by" body list only if native blocking is unavailable. Wiring sorts nodes into the frontier
-(no open blockers) and the blocked.
+**Pass 2 — wire.** Now that every node has an id, add the blocking edges — for each node, link the nodes
+that block it (build edges and its de-fog node).
 
-*Done when:* every build and de-fog edge is a native blocking link and GitHub shows the correct frontier.
+```bash
+gh api -X POST repos/<owner>/<repo>/issues/<blocked-number>/dependencies/blocked_by \
+  -F issue_id=<blocker-database-id>
+```
+
+Wiring sorts nodes into the **frontier** (no open blockers) and the blocked. Read both back to confirm
+what you wired: `.../issues/<map-number>/sub_issues` lists every node, and
+`.../issues/<n>/dependencies/blocked_by` lists one node's blockers, each carrying its `state`.
+
+*Done when:* every node is a sub-issue of the map, every build and de-fog edge is a real dependency
+link, and both readbacks return exactly what you wired.

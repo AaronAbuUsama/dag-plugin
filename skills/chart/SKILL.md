@@ -14,7 +14,7 @@ renders visually. The suite then walks it from `/dag:preflight` onward. Terms ar
 The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. GitHub is the
 tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.
 
-**Default posture: wayfinding-light.** The grilling already burned off the fog — your job is to
+**Default posture: decompose, don't rediscover.** The grilling already burned off the fog — your job is to
 decompose a known plan into buildable nodes and wire their edges, not to rediscover the route. Chart what
 you can specify now. Only when the effort is genuinely huge *and* still foggy — you can't yet slice whole
 regions into nodes — escalate to full fog-of-war (see [Escalation](#escalation-full-fog-of-war)); it is
@@ -31,7 +31,7 @@ the name's link, never stands in for it.
 - **Map** — one issue labelled `dag:map`, the canonical artifact. An **index**, not a store: it lists
   each node once and links to it; detail lives in the node, never restated on the map.
 - **Node** — a child issue of the map: one tracer-bullet vertical slice (see below), its body carrying
-  what-to-build, acceptance criteria, and its blocking edges. One node = one agent = one PR.
+  what-to-build, acceptance criteria, and its blocking edges. One node = one **teammate** = one PR.
 - **Edge** — the tracker's native blocking relationship, not prose. A node is on the **frontier** when
   every node blocking it is closed.
 
@@ -75,6 +75,11 @@ unknown is settled *before* the build reaches the frontier:
 A de-fog node is a real child issue with its own blocking edge into the build node — so the frontier
 never surfaces a build node whose premise is still unsettled.
 
+**The `dag:needs-*` label goes on the de-fog node, not the build node.** The de-fog node is the one
+sitting on the frontier with work to do; the build node is blocked and invisible to the router by
+definition. A label on a blocked node is a label nothing ever reads. The label says what *kind* of
+de-fogging this node is, so `/dag:plan` can route it without opening it.
+
 ## Process
 
 ### 1. Gather the plan
@@ -99,8 +104,45 @@ is a horizontal single-layer slice.
 Give every build node one readiness verdict. For each non-**clear** node, add its de-fog node
 (grilling / research / spike) and record that it blocks the build node.
 
-*Done when:* every node carries a readiness verdict, and every needs-grilling / needs-research /
-needs-prototype node has a de-fog node blocking it — no build node left resting on an unsettled premise.
+The verdict routes the work later, so it lands as a **label on the de-fog node** — `dag:needs-grilling`,
+`dag:needs-research`, or `dag:needs-prototype`. A **clear** node has no de-fog node and no label at all.
+Apply it when the de-fog issue is created (step 4). `/dag:plan` routes off these labels and reads nothing
+else, and it only ever sees the frontier — so a label on the blocked build node is a label no router
+will ever read.
+
+*Done when:* every build node carries a readiness verdict in its body; every non-clear one has a de-fog
+node blocking it; and every de-fog node carries the `dag:needs-*` label matching what it is for — no
+build node left resting on an unsettled premise, and no label stranded on a blocked node.
+
+### 3b. Write each node's proof contract
+
+Proof is decided here, at issue-creation, **not** by whoever builds the node later. An implementing agent
+that invents its own bar picks the bar it can clear — so the bar is written down before the code exists.
+
+First settle the **proof profile** for this effort and put it on the map: which **tiers** genuinely exist
+in this repo and the command or query that reaches each. Take it from the repo (its test command, how it
+runs its code and how a run is watched, where durable records live, whether errors and events are
+collected somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as
+absent — but "we don't deploy anywhere" is not one of them: if the repo can run its code, it has tier 3.
+
+Then, per node: name its **surface** — that fixes the **evidence form** — and fill its proof table from
+the profile, plus the **nonce** the run will carry. Every node has a surface and so has an evidence form:
+a backend node proves itself with a durable delta and exact ids, a CLI node with its captured output, a
+UI node with screenshots and a video.
+
+**When a node's proof can't be defined, do not chart it as buildable.** That is a de-fog signal, exactly
+like readiness — route it: a decision about *what would even count* as proof → **needs-grilling**; nobody
+knows yet whether the thing can be observed at all → **needs-prototype**, and the spike's goal is to find
+out. A node whose proof stays undefinable is reshaped until it is provable, or it doesn't get built.
+
+Write the **run profile** onto the map too — concurrency, models, autonomy — and the **Skills** line:
+what a teammate consults while building, and which review its PR gets. The suite delegates who does
+the work and owns only what they are told, so a skill left unnamed here is a teammate guessing.
+Defaults are fine; stating them is what keeps a fresh context window running the DAG the same way.
+
+*Done when:* the map carries the proof profile and the run profile, every build node's issue body carries a proof table whose
+tiers are drawn from that profile plus a nonce, and every node whose proof could not be defined has a
+de-fog node blocking it instead of a proof table.
 
 ### 4. Create, then wire
 
@@ -124,4 +166,4 @@ When the effort is genuinely huge and still foggy — whole regions you can't ye
 force premature nodes. Chart only what's specifiable now and write the rest into a **Not yet specified**
 section on the map: the dim, un-ticketable view toward the destination. As upstream de-fog nodes resolve,
 **graduate** each patch that has become specifiable into fresh nodes, clearing it from Not yet specified.
-This is wayfinder's fog-of-war apparatus; reach for it only when the plan can't be fully sliced up front.
+Reach for this only when the plan genuinely can't be fully sliced up front.

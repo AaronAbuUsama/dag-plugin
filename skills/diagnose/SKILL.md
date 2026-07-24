@@ -1,6 +1,6 @@
 ---
 name: diagnose
-description: Find the one design gap behind a cluster of recurring review findings, and return a consolidating fix or a pre-validated escalation. Use when a bug-class recurs across review rounds, when the same finding-shape appears at a new checkpoint, when patching one defect keeps spawning adjacent ones, or when a fix needs a new mechanism rather than a tightened check.
+description: Find the one design gap behind a cluster of review findings and return a consolidating fix or a pre-validated escalation. Use when a bug-class recurs, or when a fix needs a new mechanism rather than a tightened check.
 ---
 
 # Diagnose — find the nest
@@ -26,7 +26,8 @@ it from the cluster; if fewer than two remain, the verdict is **independent** (s
 ## 2. Read the whole subsystem, not the diff
 
 This is the step that separates **diagnosis** from **triage**, and it is the load-bearing behaviour of
-this skill. The diff shows you where a mole surfaced; it never shows you the nest. Open the whole
+this skill. The diff shows you where a mole surfaced; it never shows you the nest — and every patch aimed at a
+mole you haven't diagnosed risks a **fix-induced** defect in its place. Open the whole
 subsystem the cluster lives in — every module that reads or writes the shared state, every path that
 touches the invariant in question — and trace the assumption end to end. The motivating failure did the
 opposite: six TOCTOU/stale-state findings were patched one diff at a time across rounds 3→11, and nobody
@@ -55,9 +56,9 @@ from step 2 (or, for **independent**, at why the shapes differ).
 
 Design the **one consolidating fix** that closes the nest — the shared primitive, guard, or invariant
 enforcement that every member of the cluster routes through. Then apply **fix-completeness** *to the
-consolidation itself*. This is where the motivating round-11 fix failed: a shared `verifyLiveContinuation`
-primitive closed four of six cluster members but missed the `ensureBranch` call site, and that sixth mole
-reached merge unresolved. Do not repeat it.
+consolidation itself*. This is where the motivating round-11 fix failed: a shared guard closed five of
+the cluster's six members but missed one call site, and that sixth mole reached merge unresolved. Do not
+repeat it.
 
 *Done when — the exhaustive criterion:* you have enumerated **every** call site and **every** branch in
 the subsystem where the nest's assumption is relied on — found by grepping the whole subsystem for the

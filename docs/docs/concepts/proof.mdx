@@ -1,0 +1,169 @@
+---
+title: Proof
+description: Tiers ordered by closeness to reality, a per-repo profile that says what this repo can prove with, and a contract fixed before any code is written.
+sidebar:
+  icon: shield-check
+  order: 1
+---
+
+The suite's first principle: **a claim that cannot be verified is not a result.** Tests verify code
+against itself; only reality verifies it against the world. Everything here exists to keep those two
+from being confused.
+
+## Proof tiers
+
+Proof ordered by how close it gets to reality. A higher tier never substitutes for a lower one, and a
+lower one never *promotes* into a higher one.
+
+| Tier | Name | What it is |
+| --- | --- | --- |
+| 1 | **mechanical** | Types, lint, build, unit tests. The code agrees with itself. |
+| 2 | **integrated** | The real components wired together, still hermetic. No mocks at the seam under test. |
+| 3 | **live** | The exact committed head **running**, observed doing the real thing. |
+| 4 | **readback** | The system's own durable record of *that same event*, read back independently. |
+| 5 | **observed** | What the run emitted — events, and especially errors — from wherever this repo collects them. |
+
+### Tier 3 means running, not deployed
+
+This is the tier everything turns on, and it is the one most often misread.
+
+:::note
+**Tier 3 is the exact committed head running and being observed doing its job.** Where and how it runs
+is a repo detail. A local app you clicked through and screenshotted is full reality contact. A deployed
+service nobody watched is none.
+:::
+
+"We have no deploy target" is therefore not a reason to have no tier 3. Tier 3 is absent only when the
+code genuinely cannot be run and watched at all, which is rare. **If you can run it, you can prove it.**
+
+What survives from the stricter reading is the part that mattered: the **exact committed head**. Never a
+rebuilt tree, never uncommitted changes.
+
+## The proof profile
+
+Which tiers exist is a property of the repo, not of the suite. It is declared once on the map and read
+by every proof step — this is the whole of the suite's per-repo configuration. The skills stay generic;
+the repo supplies its own reality.
+
+| tier | exists here? | how it is reached |
+| --- | --- | --- |
+| 1 mechanical | yes | the repo's test/typecheck/build command |
+| 2 integrated | yes/no | the command |
+| 3 live | yes/no | **how this repo runs its code**, and how the run is driven and observed |
+| 4 readback | yes/no | the durable store and how it is queried |
+| 5 observed | yes/no | the event/error collector and how it is queried |
+
+Absent tiers are stated as absent — never faked, never quietly skipped.
+
+The profile also answers one more question: **is tier 3 reachable from a branch?** That single answer
+decides when proof runs, and no individual node gets to decide it for itself.
+
+## When proof runs
+
+<CardGroup cols={2}>
+  <Card title="Reachable from a branch">
+    The proof contract is a fourth **merge gate** signal, satisfied on the open PR. A node that cannot
+    be proven never merges, and reaches done-clean *before* it lands.
+  </Card>
+  <Card title="Needs the merged head">
+    The profile names the shared environment it waits on, and proof runs straight after the merge.
+  </Card>
+</CardGroup>
+
+The open PR is the one moment a reviewer is actually reading, and learning that a node can't be proven
+is far cheaper before the merge than after. So proof belongs at the gate whenever it can reach it —
+which is what makes *proof is never deferred* literally true rather than aspirational.
+
+## The proof contract
+
+The concrete, runnable evidence that one node is done: which tiers it must reach, the evidence form for
+each, and the nonce tying the evidence to this run.
+
+It is written into the node's issue **when the node is created — before any code** — and validated at
+pre-flight. An agent that invents its own bar picks the bar it can clear, so the bar is written down
+before the code exists.
+
+:::warning
+A node whose proof contract cannot be defined does not get built. That is a **stop**, routed back to a
+grill (a decision is open) or a spike (nobody knows yet whether it can be proven).
+:::
+
+## Evidence form
+
+*What the proof looks like*, which follows the **surface** the node touches. The discipline is
+identical; only the artifact changes.
+
+| Surface | Evidence |
+| --- | --- |
+| UI / browser | A full-frame screenshot of each state, plus a video of the journey. |
+| backend / data | The durable delta: the record before, the record after, with exact ids. |
+| API / SDK | The real request and response, with exact ids. |
+| CLI / tooling | The invocation and its output, captured verbatim. |
+| messaging / external | The message as the real recipient saw it, plus its provider id. |
+
+Every node has a surface, so **every node has an evidence form**. "Backend, so nothing to show" is not
+a thing.
+
+## Nonce, receipt, chain of evidence
+
+A **nonce** is a unique token carried through the evidence, so a receipt can only belong to *this* run.
+Its absence is established first — show it appears nowhere before the run, then show it appearing at
+each tier the contract names.
+
+Two rules make it worth anything, and both exist because the obvious version is trivially gameable:
+
+**The value is minted at run time, never written into the issue.** The contract fixes *where* the nonce
+enters and which path it travels; the token itself is generated when the proof runs. A value written
+down at issue-creation is already in the repo before the run — and every committed receipt carries every
+previous one — so it can never be shown absent, and the absence check becomes theatre.
+
+**It must travel through the behaviour the acceptance criteria name.** Not past it. One line at the top
+of a handler that prints the token, writes it to a row, and fires an event would produce textbook
+convergence across three independent channels while the feature underneath does nothing at all. A token
+the code emits *alongside* the feature proves the code ran. Only one that travelled the path the
+criteria name proves the feature worked.
+
+A **receipt** is the durable, reviewer-openable record of a satisfied contract, committed to the repo so
+it outlives the PR page.
+
+The **chain of evidence** is the short argument that the artifacts actually prove the claim:
+
+- Where the repo has corroborating tiers, that argument is **convergence** — the same nonce at
+  independent tiers, each a channel you didn't write.
+- Where it has none, the argument rests on the observation itself. Which is exactly why that observation
+  must be an artifact a reviewer can open, never an assertion that it happened.
+
+Say which of the two you are making. A chain claiming a convergence it doesn't have is worse than one
+that states it has none.
+
+## Verdicts
+
+The status of one tier, in exactly one word: **PROVEN** / **NOT PROVEN** / **BLOCKED**.
+
+`BLOCKED` is reserved for a genuine external or authorization gate. Anything you could fix yourself is
+`NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming the tier in the
+same sentence — understating is recoverable, overstating is how a rollout ships nothing.
+
+## Who proves what
+
+The teammate that built the node runs it and captures the evidence its contract names. It never grades
+that evidence — it reports **what it observed**, and the **verdict** for each tier is issued by the
+orchestrator at the merge gate, reading what came back.
+
+Capture parallelises across a wave; judgement does not. **Nobody grades their own homework.**
+
+## What you have to declare
+
+Two things the suite delegates rather than owns, both declared on the map and both required before
+`/dag:execute` can finish a node:
+
+- **The proof profile** — which tiers exist here, the command or query that reaches each, whether tier 3
+  is reachable from a branch, and where receipts are committed. `/dag:chart` settles this with you.
+- **The Skills line** — what a teammate consults while building, and **which review its PR gets**. The
+  suite ships no reviewer of its own: it names what you already trust and tells it what to judge
+  against. Leave this blank and the merge gate has a signal that can never go clean.
+
+The reviewer is handed the node's acceptance criteria, its proof contract, and its invariants, and asked
+two questions: does the diff meet the criteria, and does it leave the proof contract **satisfiable** —
+states observable, records readable. That second question runs *before* the evidence is gathered, because
+a node whose behaviour nobody can observe is cheapest to catch while it is still a diff.

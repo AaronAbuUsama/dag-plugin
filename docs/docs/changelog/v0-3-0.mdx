@@ -1,0 +1,23 @@
+---
+title: v0.3.0
+description: The proof layer — tiers, contracts fixed before any code, and evidence posted into the pull request.
+type: changelog
+date: 2026-07-24T18:15:19Z
+changelog:
+  version: 0.3.0
+---
+
+**The proof layer.** Verification is the suite's first principle: a claim that cannot be verified is not
+a result, and only reality verifies code against the world.
+
+- **Proof tiers** — evidence ordered by closeness to reality (mechanical → integrated → live → readback
+  → observed). A higher tier never substitutes for a lower one, and which tiers exist is a property of
+  the repo, declared once in the map's **proof profile**.
+- **Proof is defined before the code.** Every node's contract — tiers, evidence form, nonce — is written
+  into its issue when the node is created. A node whose proof cannot be defined routes to a grill or a
+  spike rather than being charted as buildable.
+- **`/dag:prove`** — captures the evidence the node's surface calls for, commits a receipt, and posts
+  the tier table and evidence **into the pull request**.
+- **Agent teams** are the one way a wave runs. One teammate = one node = one worktree = one PR.
+- **Run profile** — concurrency, models, autonomy declared on the map, so a fresh window runs the graph
+  the way the last one did.

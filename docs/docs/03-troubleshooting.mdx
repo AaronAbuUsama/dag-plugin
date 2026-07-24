@@ -1,0 +1,164 @@
+---
+title: When it goes wrong
+description: Stops, deadlocks, resuming after a crash, and the failure modes worth knowing before you start.
+sidebar:
+  label: Troubleshooting
+  icon: life-buoy
+  order: 3
+---
+
+## `/dag:execute` refuses to start
+
+It requires `dag:preflighted` on the map, and that is deliberate — the label is the whole boundary
+between human-driven planning and autonomous execution.
+
+```bash
+gh issue view <map-number> --json labels --jq '.labels[].name'
+```
+
+No label means pre-flight was never signed, or something took it off. Run `/dag:plan`; it will route you
+to `/dag:preflight`.
+
+## A build node never becomes ready
+
+Almost always an open de-fog node. A build node blocked by one stays off the frontier until that node
+**closes** — and closing is what `/dag:plan` does when the move's answer lands.
+
+```bash
+# what is still blocking it, and is that blocker closed?
+gh api repos/<owner>/<repo>/issues/<node>/dependencies/blocked_by --jq '.[] | {number, title, state}'
+```
+
+If a blocker is `open` and its answer is already recorded, close it — that is the step that was missed:
+
+```bash
+gh issue close <defog-node> --comment "Answered: <the decision / fact / verdict>"
+```
+
+If a blocker is open with *no* answer on it, the de-fog move never actually ran. Run `/dag:plan` and it
+will name it.
+
+## The router keeps sending me to the same move
+
+A `dag:needs-*` label on a node that has already been answered. The label retires by the node
+**closing**, so an answered-but-open node loops forever. Close it.
+
+If the label is on a **build** node rather than its de-fog node, that's a charting mistake — the router
+never sees it there, because a blocked node is never on the frontier. Move it:
+
+```bash
+gh issue edit <build-node> --remove-label dag:needs-grilling
+gh issue edit <defog-node> --add-label dag:needs-grilling
+```
+
+## `/dag:plan` reports fewer nodes than I created
+
+Pagination. Both `sub_issues` and `dependencies/blocked_by` return **30 per page** by default, and a
+truncated read looks like a smaller graph rather than an error. Every read the suite specifies uses
+`--paginate`; if you're checking by hand, use it too.
+
+```bash
+gh api --paginate repos/<owner>/<repo>/issues/<map>/sub_issues --jq 'length'
+```
+
+## A run stopped and I don't know where it got to
+
+Nothing is lost — the chart is the memory. `/dag:execute` derives its ledger from the issues rather than
+holding it in a conversation, so a fresh window reads the same state:
+
+```bash
+gh issue view <map> --json labels                    # still signed?
+gh api --paginate repos/<o>/<r>/issues/<map>/sub_issues --jq '.[] | {number,title,state}'
+gh pr list --state open --json number,headRefName,title
+```
+
+What a resumed session **does** lose is the teammates themselves. Their branches, worktrees and open PRs
+survive; the agent sessions don't. Re-run `/dag:execute` and it dispatches fresh teammates to the nodes
+still open.
+
+**Leftover worktrees** are the one thing worth cleaning by hand:
+
+```bash
+git worktree list
+git worktree remove <path>     # for any whose node is already closed
+```
+
+## It hit a rung-3 stop
+
+That is the system working. A stop arrives pre-validated: the named root cause, a confidence level, and
+whether fixing it unblocks the rest of the graph.
+
+`/dag:execute` removes `dag:preflighted` when it stops, so the DAG is back in planning and no fresh
+window can resume execution over a graph you halted. If you find a stopped node with the label still on,
+take it off yourself:
+
+```bash
+gh issue edit <map> --remove-label dag:preflighted
+```
+
+Then `/dag:plan` picks it up and routes it to a grill, a spike, or a re-chart. Pre-flight is re-signed
+before execution resumes.
+
+## A node's proof can't be gathered
+
+This is a **stop**, not something to work around, and the suite is deliberately rigid here: a node whose
+behaviour nobody can observe is not done.
+
+The usual causes, in order of likelihood:
+
+<CardGroup cols={2}>
+  <Card title="The contract asks for something the node doesn't build">
+    Add it to the node. If a record has to be readable, the node builds the way to read it.
+  </Card>
+  <Card title="The profile names a tier this repo doesn't have">
+    Fix the profile on the map and re-run pre-flight. An absent tier is stated absent, not faked.
+  </Card>
+  <Card title="Nobody knows whether it can be observed at all">
+    That's a spike. Raise one, let it answer the question, then re-chart the node.
+  </Card>
+  <Card title="The node's premise was wrong">
+    Not a proof problem. Rung-3 stop, back to planning.
+  </Card>
+</CardGroup>
+
+## `/dag:setup` can't verify blocking
+
+It opens two throwaway issues, links them, reads the relation back, then deletes the link and closes
+both. If that fails, the suite genuinely cannot run here — the edges *are* GitHub's dependency relation.
+
+Check in order: Issues enabled on the repo; your token carries `repo`; and the endpoint answers at all.
+
+```bash
+gh auth status
+gh api repos/<owner>/<repo>/issues/1/dependencies/blocked_by
+```
+
+An empty array `[]` is success — it means the endpoint exists and this issue has no blockers. A `404` on
+the *endpoint* (rather than the issue) means this host doesn't support it, which rules out older GitHub
+Enterprise.
+
+## Two charts in one repo
+
+`/dag:plan` reads a single map. With two open `dag:map` issues it will name both and ask which effort you
+mean rather than guessing.
+
+```bash
+gh issue list --label dag:map --state open --json number,title
+```
+
+Close the finished one. A chart whose nodes are all closed is done and should not stay open.
+
+## Things it will do that surprise people
+
+Worth knowing before the first run rather than after:
+
+- **`/dag:execute` merges to your base branch and closes issues, unattended.** That is what the signature
+  authorises. Run it somewhere you're willing to have written to.
+- **`/dag:setup` edits your `CLAUDE.md`** (or `AGENTS.md`) to add a `## DAG suite` block, and writes
+  `CONTEXT.md` and `docs/adr/`. It shows you the draft first.
+- **`/dag:prove` can leave a real footprint** — durable records, and for a messaging surface, real
+  messages to real recipients. It reports that footprint in the PR, but nothing caps it. Point messaging
+  nodes at a test recipient.
+- **Inline PR images don't render on private repos.** GitHub's image proxy can't fetch private media, and
+  no URL rewriting changes that. On a private repo the committed receipt is the proof; the inline embed
+  is a bonus.

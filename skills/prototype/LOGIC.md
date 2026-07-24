@@ -24,7 +24,9 @@ user is watching now or returning to it AFK.
 
 ### 2. Pick the language
 
-Use whatever the host project uses. If the project has no obvious runtime (e.g. a docs repo), ask.
+Use whatever the host project uses, and its package manager with it — read that off the lockfile rather
+than guessing. If the project has no obvious runtime (e.g. a docs repo), ask; where the choice is
+genuinely open, prefer **bun**, which executes TypeScript as-is and saves the spike a build step.
 
 Match the project's existing conventions for tooling — don't add a new package manager or runtime
 just for the prototype.
@@ -80,8 +82,8 @@ The whole frame should fit on one screen.
 ### 5. Make it runnable in one command
 
 Add a script to the project's existing task runner (`package.json` scripts, `Makefile`,
-`pyproject.toml`). The user should run `pnpm run <prototype-name>` or equivalent — never need to
-remember a path.
+`pyproject.toml`), invoked with the repo's own package manager. The user should start it with one
+command — never need to remember a path.
 
 If the host project has no task runner, just put the command at the top of the prototype's README.
 

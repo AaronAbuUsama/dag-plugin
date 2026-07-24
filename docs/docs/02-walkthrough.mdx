@@ -1,0 +1,244 @@
+---
+title: A chart, end to end
+description: One small effort walked from idea to closed issue, with the actual artifacts each step produces.
+sidebar:
+  label: Walkthrough
+  icon: footprints
+  order: 2
+---
+
+Every other page here describes a part. This one walks a small effort through all of it, showing what
+each step actually leaves behind — the issue bodies, the API calls, the PR comment. Read it once and the
+rest of the docs stop being abstract.
+
+The example: **add CSV export to a reports page.** Two build nodes, one of which needs a decision
+settled first.
+
+:::note
+The `gh` invocations here are real and runnable. The issue bodies are the templates filled in for this
+example — yours will differ in content, not in shape.
+:::
+
+## 1. What the chart looks like
+
+```
+                  ┌──────────────────────────────┐
+                  │  map: CSV export for reports │  ◄── dag:map
+                  └──────────────────────────────┘
+                       │            │           │
+        ┌──────────────┘            │           └──────────────┐
+        ▼                           ▼                          ▼
+┌────────────────┐        ┌──────────────────┐       ┌────────────────────┐
+│ Decide the CSV │        │ Export endpoint  │       │ Download button    │
+│ column set     │ blocks │ + serializer     │blocks │ on the reports page│
+│ dag:needs-     │───────►│                  │──────►│                    │
+│ grilling       │        │  (build node)    │       │   (build node)     │
+└────────────────┘        └──────────────────┘       └────────────────────┘
+   de-fog node                  frontier                    blocked
+```
+
+Three child issues under one map. The **de-fog node** carries the `dag:needs-grilling` label — never the
+build node it blocks, because `/dag:plan` only ever looks at the frontier and a blocked node isn't on it.
+
+## 2. The map issue
+
+`/dag:chart` creates this. It's an index — it links each node and restates none of their detail. The two
+profiles on it are what make a run reproducible from any context window:
+
+```markdown
+## Destination
+
+Users can export any report as CSV from the reports page.
+
+## Notes
+
+Reports live in `app/reports`. Money is always minor units.
+
+**Skills**
+- build: `tdd`, `code-quality:simplify`
+- review: `pr-review-toolkit:review-pr`
+
+## Proof profile
+
+| tier | exists here? | how it is reached |
+|---|---|---|
+| 1 mechanical | yes | `bun test && bun run typecheck` |
+| 2 integrated | yes | `bun test:integration` |
+| 3 live | yes | `bun dev`, driven in a browser |
+| 4 readback | yes | the `exports` table, via `bun db:query` |
+| 5 observed | no | none — no collector in this repo |
+
+**Tier 3 reachable from a branch?** yes
+(proof is a merge gate signal, gathered on the PR)
+
+Receipts are committed to `docs/receipts/<node>-<date>/`.
+
+## Run profile
+
+- **concurrency** — 2
+- **models** — coder opus · reviewer opus
+- **autonomy** — autonomous
+```
+
+Two things there are load-bearing and easy to skip. The **Skills line** names who builds and who reviews
+— the suite ships neither, and a blank review entry leaves the merge gate with a signal that can never go
+clean. And **tier 5 is recorded as absent**, not omitted: an absent tier stated is honest, an absent tier
+omitted reads as coverage.
+
+## 3. A build node
+
+The proof contract is the part that matters, and it is written **now, before any code**:
+
+```markdown
+## What to build
+
+A user on the reports page can download the current report as CSV, and the file matches what they see.
+
+## Acceptance criteria
+
+- [ ] A Download CSV button appears on the reports page
+- [ ] The file downloads with the report's own name
+- [ ] Rows and columns match the on-screen table, in the same order
+- [ ] Money values keep two decimal places
+
+## Proof
+
+**Surface:** ui
+
+| tier | what proves this node | evidence form |
+|---|---|---|
+| 1 mechanical | `bun test && bun run typecheck` | command + result |
+| 2 integrated | the serializer against a real report fixture | command + result |
+| 3 live | a real download in a browser, file opened | screenshot + video |
+| 4 readback | an `exports` row for that download, with its id | query + exact ids |
+| 5 observed | N/A — no collector in this repo | — |
+
+**Nonce:** the report title the export is triggered from — it must appear in the
+downloaded file's header row AND in the `exports` row. Value minted at run time.
+
+## Readiness
+
+clear — blocked only by the column-set decision.
+
+## Blocked by
+
+Decide the CSV column set
+```
+
+The nonce is the anti-gaming mechanism, so read that line carefully: it names **where the token enters
+and the path it travels**. A token the code merely logs would satisfy a weaker contract while the export
+itself does nothing. This one has to come out the other end of the actual feature.
+
+## 4. Creating and wiring it
+
+Two passes, because issues need ids before they can reference each other. `gh issue create` prints a
+**URL**, not a number:
+
+```bash
+R=you/your-repo
+
+MAP=$(gh issue create -R $R --title "map: CSV export for reports" \
+      --label dag:map --body-file map.md | grep -oE '[0-9]+$')
+
+# the de-fog node carries the readiness label; build nodes carry none
+DEFOG=$(gh issue create -R $R --title "Decide the CSV column set" \
+        --label dag:needs-grilling --body-file defog.md | grep -oE '[0-9]+$')
+ENDPOINT=$(gh issue create -R $R --title "Export endpoint + serializer" \
+           --body-file node-1.md | grep -oE '[0-9]+$')
+
+# parent each node to the map — sub_issues takes the DATABASE id, not the number
+for N in $DEFOG $ENDPOINT; do
+  gh api -X POST repos/$R/issues/$MAP/sub_issues \
+    -F sub_issue_id=$(gh api repos/$R/issues/$N --jq .id)
+done
+
+# wire the edge: the endpoint is blocked by the decision
+gh api -X POST repos/$R/issues/$ENDPOINT/dependencies/blocked_by \
+  -F issue_id=$(gh api repos/$R/issues/$DEFOG --jq .id)
+```
+
+:::warning
+Both endpoints take the issue's **database id** (a nine-or-more digit number), never the `#number` you
+see in the UI. Passing the number where the id belongs is the most common way a chart wires itself wrong
+— and it fails quietly, parenting the wrong issue.
+:::
+
+Read it back to confirm, always paginated — both endpoints return 30 per page by default, and a
+truncated read looks exactly like a smaller graph rather than an error:
+
+```bash
+gh api --paginate repos/$R/issues/$MAP/sub_issues --jq '.[] | {number, title, state}'
+```
+
+## 5. Walking it
+
+```
+/dag:plan
+```
+
+It reads the state off GitHub and names one move. With that de-fog node on the frontier, it says: run
+`/dag:grill`. You settle the column set together, and `/dag:plan` **records the decision as a comment on
+the de-fog node and closes it**.
+
+That close is the mechanism. It unblocks the endpoint node onto the frontier, and it retires the
+`dag:needs-grilling` label without anyone removing a label — a closed node is never on the frontier.
+
+Run `/dag:plan` again and now every de-fog node is closed, so the chart is complete and the move is
+`/dag:preflight`. That validates each build node against its invariants, criteria, edges and contract,
+posts the signed table as a map comment, and adds `dag:preflighted`.
+
+```
+/dag:execute
+```
+
+It checks that label first and refuses without it. Then one teammate per ready node, each in its own
+worktree, each opening one PR.
+
+## 6. What lands on the PR
+
+The proof section `/dag:prove` posts, once the node is built and run:
+
+```markdown
+## Proof
+
+| tier | verdict | evidence |
+|---|---|---|
+| 1 mechanical | PROVEN | `bun test && bun run typecheck` — 214 passed, at `a1b2c3d` |
+| 2 integrated | PROVEN | `bun test:integration` — serializer vs fixture, 12 passed |
+| 3 live | PROVEN | download run 14:02–14:04Z against head `a1b2c3d` — screenshots below, [video](url) |
+| 4 readback | PROVEN | `bun db:query 'select * from exports …'` → row `8814`, title `Q3 Revenue` |
+| 5 observed | NOT PROVEN | no collector in this repo |
+
+<screenshots, inline>
+
+**Chain of evidence.** The report title `Q3 Revenue` was typed once, in the browser. It
+appears in the downloaded file's header row (tier 3) and in `exports` row 8814 (tier 4) —
+two channels, one of which we did not write. Tier 5 is absent here, so this is convergence
+across two tiers rather than three, and it says so.
+
+**Irreversible footprint.** One `exports` row (8814). No messages sent, nothing published.
+
+Receipt: docs/receipts/export-endpoint-2026-07-24/
+```
+
+Note what makes that honest. Tier 5 says `NOT PROVEN` with the reason, rather than being left out. The
+chain of evidence says how many independent channels actually corroborate — two, not three — instead of
+claiming a convergence it doesn't have. And the nonce is a value that came out of the feature, not one
+the code emitted beside it.
+
+The teammate **captured** all of that. It does not grade it: the `verdict` column is filled in by the
+orchestrator at the merge gate, reading what came back. Nobody grades their own homework.
+
+## 7. Closing
+
+Every gate signal clean → the node merges → its issue closes on the satisfied contract → the next node
+is on the frontier. When every node is closed, the chart is done.
+
+<CardGroup cols={2}>
+  <Card title="When it goes wrong" href="/troubleshooting">
+    Stops, deadlocks, resuming after a crash, and the failure modes worth knowing before you start.
+  </Card>
+  <Card title="Proof in depth" href="/concepts/proof">
+    Tiers, the profile, and why the nonce rules are what they are.
+  </Card>
+</CardGroup>

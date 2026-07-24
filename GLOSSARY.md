@@ -7,10 +7,11 @@ skills use it without re-defining.
 ---
 
 **DAG** — the plan as a graph of **nodes** (work slices) joined by **edges** (a node blocks another
-until it merges). Built upstream by a ticketing skill; this suite validates it, runs it, and closes it.
+until it closes — and under close-on-proof it closes when its proof lands, not when it merges). Laid down by `/dag:chart` from a grilled plan; the suite then validates it, walks it,
+and closes it.
 
 **node** — one work slice: a narrow-but-complete vertical path (schema→logic→tests) sized for a single
-fresh context, demoable on its own. One node = one agent = one worktree = one PR.
+fresh context, demoable on its own. One node = one **teammate** = one worktree = one PR.
 
 **pre-flight** — the checklist you run *before the wheels leave the ground*. A whole-DAG gate, run once
 before any dispatch: every node checked against the architecture invariants, its own acceptance
@@ -20,22 +21,117 @@ it is why architecture violations get caught late, in review, at their most expe
 **invariant** — a rule no node may violate, stated in the project's architecture doc. Conformance is
 checked at pre-flight against the *design*, not discovered in review against the *code*.
 
-**proof contract** — the concrete, runnable evidence that one node is done: which proof layers, what
-nonce, what receipt. Defined at pre-flight. **A node with no runnable proof contract does not pass
-pre-flight** — "we'll prove it after deploy" is banned.
+**verification** — the suite's first principle: *a claim that cannot be verified is not a result.* Tests
+verify the code against itself; only reality verifies the code against the world. Everything below
+exists to keep those two from being confused.
+
+**proof tier** — proof ordered by how close it gets to reality. A higher tier never substitutes for a
+lower one, and a lower one never *promotes* into a higher one:
+
+1. **mechanical** — types, lint, build, unit tests. The code agrees with itself.
+2. **integrated** — the real components wired together, still hermetic. No mocks at the seam under test.
+3. **live** — the exact committed head **running**, observed doing the real thing. Where and how it runs
+   is a repo detail the **proof profile** answers; what makes it tier 3 is that the head is running and
+   someone is watching it. A run nobody observed is not tier 3, wherever it happened.
+4. **readback** — the system's own durable record of *that same event*, read back independently.
+5. **observed** — what the run emitted: events, and especially **errors**, queried from wherever this
+   repo collects them.
+
+Which tiers exist is a property of the repo, not of the suite — declared once on the **map** (see
+**proof profile**). Tier 3 is absent only when the code genuinely cannot be run and watched at all,
+which is rare — "no deploy target" is not that: if you can run it, you can prove it. A repo with no
+error/event collector has no tier 5. Absent tiers are stated as absent, never faked and never quietly
+skipped.
+
+**verdict** — a judgement returned in one word from a fixed vocabulary, so it cannot be hedged. Each
+judging step has its own, and every one of them is issued by the grader, never by the party being
+graded:
+
+- a **proof tier** — **PROVEN** / **NOT PROVEN** / **BLOCKED**
+- pre-flight, on a node's invariants — satisfies / at-risk / re-plan
+- diagnosis, on a cluster — code-wrong / node-wrong / independent
+
+`BLOCKED` is reserved for a genuine external or authorization gate; anything we could fix ourselves is
+`NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming which verdict, of
+what, in the same sentence. Understating is recoverable; overstating is how a rollout ships nothing.
+
+**evidence form** — *what the proof looks like*, which follows the **surface** the node touches. The
+discipline is identical; only the artifact changes:
+
+- **UI / browser** — a full-frame screenshot of each state, plus a video of the journey.
+- **backend / data** — the durable delta: the record before, the record after, with exact ids.
+- **API / SDK** — the real request and response, with exact ids.
+- **CLI / tooling** — the invocation and its output, captured verbatim (a screenshot is fine).
+- **messaging / external surface** — the message as the real recipient saw it, plus its provider id.
+
+Every node has a surface, so **every node has an evidence form** — "backend, so nothing to show" is not
+a thing.
+
+**proof contract** — the concrete, runnable evidence that one node is done: which **tiers** it must
+reach, the **evidence form** for each, and the **nonce** that ties the evidence to this run. Written
+into the node's issue **when the node is created** — before any code — and validated at pre-flight.
+**A node whose proof contract cannot be defined does not get built**: that is a **stop**, routed back to
+a grill (a decision is open) or a **spike** (nobody knows yet whether it can be proven).
+
+**nonce** — a unique token minted **per proof run** and carried through the evidence, so a receipt can
+only belong to *this* run. The **proof contract** fixes where it enters and which path it must travel;
+the *value* is minted at run time, never written into the issue — a value recorded before the run is
+already in the repo and can never be shown absent. And it must travel **through the behaviour the
+acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
+the feature worked. Its absence is established first, at each tier the contract names.
+
+**primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
+code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every
+claim back to one; a secondary account is where stale facts come from.
+
+**database id** — GitHub's internal issue id, which every dependency and sub-issue endpoint takes, and
+which is *not* the `#number` a human sees. Read it with `gh api repos/<owner>/<repo>/issues/<n> --jq
+.id`. Passing the number where the id belongs is the single most common way a chart wires itself wrong.
+
+**receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
+exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.
+
+**chain of evidence** — the short argument that the artifacts actually prove the claim. Where the repo
+has corroborating tiers, that argument is **convergence**: the same **nonce** at independent tiers (live
+*and* readback *and* observed), each a channel you didn't write. Where it has none, the argument rests
+on the observation itself — which is exactly why that observation must be an artifact a reviewer can
+open, never an assertion that it happened. Say which of the two this is: a chain claiming a convergence
+it doesn't have is worse than one that states it has none.
 
 **proof ledger** — the running record of each node's proof contract and whether it is satisfied. Makes
 the difference between the two done-states impossible to blur:
 
 - **triage-clean** — the reviews are clean. Necessary, not sufficient.
-- **done-clean** — the proof contract is *satisfied* (the live evidence exists). The only real "done".
+- **done-clean** — the proof contract is *satisfied*: the evidence exists, is in the PR, and is
+  committed as a receipt. The only real "done".
 
-Proof is never deferred. If a node cannot be proven, that is a **stop** signal — before work starts if
-the contract can't even be defined, or at merge if the evidence can't be gathered — never a shrug.
+Proof is never deferred, and it is never merely asserted — **show it, don't claim it**. Where the
+**proof profile** says tier 3 is reachable from a branch, proof is gathered *before* the merge, as a
+**merge gate** signal — so "never deferred" is literal, and a node reaches **done-clean** before it
+lands. Where tier 3 needs the merged head, proof runs immediately after the merge and the issue closes
+on it. If a node cannot be proven, that is a **stop** signal — before work starts if the contract can't
+be defined, or at the gate if the evidence can't be gathered — never a shrug.
 
-**merge gate** — the three signals that must all be clean before a node merges: CI, an independent
-review (bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), and the
-orchestrator's own cold read of the diff.
+**proof profile** — what *this repo* can prove with, declared once in the map's Notes and read by every
+proof step: which **tiers** exist here, the command or query that reaches each, and where receipts are
+committed. For tier 3 that means **how this repo runs its code**, and how a run is driven and observed.
+This is the whole of the suite's per-repo configuration — the skills stay generic, the repo supplies its
+own reality.
+
+**agent team** — how a wave is executed: you are the team lead, and each ready **node** goes to one
+**teammate** — a separate session with its own context window that inherits the repo's context and its
+brief, never the lead's conversation. Teammates share a task list that unblocks work as its blockers
+complete, so the team mirrors the **frontier**. Sized from the frontier and held under the concurrency
+cap. It is the suite's one runner; there is no second way to walk a DAG.
+
+**run profile** — how an effort is run, declared on the **map** beside the **proof profile**: the
+concurrency cap, the model per role, and the **autonomy level**. It lives on GitHub rather than in a
+conversation, so every context window runs the DAG the same way.
+
+**merge gate** — the signals that must all be clean before a node merges: CI, an independent review
+(bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), the orchestrator's
+own cold read of the diff, and — wherever the **proof profile** says tier 3 is reachable from a
+branch — the node's **proof contract** satisfied, with the evidence in the PR.
 
 **triage vs diagnosis** — the two review modes.
 - **triage** — what a point-reviewer does: surface one symptom at a time. Fast, shallow, never names
@@ -74,7 +170,7 @@ regression class — including on a **consolidating fix**, which must cover ever
    code), the proof can't be gathered, or the fix would cost more than it's worth.
 
 **inner loop / outer loop** — the inner loop is autonomous diagnose-and-fix (rung 2); the outer loop is
-the rare, pre-validated human escalation (rung 3). The **autonomy level** (set via the router) decides
+the rare, pre-validated human escalation (rung 3). The **autonomy level** (from the **run profile**) decides
 how freely the inner loop runs before the outer loop is allowed to fire — autonomous by default.
 
 **code-wrong vs node-wrong** — diagnosis's verdict on a cluster. **code-wrong**: the implementation was

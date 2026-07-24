@@ -1,0 +1,106 @@
+---
+title: v0.4.0
+description: Tier 3 stops meaning deployed and starts meaning running and observed, and the one entry point becomes two doors.
+type: changelog
+date: 2026-07-24T21:15:27Z
+changelog:
+  version: 0.4.0
+---
+
+**The running model, and two doors.**
+
+## Tier 3 is code running and being observed
+
+"Deployed" was residue from one long-running service on one server, generalised into a universal law.
+Tier 3 is now *the exact committed head running, observed doing the real thing* — where it runs is a
+repo detail the proof profile answers.
+
+- A local run you clicked through and captured is full reality contact. A deployed service nobody
+  watched is none.
+- **"A repo with no deploy target has no tier 3" is inverted.** Tier 3 is absent only when the code
+  cannot be run and watched at all. If you can run it, you can prove it.
+- `evidence.md` used to treat a local run as a grudging exception needing the profile's permission. It
+  is now simply one of the ways a repo runs its code.
+- No runner, command, or host is named anywhere in the suite.
+
+The anti-cheat that mattered survives untouched: the **exact committed head**, never a rebuilt tree,
+never uncommitted changes.
+
+## Proof runs at the merge gate
+
+The suite's headline is *proof is never deferred*, and the loop deferred every node's proof past its own
+merge — the one moment a reviewer is actually reading. That ordering existed only because you cannot
+deploy a branch.
+
+Now the proof profile answers whether tier 3 is reachable from a branch, and the stage falls out of it:
+
+- **reachable** → the contract is a fourth merge-gate signal, satisfied on the open PR. A node that
+  cannot be proven never merges, and reaches done-clean before it lands.
+- **needs the merged head** → the profile names the shared environment it waits on, and proof follows
+  the merge as before.
+
+No node declares its own stage — that would hand the builder the one lever the suite exists to keep out
+of its hands.
+
+## The teammate gathers; the orchestrator grades
+
+"The live box is yours alone" was a shared-server assumption, not a rule, and it serialised the most
+expensive step in the loop. Capture now parallelises across a wave. What was load-bearing survives:
+**nobody grades their own homework.**
+
+## The chain of evidence degrades honestly
+
+It required the same nonce at independent tiers and called anything less "a single screenshot taken on
+trust" — so a repo with only tiers 1 and 3 had its best possible proof defined as insufficient. It now
+names which argument it is making: convergence where corroborating tiers exist, otherwise the
+observation itself.
+
+## Two entry doors
+
+One door could not open any of its rooms — every planning target was user-invoked, so the promised
+handoff could never fire.
+
+- `/dag:plan` replaces the `map` skill: reads chart state, names the single next move, ends at the
+  signature.
+- `/dag:execute` replaces `run`: checks the signature first and refuses to dispatch without it.
+- The `dag:map` **issue and label are unchanged** — only the skill was ever confusingly named.
+
+## The GitHub mechanics are real
+
+Every command for creating a blocking edge or a sub-issue was invented and would have failed on any
+repo — `gh issue edit --add-blocked-by` is not a flag, `gh sub-issue` is not a command, and the real
+endpoints take an issue's **database id**, not its number. Replaced with the REST endpoints, tested
+live. `chart` also now applies the `dag:needs-*` readiness labels it never applied, so the planning
+router can fire at all.
+
+## The planning loop actually terminates
+
+The readiness router could never fire. The `dag:needs-*` label went on the **build** node, which is
+blocked by its de-fog node and therefore never on the frontier the router reads — while the de-fog node
+that *was* on the frontier carried no label at all. Nothing closed a de-fog node either, and nothing
+removed a label.
+
+The label now goes on the de-fog node, and `/dag:plan` closes that node when its answer lands. That one
+close unblocks the build node, retires the label without any remove-label call, and terminates the loop.
+
+`/dag:research` used to write its finding to a file "somewhere sensible"; it now posts it to its own
+issue, which is the only place the router looks.
+
+## The nonce proves the feature worked, not that the code ran
+
+Its value is minted at run time rather than written into the issue — a value recorded before the run is
+already in the repo (every committed receipt carries every previous one) and can never be shown absent.
+And the contract now names the **path** it must travel, because nothing previously stopped three log
+lines from producing textbook convergence over a feature that does nothing.
+
+## Capture is not a verdict
+
+The teammate ran `/dag:prove` on its own node and `prove` returned a verdict per tier — so the party
+that wrote the code graded its own work. `prove` now reports what it **observed**; the verdict is the
+orchestrator's at the merge gate.
+
+## check.sh can fail
+
+Its orphan-term check set a flag inside a pipeline subshell and always exited 0; four other checks were
+narrower than they read. Every check is now fault-injection-proven, scoped to tracked files, and one new
+check keeps foreign skills from shipping inside the plugin.

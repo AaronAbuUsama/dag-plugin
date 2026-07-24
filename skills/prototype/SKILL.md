@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build a throwaway prototype (a spike) to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like — or when routing a needs-prototype node that must be de-risked before it can be built.
+description: Build the throwaway spike that de-risks a DAG node. Use when a node's readiness is needs-prototype, or when another dag skill raises a spike against a node.
 ---
 
 # Prototype
@@ -30,8 +30,9 @@ assumption at the top of the prototype.
    it will actually be used (next to the module or page it's prototyping for) so context is obvious —
    but name it so a casual reader can see it's a spike, not production. For throwaway UI routes, obey
    whatever routing convention the project already uses; don't invent a new top-level structure.
-2. **One command to run.** Whatever the project's existing task runner supports — `pnpm <name>`,
-   `python <path>`, `bun <path>`, etc. The user must be able to start it without thinking.
+2. **One command to run.** Use the repo's own package manager and task runner — read it off the
+   lockfile rather than guessing. Where the repo doesn't settle it, ask, and prefer **bun**: it executes
+   TypeScript as-is, so a spike needs no build step. The user must be able to start it without thinking.
 3. **No persistence by default.** State lives in memory. Persistence is the thing the spike is
    _checking_, not something it should depend on. If the question explicitly involves a database, hit
    a scratch DB or a local file with a clear "PROTOTYPE — wipe me" name.

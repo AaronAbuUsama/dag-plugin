@@ -1,0 +1,135 @@
+---
+title: Quickstart
+description: Install the plugin, configure a repo once, and walk your first graph from idea to proven.
+sidebar:
+  label: Quickstart
+  icon: rocket
+  order: 1
+---
+
+## Install
+
+```
+/plugin marketplace add AaronAbuUsama/dag-plugin
+/plugin install dag@dag-engineering
+```
+
+To iterate on a working copy instead, launch with `claude --plugin-dir /path/to/dag-plugin`.
+
+## What it needs
+
+GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's own
+issue-dependency relation, which no other tracker renders.
+
+| Requirement | Why |
+| --- | --- |
+| **`gh`, authenticated** | Non-negotiable. The suite creates issues, sub-issues, dependency links, and labels through it. |
+| **A browser, `ffmpeg`** | Only what a node's evidence form calls for — driving a UI, pulling a still out of a journey video. |
+
+## Configure the repo, once
+
+```
+/dag:setup
+```
+
+**What it will do to your repo**, so none of it is a surprise:
+
+- **Opens two throwaway issues**, links one as blocked by the other, reads the relation back, then
+  deletes the link and closes both. It refuses to assume GitHub's dependency relation works here — it
+  proves it. Two issue numbers get used up.
+- **Creates five labels** (below).
+- **Writes `CONTEXT.md` and `docs/adr/`** at your repo root, if they don't exist.
+- **Edits your `CLAUDE.md`** — or `AGENTS.md` — to add a `## DAG suite` block. It shows you the draft
+  first.
+
+Re-run it only to change the label set or the doc layout.
+
+| Label | Goes on | Meaning |
+| --- | --- | --- |
+| `dag:map` | the map issue | The parent issue indexing this chart's nodes. |
+| `dag:preflighted` | the map issue | Pre-flight is signed; the DAG is cleared for `/dag:execute`. |
+| `dag:needs-grilling` | a **de-fog** node | A decision is still open. |
+| `dag:needs-research` | a **de-fog** node | A fact must be found first. |
+| `dag:needs-prototype` | a **de-fog** node | Not knowable on paper; a spike answers it. |
+
+The three `dag:needs-*` labels go on the de-fog node, never on the build node it blocks — that's the
+node `/dag:plan` can actually see. A build node with no de-fog node blocking it is **clear**.
+
+## Plan
+
+```
+/dag:plan
+```
+
+With no chart yet it says so, and names the first move — `/dag:grill`. From then on, every time you run it
+you get one sentence about where you are and one command to run.
+
+**You should see** something of this shape:
+
+> No `dag:map` issue on this repo, so there's no chart yet. You're at the start.
+> **Next move: `/dag:grill`** — I'll interview you until the plan is settled, then `/dag:chart` lays it
+> down as issues.
+
+If instead it can't find the labels, `/dag:setup` didn't finish — re-run it.
+
+A typical sequence, one move per turn:
+
+<Steps>
+  <Step title="/dag:grill">
+    A batched, code-grounded interview. Every question arrives with the problem in real code, what it
+    touches, the options as concrete diffs, and a graded recommendation — then the ask.
+  </Step>
+  <Step title="/dag:prototype or /dag:research">
+    Only where the plan needs them: a throwaway spike for what isn't knowable on paper, a background
+    agent for a fact that is knowable but not yet known.
+  </Step>
+  <Step title="/dag:chart">
+    Lays the settled plan onto GitHub — a map issue indexing node issues, joined by real blocking edges,
+    each node carrying its acceptance criteria **and its proof contract**.
+  </Step>
+  <Step title="/dag:preflight">
+    The gate. Every node checked against its invariants, its criteria, its edges, and a runnable proof
+    contract. Signing it adds `dag:preflighted` to the map.
+  </Step>
+</Steps>
+
+## Execute
+
+```
+/dag:execute
+```
+
+It checks the signature first and refuses to dispatch without it. Then it walks the graph wave by wave:
+one teammate per ready node, each in its own worktree, each opening one PR.
+
+**You should see** the ready set named before anything is dispatched, then one PR appear per node. If it
+stops immediately saying the DAG isn't signed, pre-flight hasn't run — go back to `/dag:plan`.
+
+Per node it works the **merge gate** — CI green, an independent review whose verdict is posted to the
+PR, your own cold read of the diff, and (wherever the branch can run the code) the node's proof
+contract satisfied with the evidence in the PR. Findings feed the **escalation ladder**; a bug-class
+recurring twice stops the patching and calls `/dag:diagnose`.
+
+:::warning
+**`/dag:execute` merges to your base branch and closes the issues, on its own.** That is the point of
+the signature — once pre-flight is signed you are not in the loop per node, and it merges each node once
+every gate signal is clean. Run it on a branch you are willing to have written to, and read the run
+profile on your map (concurrency, models, autonomy) before you start.
+:::
+
+You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a hard
+stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of whether
+fixing it unblocks anything. When it stops, it removes `dag:preflighted` from the map, so the DAG is
+back in planning and no fresh window can resume execution over a graph you halted.
+
+## What "done" means
+
+<CardGroup cols={2}>
+  <Card title="triage-clean">
+    The reviews are clean. Necessary, not sufficient.
+  </Card>
+  <Card title="done-clean">
+    The proof contract is satisfied — the evidence exists, it is in the PR, and a receipt is committed.
+    The only real done.
+  </Card>
+</CardGroup>

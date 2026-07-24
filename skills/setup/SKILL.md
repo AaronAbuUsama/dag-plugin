@@ -1,13 +1,13 @@
 ---
 name: setup
-description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart/run rely on, and lays out domain docs. Run once before /dag:chart.
+description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once before /dag:chart.
 disable-model-invocation: true
 ---
 
 # Setup — configure this repo for the DAG suite
 
 Scaffold the three things the rest of the suite assumes exist: a **tracker** that supports native
-blocking, the **label vocabulary** `chart` and `run` read and write, and a **domain doc** layout. Terms
+blocking, the **label vocabulary** `chart` and `execute` read and write, and a **domain doc** layout. Terms
 are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md). Prompt-driven, not a script: explore,
 present, confirm, then write.
 
@@ -17,43 +17,66 @@ present, confirm, then write.
 
 - `git remote -v` — confirm this repo's remote is GitHub. The suite is GitHub-native: `chart`'s **edges**
   are the tracker's real blocking relationship, not prose links, and no other tracker renders that.
-- `gh auth status` — confirmed and scoped to this repo.
+- `gh auth status` — authenticated, and the token carries `repo`. It reports the host and scopes,
+  not per-repo access, so confirm that separately with a read against this repo.
 - `gh label list` — which of the suite's labels (below) already exist.
 - `CLAUDE.md` / `AGENTS.md` at the repo root — does either exist, and is there already a `## DAG suite`
   section?
 - `CONTEXT.md`, `CONTEXT-MAP.md`, `docs/adr/` — existing domain docs.
-- Monorepo signals — `pnpm-workspace.yaml`, a `workspaces` field, populated `packages/*/src`. Their
-  absence (the common case) means single-context.
+- Monorepo signals — a workspace declaration in whatever form this repo's tooling uses, plus populated
+  `packages/*/src`. Their absence (the common case) means single-context.
 
 *Done when:* you know the remote, auth state, which labels already exist, which root doc to edit, and
 whether domain docs already exist.
 
 ### 2. Confirm native blocking
 
-`chart` renders the **frontier** from GitHub's real issue-blocking relation (Issues → Development panel,
-or `gh issue edit --add-blocked-by` where available) — not from checklists or "blocked by #12" prose.
-Verify it, don't assume it: open two throwaway issues, link one as blocked by the other, confirm the
-relation shows in the UI or `gh issue view --json`, then close both.
+`chart` renders the **frontier** from GitHub's real issue-dependency relation — not from checklists or
+"blocked by #12" prose. It is a REST endpoint rather than a `gh issue` flag, and it takes the issue's
+**database id**, never its `#number`:
 
-*Done when:* you have confirmed, on this repo, that a real blocking link can be created and read back —
-not just that the repo has Issues enabled.
+```bash
+gh api repos/<owner>/<repo>/issues/<n> --jq .id                       # the database id
+gh api -X POST repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by \
+  -F issue_id=<blocker-database-id>
+gh api repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by        # read the blockers back
+```
+
+Verify it on this repo rather than assuming it: open two throwaway issues, link one as blocked by the
+other, read the relation back, then **delete the link and close both** — a probe that leaves a live
+dependency between two junk issues has changed the tracker it was only meant to test.
+
+```bash
+gh api -X DELETE repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by/<blocker-database-id>
+```
+
+The read carries each blocker's `state`, which is what lets the frontier be computed with one query per
+node.
+
+*Done when:* a blocking link has been created and read back on this repo with the commands above — not
+merely that the repo has Issues enabled.
 
 ### 3. Create the label vocabulary
 
 Create every label below with `gh label create <name> --color <hex> --description "<text>" --force`
 (idempotent — safe to re-run):
 
-| Label | Meaning |
+GitHub renders a label description as plain text and caps it at 100 characters, so these are written
+without markup and short enough to survive:
+
+| Label | Description to set |
 |---|---|
-| `dag:map` | Marks the parent **map** issue that indexes a chart's nodes. |
-| `dag:preflighted` | On the map issue: pre-flight is signed and the DAG is cleared for `run`. The conductor reads it. |
-| `dag:needs-grilling` | Node's **readiness** is needs-grilling — a decision is still open. |
-| `dag:needs-research` | Node's readiness is needs-research — a fact must be found first. |
-| `dag:needs-prototype` | Node's readiness is needs-prototype — not knowable on paper; a spike blocks it. |
+| `dag:map` | `The parent map issue indexing this chart's nodes` |
+| `dag:preflighted` | `Pre-flight signed; this DAG is cleared for /dag:execute` |
+| `dag:needs-grilling` | `De-fog node: a decision is still open` |
+| `dag:needs-research` | `De-fog node: a fact must be found first` |
+| `dag:needs-prototype` | `De-fog node: not knowable on paper; a spike answers it` |
+
+The three `dag:needs-*` labels go on **de-fog** nodes, which is where `/dag:plan` reads them.
 
 A node with none of the three readiness labels is **clear** — spec it and build, no de-fog node needed.
 Don't add a "ready" or "blocked" label: that state is native, not a label — a node is on the frontier when
-every issue blocking it is closed, and GitHub's UI already shows blocked/unblocked. `run` closes each
+every issue blocking it is closed, and GitHub's UI already shows blocked/unblocked. `execute` closes each
 node's issue itself the moment its proof contract is satisfied (close-on-proof) — no closing label either.
 
 *Done when:* `gh label list` shows all five labels present with the descriptions above.
@@ -81,7 +104,7 @@ Issues live on GitHub; native blocking is confirmed working. Labels: `dag:map` (
 `dag:preflighted` (pre-flight signed), `dag:needs-grilling` / `dag:needs-research` /
 `dag:needs-prototype` (readiness — absent means clear).
 Domain docs: [single-context | multi-context], see CONTEXT.md[/CONTEXT-MAP.md]. See `GLOSSARY.md` and
-`/dag:map` for the suite's terms and skills.
+`/dag:plan` for the suite's terms and skills.
 ```
 
 *Done when:* the block is written (or updated) in the chosen root doc.

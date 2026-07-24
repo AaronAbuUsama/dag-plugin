@@ -27,14 +27,14 @@ done
 note "$(ls -1 skills/*/SKILL.md | wc -l | tr -d ' ') skills checked"
 
 echo "== /dag: cross-references resolve =="
-for s in $(grep -rhoE "/dag:[a-z-]+" --include="*.md" . | sort -u); do
+for s in $(git ls-files -z -- '*.md' | xargs -0 grep -hoE "/dag:[a-z-]+" | sort -u); do
   [ -f "skills/${s#/dag:}/SKILL.md" ] || bad "unresolved reference $s"
 done
 note "all resolve"
 
 echo "== relative links resolve =="
 # Matches ](path.md) and ](path.md#anchor); skips same-file anchors ](#x) and absolute URLs.
-find . -name "*.md" -not -path "./.git/*" | while IFS= read -r f; do
+git ls-files -- '*.md' | while IFS= read -r f; do
   grep -oE "\]\([^)#:][^)#]*\.md(#[^)]*)?\)" "$f" | sed 's/^](//;s/)$//;s/#.*$//' | while read -r l; do
     [ -f "$(dirname "$f")/$l" ] || echo "$f -> $l"
   done
@@ -70,7 +70,7 @@ else
 fi
 
 echo "== no vendor residue =="
-if grep -rniE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" --include="*.md" --include="*.json" . | grep -v '"email"' | grep -q .; then
+if git ls-files -z -- '*.md' '*.json' | xargs -0 grep -niE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" | grep -v '"email"' | grep -q .; then
   bad "vendor residue found"
 else
   note "clean"

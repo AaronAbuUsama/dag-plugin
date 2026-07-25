@@ -102,19 +102,18 @@ a reviewer is actually reading, and a node whose proof can't be gathered has not
 cheaper to learn before the merge than after. Only where tier 3 genuinely needs the merged head does
 proof move to step 5.
 
-**Proof must be current with what merges, and currency is checked by content, not ancestry.** Evidence
-gathered at an earlier commit is evidence about *that* commit, and review fixes landing after it can
-change the behaviour it claimed. A squash merge does not keep the proof commit as an ancestor, so
-`git merge-base --is-ancestor` answers "not merged" for work that merged perfectly — diff the paths the
-evidence covers instead:
+**Proof must be current with the code it is about to merge with.** Evidence gathered at an earlier commit
+is evidence about *that* commit, and review fixes landing after it can change the very behaviour it
+claimed. Here the comparison is against **the PR head** — not the base branch, which does not contain this
+node's work yet and would report the whole feature as a difference every time:
 
 ```bash
-git diff <proof-head> origin/main -- <paths the contract's evidence covers>
+git diff <proof-head> <pr-head> -- <paths the contract's evidence covers>
 ```
 
-Empty means the proof still describes what is on `main`. Non-empty means re-prove — and a re-proof is not
-merely fresher, it is often strictly better evidence, because the fixes it runs against created states the
-first run could not reach.
+Empty means the proof still describes what is about to merge. Non-empty means re-prove — and a re-proof is
+not merely fresher, it is often strictly better evidence, because the fixes it runs against created states
+the first run could not reach.
 
 *Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, every finding
 of the last round was resolved through the ladder, and the proof contract is satisfied — or the profile
@@ -175,6 +174,18 @@ finding is still being patched after a trigger has fired.
 
 Where tier 3 was reachable from the branch, the node arrives here already proven — the merge gate took
 its evidence in step 3. Merge it, and close its issue on the satisfied contract.
+
+**Past the merge, currency is checked by content, never by ancestry.** A squash merge does not keep the
+proof commit as an ancestor, so `git merge-base --is-ancestor` answers "not merged" for work that merged
+perfectly. Now that the base *does* contain the node's work, diffing against it is the reliable check:
+
+```bash
+git diff <proof-head> origin/main -- <paths the contract's evidence covers>
+```
+
+Empty confirms the evidence still describes what shipped. Non-empty means the merge changed something the
+proof spoke for — a conflict resolution, a rebase, someone else's node landing in the same paths — and the
+node owes a re-proof before it closes.
 
 Where tier 3 needs the merged head, triage-clean clears the node to merge but does not make it done.
 Carry it through in one sitting: merge → get the head running the way the profile says this repo runs

@@ -182,3 +182,40 @@ satisfied-and-closed or a recorded stop.
 
 *Done when:* every node in the DAG is done-clean with a closed issue, or is an open rung-3 stop returned
 to planning — no node left in an in-between state.
+
+## 7. End the turn with a position — every time, no exceptions
+
+Execution runs long and unattended, so a turn ends whenever the loop pauses: a wave completed, a rung-3
+stop, the DAG done, or the context window running out mid-wave. **Whichever it is, the last thing in the
+turn is this block.** Not a log of what happened; a statement of where the run now stands.
+
+```markdown
+**Where we are** — <wave N of the DAG; how many nodes done-clean, in flight, blocked>
+
+**What's saved, and where** — <closed issues, merged PRs, committed receipts; then open PRs and worktrees>
+
+**What happens next** — <the next wave, or the decision a stop needs from the user>
+
+**What you do** — <almost always: nothing, or run `/dag:execute` again>
+```
+
+- **Where we are** — position in the DAG, in nodes rather than prose. The user has not been watching.
+- **What's saved, and where** — durable first (closed issues, merged commits, committed receipts), then
+  what is still in flight (open PRs, live worktrees). Those two have very different survival odds, and a
+  resumed session inherits only the first cleanly.
+- **What happens next** — the next wave, which is yours to run. The one case where it is genuinely the
+  user's is a rung-3 stop, and then say exactly what the decision is.
+- **What you do** — usually **nothing, or run `/dag:execute` again**. Say it plainly. Re-running the same
+  command resumes from the tracker, and a user who has not read the docs has no way to know that.
+
+**A stop is not an ending, and must not read like one.** When the ladder reaches rung 3 the block still
+closes the turn — with the named nest, whether fixing it unblocks the rest of the graph, and the fact that
+`dag:preflighted` has been removed so the DAG is back in planning. A stop that reads as a failure report
+leaves the user with a diagnosis and no idea what to do with it.
+
+**Never hand over a planning command.** If the answer is that planning has to happen again, say so and
+name **`/dag:plan`** — the other door. Never `/dag:grill`, never `/dag:preflight`.
+
+*Done when:* the turn's final block carries all four lines, the position is stated in nodes, in-flight
+work is listed separately from durable work, and "what you do" states plainly that re-running
+`/dag:execute` resumes.

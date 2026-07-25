@@ -11,6 +11,9 @@ blocking, the **label vocabulary** `chart` and `execute` read and write, and a *
 are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md). Prompt-driven, not a script: explore,
 present, confirm, then write.
 
+The shape of the message a turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+
 ## Process
 
 ### 1. Explore

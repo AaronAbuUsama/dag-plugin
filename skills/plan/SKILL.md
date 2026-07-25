@@ -11,6 +11,9 @@ signed. It finds the **chart** on GitHub, reads its state, and **runs** the next
 to work out which skill to reach for, or type a second command to get started. Terms are defined once in
 [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
+The shape of the message a turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+
 Planning ends at the **pre-flight** signature. Past it the DAG belongs to
 [`/dag:execute`](../execute/SKILL.md), which walks it to done-clean.
 

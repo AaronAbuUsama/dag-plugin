@@ -8,7 +8,8 @@ disable-model-invocation: true
 
 The loop you live in from a signed **pre-flight** until the **DAG** is done. It runs the DAG **wave by
 wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-completeness**, the
-**proof ledger**, and close-on-proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
+**proof ledger**, and close-on-proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and the shape of the message this turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
 
 **The core loop, per node:** dispatch a self-contained brief → **merge gate** (CI + independent review
 whose verdict is *posted to the PR* + your own cold read + the **proof contract** satisfied, wherever

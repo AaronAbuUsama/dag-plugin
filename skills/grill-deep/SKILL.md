@@ -15,6 +15,9 @@ trade-off to an ADR — right then, while the reasoning is fresh.
 Terms in **bold** (**design tree**, **frontier**, **round**, **rubric-grill**, **readiness**) are defined
 in [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
+The shape of the message a turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+
 ## The delta: capture as you settle
 
 Grill's loop folds each round's answers back into the design tree (its step 4). Grill-deep extends that

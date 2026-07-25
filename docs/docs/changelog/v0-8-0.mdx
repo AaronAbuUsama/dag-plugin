@@ -1,0 +1,28 @@
+---
+title: v0.8.0
+description: "A house style for the stopping message: composable slots, hard separators, and the decision protocol absorbed into it."
+type: changelog
+date: 2026-07-25T07:00:00Z
+changelog:
+  version: 0.8.0
+---
+
+**A house style for the stopping message.** Every skill ends a turn by talking to a human, and nothing
+said what that message should look like — so each turn invented a layout, and long roll-ups collapsed into
+a wall of paragraphs and bullets with no hard breaks. Reported as genuinely hard to read.
+
+[`STOPPING-MESSAGE.md`](STOPPING-MESSAGE.md) defines it as **composable slots, not a template**: a
+HEADLINE that gives the shape of the news before any detail, a FLIGHT DECK for scannable state, an
+EVIDENCE TABLE, a DECISION BLOCK, and a closing what-you-do. Pick the slots the message needs and skip the
+rest — a three-line update stays three lines, because imposing ceremony on a short turn is a failure of the
+style rather than compliance with it. Hard `---` separators between slots whenever there is more than one.
+
+- **The evidence table is a component, not a format** — droppable into a finding, a roll-up or a grill
+  alike. Its `Verified` column is the point: what *you* checked never blurs with what an agent reported,
+  because an agent's report is a claim about the code rather than a reading of it. Unverified rows are
+  labelled, not dropped.
+- **The decision protocol stops being a second, parallel rule.** The problem in code · what it touches ·
+  options as code or diffs · a stated rubric · a recommendation · then the question — that is now the
+  DECISION BLOCK slot of this one style, binding on `AskUserQuestion` prompts, grills, and any options put
+  in front of a human. `grill`'s rubric-grill defers to it explicitly rather than restating it.
+- **All eleven skills point at it**, beside the glossary link they already carried.

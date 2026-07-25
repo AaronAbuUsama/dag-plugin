@@ -12,6 +12,9 @@ something is knowable but not yet known.
 
 Its job:
 
+The shape of the message a turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+
 1. Investigate the question against **primary sources** — official docs, source code, specs, first-party
    APIs — not a secondary write-up of them. Follow every claim back to the source that owns it.
 2. Write the findings to a single Markdown file, citing each claim's source.

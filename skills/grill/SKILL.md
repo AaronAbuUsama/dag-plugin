@@ -70,7 +70,10 @@ earn their space — cut the prose around them, not them.
 ## The rubric-grill — the load-bearing move
 
 **A question the user cannot judge from what is on screen is a failed question.** Every decision goes to
-them in the five parts below, in this order, with no exceptions and no preamble.
+them in the five parts below, in this order, with no exceptions and no preamble. This *is* the
+**decision block** of [`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md) — one house style, not a
+second rule that happens to agree with it. What follows is that block spelled out for grilling, where
+every turn is a decision.
 
 <rubric-grill-order>
 

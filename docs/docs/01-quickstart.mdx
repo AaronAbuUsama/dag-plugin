@@ -16,6 +16,45 @@ sidebar:
 
 To iterate on a working copy instead, launch with `claude --plugin-dir /path/to/dag-plugin`.
 
+## Updating
+
+New versions do **not** arrive on their own. Claude Code auto-updates Anthropic's own marketplaces by
+default and leaves third-party ones — this one included — switched off, so an install stays on whatever
+version it was added at until you refresh it.
+
+```bash
+claude plugin marketplace update dag-engineering   # pull new commits from the repo
+claude plugin update dag@dag-engineering           # move the install to the new version
+```
+
+Then **restart Claude Code**. The CLI says so itself — *"restart required to apply"* — because the running
+session keeps the version it loaded at launch.
+
+:::warning
+**`claude plugin update` defaults to `--scope user`.** If you installed into a single project, a bare
+update fails with *"Plugin 'dag' is not installed at scope user"* even though it plainly is installed.
+Pass the scope it was installed at:
+
+```bash
+claude plugin update dag@dag-engineering --scope local
+```
+
+`claude plugin list` shows which scope you have.
+:::
+
+To stop doing this by hand, turn auto-update on for the marketplace: run `/plugin`, open the
+**Marketplaces** tab, select `dag-engineering`, and choose **Enable auto-update**. Claude Code then
+refreshes in the background shortly after each session starts.
+
+### Checking what you're on
+
+```bash
+claude plugin list
+```
+
+Installs are cached per version at `~/.claude/plugins/cache/dag-engineering/dag/<version>/`, so an old
+version stays on disk beside the new one — seeing `0.4.0` there does not mean you are running it.
+
 ## What it needs
 
 GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's own

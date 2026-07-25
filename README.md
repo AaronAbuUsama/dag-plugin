@@ -22,10 +22,18 @@ end, with the real issue bodies and the PR comment.
 /dag:execute    # walk the signed graph to done-clean
 ```
 
+**Updating.** Third-party marketplaces do not auto-update by default, so an install stays put until you
+refresh it — then restart, since the running session keeps the version it launched with:
+
+```bash
+claude plugin marketplace update dag-engineering
+claude plugin update dag@dag-engineering            # add --scope local if installed per-project
+```
+
 **Two doors, one for each half.** `/dag:plan` is where you live until the plan is signed: run it from any
-window and it reads the state off GitHub, tells you where you are, and names the single next move — so
-you never have to work out which skill to reach for. When it says the DAG is signed, you run
-`/dag:execute` once and it drives the rest on its own.
+window and it reads the state off GitHub, tells you where you are, and runs the next move — so you never
+have to work out which skill to reach for, or type a second command to start. When it says the DAG is
+signed, you run `/dag:execute` once and it drives the rest on its own.
 
 ## Two phases, two doors
 
@@ -37,8 +45,8 @@ you never have to work out which skill to reach for. When it says the DAG is sig
                           the pre-flight signature
 ```
 
-**Planning is human-in-the-loop**: `/dag:plan` names one move at a time and runs it *with* you — you make
-the decisions. **Execution is not**: once pre-flight is signed, `/dag:execute` walks the graph on its own,
+**Planning is human-in-the-loop**: `/dag:plan` reads the chart's state and runs the next move *with* you,
+in the same turn — you make the decisions, it never hands you a command to type. **Execution is not**: once pre-flight is signed, `/dag:execute` walks the graph on its own,
 dispatching an **agent team** (one teammate = one node = one worktree = one PR), climbing the escalation
 ladder, and proving each node before closing it. The signed pre-flight is the door between them, and it
 lives on GitHub as a label — so `/dag:execute` refuses to start without it, and a rung-3 stop hands the
@@ -62,7 +70,7 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──�
 
 | Phase | Skill | What it does |
 |---|---|---|
-| **entry** | `/dag:plan` | The planning door — reads state, names the next move, through to the signature. |
+| **entry** | `/dag:plan` | The planning door — reads state and runs the next move, through to the signature. |
 | | `/dag:execute` | The execution door — walks the signed graph to done-clean. |
 | **setup** | `/dag:setup` | One-time: GitHub tracker + the suite's labels. |
 | **plan** | `/dag:grill` | Batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
@@ -102,7 +110,12 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──�
 
 Install from the marketplace as above, or load a working copy with
 `claude --plugin-dir /path/to/dag-plugin` while iterating. `scripts/check.sh` runs the suite's own
-consistency checks. No external skill dependencies.
+consistency checks, and `claude plugin validate .` checks the manifests. No external skill dependencies.
+
+Updating is two steps and a restart — refresh the marketplace, then move the install — and
+`claude plugin update` defaults to `--scope user`, so a per-project install needs `--scope local` or it
+reports the plugin as not installed. Full detail in the
+[quickstart](docs/docs/01-quickstart.mdx#updating).
 
 **What it needs.** GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's
 own issue-dependency relation, so `gh` authenticated against the repo is a hard requirement.

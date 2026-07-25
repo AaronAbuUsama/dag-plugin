@@ -20,6 +20,10 @@ rather than reading it.
   code or diagram and the comparison is a table; and the ask goes through **`AskUserQuestion`** rather
   than trailing off into prose. A section on presentation makes syntax highlighting, tables and diagrams
   part of the job rather than polish — the grounding only works if it can be taken in at a glance.
+- **The docs cover updating, not just installing.** Third-party marketplaces do not auto-update by
+  default, so an install sat on whatever version it was added at with nothing saying so. Now documented:
+  refresh the marketplace, move the install, restart — plus the trap that `claude plugin update` defaults
+  to `--scope user` and reports a per-project install as not installed at all.
 
 ## 0.4.0
 

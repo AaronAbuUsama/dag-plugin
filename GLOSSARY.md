@@ -88,6 +88,22 @@ claim back to one; a secondary account is where stale facts come from.
 which is *not* the `#number` a human sees. Read it with `gh api repos/<owner>/<repo>/issues/<n> --jq
 .id`. Passing the number where the id belongs is the single most common way a chart wires itself wrong.
 
+**looking for the nest** — a reflex, not a phase. The moment **two or more findings could plausibly share
+a root**, say so *unprompted* — during research, planning, grilling, review, or ad-hoc debugging, not only
+during a rollout. Three symptoms reported as three items, when they are one class, is the failure: someone
+then has to ask "are these related?", and that question should never need asking.
+
+Saying so means three things, in one short block:
+
+- **name the class in one sentence** — the shared shape, not the shared file
+- **state confidence, and separate verified instances from suspected ones** — which you read, which you
+  inferred
+- **flag whether it warrants diagnosing rather than patching each symptom**
+
+The judgement itself — is the cluster real, what is the verdict, what does a consolidating fix have to
+cover — is [`/dag:diagnose`](skills/diagnose/SKILL.md)'s, and it is reached rather than re-derived. This
+entry is the trigger; that skill is the machinery.
+
 **receipt** — the durable, reviewer-openable record of a satisfied proof contract: the artifacts, the
 exact identifiers, and the **chain of evidence**. Committed to the repo so it outlives the PR page.
 

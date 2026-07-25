@@ -113,9 +113,15 @@ Apply it when the de-fog issue is created (step 4). `/dag:plan` routes off these
 else, and it only ever sees the frontier — so a label on the blocked build node is a label no router
 will ever read.
 
+**Several nodes waiting on the same unknown is one de-fog node, not several.** Before wiring them, check
+whether the readiness verdicts share a root — see **looking for the nest** in the glossary. Three nodes
+each marked needs-grilling for what is really one decision should be one grilling node blocking all three:
+that settles it once, and it is the difference between one round with the user and three.
+
 *Done when:* every build node carries a readiness verdict in its body; every non-clear one has a de-fog
-node blocking it; and every de-fog node carries the `dag:needs-*` label matching what it is for — no
-build node left resting on an unsettled premise, and no label stranded on a blocked node.
+node blocking it; every de-fog node carries the `dag:needs-*` label matching what it is for; and no two
+de-fog nodes ask the same question — no build node left resting on an unsettled premise, and no label
+stranded on a blocked node.
 
 ### 3b. Write each node's proof contract
 

@@ -53,8 +53,14 @@ and the declared edges recorded only the merge dependency, never the shape — s
 invisible until review. For every pair that shares a contract, a shape, or a name one side defines and
 the other consumes, add the missing edge now.
 
+**Findings across nodes are a cluster too.** Several nodes failing the same invariant, or several hidden
+edges carrying the same shape, is one design gap rendered N times — apply **looking for the nest** and say
+so before sending each node back on its own. A DAG re-planned node-by-node against one root cause gets
+re-planned again.
+
 *Done when:* every declared edge is confirmed-or-removed, and every node has been checked for hidden
-edges against the nodes it shares a contract with — new edges added where found.
+edges against the nodes it shares a contract with — new edges added where found, and any pattern across
+nodes named as a possible shared root rather than logged N times.
 
 ## 4. Proof contract, per node
 

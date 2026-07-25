@@ -102,8 +102,14 @@ events and **errors** for the run's window, then the logs. Classify what you fin
 - **harness defect** — our own command, wrapper, or capture is broken. That is our work: repair it and
   rerun. A repairable failure of ours is **NOT PROVEN** plus work — never **BLOCKED**.
 
+**More than one failing tier is a cluster until proven otherwise.** Two tiers failing on one node, or the
+same tier failing across nodes, is the shape of a shared root — apply **looking for the nest** before
+classifying each one separately, and hand it to `/dag:diagnose` if it holds. Classifying three failures as
+three defects is how a nest reaches merge intact.
+
 *Done when:* the failure is classified, and either the proof has been rerun to a verdict or the node is a
-recorded stop with the failure evidence attached.
+recorded stop with the failure evidence attached — and where more than one tier failed, you have said
+whether they share a root.
 
 ## 6. Report
 

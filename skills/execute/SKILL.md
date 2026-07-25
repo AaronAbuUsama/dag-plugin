@@ -152,15 +152,27 @@ signature alone is *lossy*: a chart you halted and a chart nobody ever signed lo
 `/dag:plan`, so it routes both straight back to signing, with the same method that just failed.
 
 ```bash
+R=<owner>/<repo>
 gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
-gh issue edit <node-number> --add-label dag:needs-grilling   # or dag:needs-prototype, if whether
-                                                             # it can be observed is the unknown
+
+# the question the stop raises becomes its own de-fog node, blocking the stopped one
+gh issue create --title "De-fog: <the question>" --label dag:needs-grilling \
+  --body "<the pre-validated nest, and what settling it unblocks>"   # or dag:needs-prototype,
+                                                                     # if whether it can be
+                                                                     # observed is the unknown
+gh api repos/$R/issues/<defog-number> --jq .id
+gh api -X POST repos/$R/issues/<stopped-node>/dependencies/blocked_by -F issue_id=<defog-database-id>
 ```
 
+**Never put the readiness label on the stopped node itself.** `/dag:plan` closes a readiness-labelled
+issue the moment its move lands — that close is precisely how the build node behind it reaches the
+frontier. Label the build node and planning closes *the build node*, unbuilt, unproven, and looking done.
+The de-fog node is a separate issue that blocks it, which is the same shape `chart` uses everywhere else.
+
 `dag:halted` is what stops the next fresh window resuming autonomous execution over a graph you just
-stopped. Labelling the node as well is what stops it arriving back in planning as an ordinary open issue
-with nothing on it to say a human halted here. The chart then goes back to `/dag:plan`, which routes it to
-a **re-plan**, and pre-flight is re-signed in full before execution resumes.
+stopped. The de-fog node is what stops the stopped node arriving back in planning as an ordinary open
+issue with nothing on it to say a human halted here. The chart then goes back to `/dag:plan`, which routes
+it to a **re-plan**, and pre-flight is re-signed in full before execution resumes.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix

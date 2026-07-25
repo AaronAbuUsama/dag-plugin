@@ -164,11 +164,16 @@ Any node with a **re-plan** verdict or a **stop** proof contract is not dispatch
 planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart.
 
 **An at-risk verdict cannot survive the signature.** Either the unconfirmed choice is settled here and
-recorded on that node's issue — making the node **satisfies** — or the node is relabelled
-`dag:needs-grilling` and the chart is not complete. There is no third state to carry forward, and no
-label to invent for one: at-risk *means* an open decision, which the readiness vocabulary already names
-and the planning router already routes. A verdict this gate writes and nothing reads back is a verdict
-that gets signed over, and it looks handled while it does it.
+recorded on that node's issue — making the node **satisfies** — or it gets a **de-fog node**: a new issue
+carrying `dag:needs-grilling`, blocking the at-risk node, and the chart is not complete. There is no third
+state to carry forward, and no label to invent for one: at-risk *means* an open decision, which the
+readiness vocabulary already names and the planning router already routes. A verdict this gate writes and
+nothing reads back is a verdict that gets signed over, and it looks handled while it does it.
+
+**The label goes on the new de-fog node, never on the at-risk node itself.** `/dag:plan` closes a
+readiness-labelled issue when its move lands, and that close is how the node behind it reaches the
+frontier — so a build node wearing the label is a build node planning will close, with the work unbuilt
+and its proof contract unsatisfied. Same shape `chart` uses for every other de-fog signal.
 
 Pre-flight is signed only when every remaining node is **satisfies**, fully design-checkable,
 edge-audited, and carries a proof contract. Only a signed pre-flight clears the DAG for dispatch.

@@ -28,10 +28,11 @@ the nodes still open.
 Read the stop as recorded on the map — the node it surfaced on, the tier or check that failed, and the
 evidence. Then classify it, because only one of these belongs here:
 
-- **the node was wrong** — its premise or spec. That is a de-fog node, not a re-plan: confirm it carries
-  `dag:needs-grilling` (or `dag:needs-prototype` where the unknown is whether the thing can be observed at
-  all), **clear the halt**, and hand back to `/dag:plan`, which routes it. Re-planning a whole chart
-  around one bad node is ceremony.
+- **the node was wrong** — its premise or spec. That is a de-fog move, not a re-plan: confirm a de-fog
+  node blocks it — a *separate* issue carrying `dag:needs-grilling`, or `dag:needs-prototype` where the
+  unknown is whether the thing can be observed at all, never a label on the build node itself — then
+  **clear the halt** and hand back to `/dag:plan`, which routes it. Re-planning a whole chart around one
+  bad node is ceremony.
 
   ```bash
   gh issue edit <map-number> --remove-label dag:halted

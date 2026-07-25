@@ -38,7 +38,7 @@ map carried only `dag:map`, and the router's "chart complete, unsigned → pre-f
 the only match. It would have re-signed the same unachievable tier with the same desk-check method.
 
 - **The stop writes two marks instead of one removal** — `dag:halted` onto the map in the same edit that
-  takes the signature off, and a readiness label onto the node it stopped.
+  takes the signature off, and a de-fog node filed to block the node it stopped.
 - **`plan` reads the map's halt before anything else**, and routes it above the de-fog rows: a halted
   chart's remaining questions are asked against a plan already shown wrong somewhere.
 - **`execute` refuses to open a run on a halted map**, not merely an unsigned one.
@@ -59,7 +59,9 @@ nothing reads it back. The field chart was signed with two unresolved at-risk no
 invented a `dag:at-risk` label — with a description found nowhere in this plugin — to persist a state the
 suite gives no home to. The fix removes a state rather than adding one: an unresolved at-risk node *is* an
 open decision, which `dag:needs-grilling` already names and the router already routes. Settle the choice
-and the node is **satisfies**, or relabel it and the chart is not complete. No sixth readiness label, no
+and the node is **satisfies**, or it gets a de-fog node blocking it and the chart is not complete. The
+readiness label goes on that new issue, never on the build node — planning closes a readiness-labelled
+issue when its move lands, and closing a build node loses the work unbuilt. No sixth readiness label, no
 new routing row.
 
 **Four seams, one line each, where each belongs.**

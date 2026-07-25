@@ -115,17 +115,22 @@ still in flight and you have said so — and any question answered twice across 
 possible shared root.
 
 **A node sent back after the signature lands here again.** On a rung-3 stop `/dag:execute` swaps
-`dag:preflighted` on the map for `dag:halted` and labels the stopped node, so the chart arrives here
-marked twice over and this router picks it up like any other planning state.
+`dag:preflighted` on the map for `dag:halted` and files a de-fog node blocking the stopped one, so the
+chart arrives here marked twice over and this router picks it up like any other planning state.
 
-If you find a stopped node with neither mark — execute crashed before it could write them — do the swap
+If you find a stopped node with neither mark — execute crashed before it could write them — write them
 yourself. The signature is what lets a fresh window resume autonomous execution over a DAG a human
 already halted, and an unmarked halt is one this router will route straight back to signing:
 
 ```bash
 gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
-gh issue edit <node-number> --add-label dag:needs-grilling
+gh issue create --title "De-fog: <the question the stop raises>" --label dag:needs-grilling
+# then block the stopped node behind it, by database id — see step 2's commands
 ```
+
+**The readiness label goes on that new issue, never on the stopped node.** You close a readiness-labelled
+node when its move lands, and that close is what puts the node behind it on the frontier — so labelling
+the build node means closing the build node, unbuilt and unproven.
 
 ## 4. End the turn with a position — every time, no exceptions
 

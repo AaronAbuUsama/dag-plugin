@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "DAG Engineering — turn intent into a graph of provable work and walk it.",
-    "version": "0.9.0"
+    "version": "0.10.0"
   },
   "plugins": [
     {

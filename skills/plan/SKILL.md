@@ -42,6 +42,10 @@ With a chart, read these off GitHub — no memory of prior turns needed:
   `dag:needs-research` / `dag:needs-prototype`; no label = **clear**).
 - The **frontier**: open nodes whose every blocker is closed.
 - Whether the map carries the `dag:preflighted` label — the **signature**.
+- Whether the map carries `dag:halted` — execution stopped this chart, and it is not eligible for
+  signing again until it has been re-planned. **Read this before anything else on the map**: a halted
+  chart is also an unsigned one, and an unsigned chart with no de-fog node left is exactly what the
+  routing table's signing row matches.
 
 ```bash
 R=<owner>/<repo>
@@ -66,6 +70,7 @@ fires.
 | Chart state | The move you run | Read and follow |
 |---|---|---|
 | No chart | grill the plan, then chart it | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
+| Map labelled `dag:halted` | re-plan the chart before it is re-signed | [`../replan/SKILL.md`](../replan/SKILL.md) |
 | Frontier has a `dag:needs-grilling` node | grill that decision | [`../grill/SKILL.md`](../grill/SKILL.md) — or [`../grill-deep/SKILL.md`](../grill-deep/SKILL.md) if it warrants written ADRs |
 | Frontier has a `dag:needs-research` node | `/dag:research` (model-invoked — dispatch it) | it runs its own agent; you review what returns |
 | Frontier has a `dag:needs-prototype` node | `/dag:prototype` (model-invoked — dispatch it) | the spike that de-risks the node |
@@ -75,6 +80,10 @@ fires.
 `research` and `prototype` are model-invoked, so dispatch those directly. The rest are user-invoked, so
 read their `SKILL.md` and follow it in this turn. `/dag:execute` is the only command you ever hand the
 user, because it is the other door.
+
+**Read the table top-down and take the first row that matches.** `dag:halted` sits above the de-fog rows
+on purpose: a halted chart's remaining questions are asked against a plan that has already been shown
+wrong somewhere, so the re-plan comes first and the de-fog nodes are worked against the amended chart.
 
 **Chart complete** means every de-fog node is closed — no `dag:needs-*` label is left on an open
 issue anywhere in the chart. Not "the frontier looks clear": a de-fog node buried behind build edges
@@ -105,14 +114,23 @@ chart is carrying a nest, and the next one will ask it again. Say so and point a
 still in flight and you have said so — and any question answered twice across de-fog nodes is named as a
 possible shared root.
 
-**A node sent back after the signature lands here again.** `/dag:execute` removes `dag:preflighted` from
-the map when it raises a rung-3 stop, so the chart arrives here unsigned and this router picks it up like
-any other planning state. If you find a stopped node while the label is still on, take it off yourself —
-that label is what lets a fresh window resume autonomous execution over a DAG a human already halted:
+**A node sent back after the signature lands here again.** On a rung-3 stop `/dag:execute` swaps
+`dag:preflighted` on the map for `dag:halted` and files a de-fog node blocking the stopped one, so the
+chart arrives here marked twice over and this router picks it up like any other planning state.
+
+If you find a stopped node with neither mark — execute crashed before it could write them — write them
+yourself. The signature is what lets a fresh window resume autonomous execution over a DAG a human
+already halted, and an unmarked halt is one this router will route straight back to signing:
 
 ```bash
-gh issue edit <map-number> --remove-label dag:preflighted
+gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
+gh issue create --title "De-fog: <the question the stop raises>" --label dag:needs-grilling
+# then block the stopped node behind it, by database id — see step 2's commands
 ```
+
+**The readiness label goes on that new issue, never on the stopped node.** You close a readiness-labelled
+node when its move lands, and that close is what puts the node behind it on the frontier — so labelling
+the build node means closing the build node, unbuilt and unproven.
 
 ## 4. End the turn with a position — every time, no exceptions
 

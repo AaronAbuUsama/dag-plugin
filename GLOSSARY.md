@@ -73,12 +73,24 @@ into the node's issue **when the node is created** — before any code — and v
 **A node whose proof contract cannot be defined does not get built**: that is a **stop**, routed back to
 a grill (a decision is open) or a **spike** (nobody knows yet whether it can be proven).
 
+**baseline** — running a **proof contract**'s tier command *before* the contract is signed, to establish
+that the bar can be cleared today. A command can be perfectly coherent, correctly named, and have been
+failing for days; every desk check passes it. A tier reached through a shared environment instead of a
+command is baselined by naming **when that path was last exercised end to end** — never exercised is not
+a runnable tier. Distinct from the **nonce**'s absence check, which baselines the *token*, not the bar.
+
 **nonce** — a unique token minted **per proof run** and carried through the evidence, so a receipt can
 only belong to *this* run. The **proof contract** fixes where it enters and which path it must travel;
 the *value* is minted at run time, never written into the issue — a value recorded before the run is
 already in the repo and can never be shown absent. And it must travel **through the behaviour the
 acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
 the feature worked. Its absence is established first, at each tier the contract names.
+
+**halt** — a signed DAG stopped mid-flight by a rung-3 escalation, recorded as `dag:halted` on the map in
+the same edit that removes `dag:preflighted`. Unsigning alone is *lossy*: a chart a human stopped and a
+chart nobody ever signed look identical, and the planning router sends both to be signed. The halt is
+cleared only by a **re-plan** — find the class behind the stop, amend every contract carrying it, file the
+repair node — after which pre-flight is re-run in full, not spot-checked over the amended nodes.
 
 **primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
 code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every

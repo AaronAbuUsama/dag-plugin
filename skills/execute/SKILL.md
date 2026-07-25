@@ -35,11 +35,12 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 
 ## 1. Open the run
 
-**Check the signature before anything else.** The map must carry the `dag:preflighted` label. That label
-*is* the door between the two halves: planning is `/dag:plan`'s, execution is yours, and the signature is
-what moved the DAG across. Without it, this DAG is not cleared for dispatch — say so plainly and hand
-back to `/dag:plan`, which routes to `/dag:preflight`. A wave dispatched off an unsigned DAG is the
-whole failure the gate exists to prevent.
+**Check the signature before anything else.** The map must carry the `dag:preflighted` label, and must
+*not* carry `dag:halted`. That first label *is* the door between the two halves: planning is
+`/dag:plan`'s, execution is yours, and the signature is what moved the DAG across. Without it, this DAG
+is not cleared for dispatch — say so plainly and hand back to `/dag:plan`, which routes it. A wave
+dispatched off an unsigned DAG is the whole failure the gate exists to prevent, and a wave dispatched off
+a halted one repeats a stop a human already raised.
 
 Then read the run's inputs **off GitHub**, not off memory — this window may be the second one:
 
@@ -101,6 +102,19 @@ a reviewer is actually reading, and a node whose proof can't be gathered has not
 cheaper to learn before the merge than after. Only where tier 3 genuinely needs the merged head does
 proof move to step 5.
 
+**Proof must be current with the code it is about to merge with.** Evidence gathered at an earlier commit
+is evidence about *that* commit, and review fixes landing after it can change the very behaviour it
+claimed. Here the comparison is against **the PR head** — not the base branch, which does not contain this
+node's work yet and would report the whole feature as a difference every time:
+
+```bash
+git diff <proof-head> <pr-head> -- <paths the contract's evidence covers>
+```
+
+Empty means the proof still describes what is about to merge. Non-empty means re-prove — and a re-proof is
+not merely fresher, it is often strictly better evidence, because the fixes it runs against created states
+the first run could not reach.
+
 *Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, every finding
 of the last round was resolved through the ladder, and the proof contract is satisfied — or the profile
 says this node's tier 3 waits for the merged head.
@@ -133,15 +147,32 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-**Unsign the DAG before you surface the stop**, or the next fresh window reads the signature and resumes
-autonomous execution over a graph you just halted:
+**Mark the halt before you surface the stop** — both the map and the node, in that order. Removing the
+signature alone is *lossy*: a chart you halted and a chart nobody ever signed look identical to
+`/dag:plan`, so it routes both straight back to signing, with the same method that just failed.
 
 ```bash
-gh issue edit <map-number> --remove-label dag:preflighted
+R=<owner>/<repo>
+gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
+
+# the question the stop raises becomes its own de-fog node, blocking the stopped one
+gh issue create --title "De-fog: <the question>" --label dag:needs-grilling \
+  --body "<the pre-validated nest, and what settling it unblocks>"   # or dag:needs-prototype,
+                                                                     # if whether it can be
+                                                                     # observed is the unknown
+gh api repos/$R/issues/<defog-number> --jq .id
+gh api -X POST repos/$R/issues/<stopped-node>/dependencies/blocked_by -F issue_id=<defog-database-id>
 ```
 
-The node then goes back to `/dag:plan`, which routes it to a grill, a spike, or a re-chart, and
-pre-flight is re-signed before execution resumes.
+**Never put the readiness label on the stopped node itself.** `/dag:plan` closes a readiness-labelled
+issue the moment its move lands — that close is precisely how the build node behind it reaches the
+frontier. Label the build node and planning closes *the build node*, unbuilt, unproven, and looking done.
+The de-fog node is a separate issue that blocks it, which is the same shape `chart` uses everywhere else.
+
+`dag:halted` is what stops the next fresh window resuming autonomous execution over a graph you just
+stopped. The de-fog node is what stops the stopped node arriving back in planning as an ordinary open
+issue with nothing on it to say a human halted here. The chart then goes back to `/dag:plan`, which routes
+it to a **re-plan**, and pre-flight is re-signed in full before execution resumes.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix
@@ -155,6 +186,18 @@ finding is still being patched after a trigger has fired.
 
 Where tier 3 was reachable from the branch, the node arrives here already proven — the merge gate took
 its evidence in step 3. Merge it, and close its issue on the satisfied contract.
+
+**Past the merge, currency is checked by content, never by ancestry.** A squash merge does not keep the
+proof commit as an ancestor, so `git merge-base --is-ancestor` answers "not merged" for work that merged
+perfectly. Now that the base *does* contain the node's work, diffing against it is the reliable check:
+
+```bash
+git diff <proof-head> origin/main -- <paths the contract's evidence covers>
+```
+
+Empty confirms the evidence still describes what shipped. Non-empty means the merge changed something the
+proof spoke for — a conflict resolution, a rebase, someone else's node landing in the same paths — and the
+node owes a re-proof before it closes.
 
 Where tier 3 needs the merged head, triage-clean clears the node to merge but does not make it done.
 Carry it through in one sitting: merge → get the head running the way the profile says this repo runs
@@ -202,8 +245,8 @@ What is specific to this door, and additional to that file:
   first cleanly. Blurring them tells the user they have more than they do.
 - **A stop is not an ending and must not read like one.** When the ladder reaches rung 3 the closing
   message still carries the named **nest**, whether fixing it unblocks the rest of the graph, and the fact
-  that `dag:preflighted` has been removed so the DAG is back in planning. A stop that reads as a failure
-  report leaves the user holding a diagnosis with nothing to do about it.
+  that the map now carries `dag:halted` instead of `dag:preflighted` so the DAG is back in planning. A
+  stop that reads as a failure report leaves the user holding a diagnosis with nothing to do about it.
 - **"What you do" says that re-running resumes** — usually *nothing, or run `/dag:execute` again*. And
   where planning has to happen again, name `/dag:plan`, the other door. Never `/dag:grill`, never
   `/dag:preflight`.

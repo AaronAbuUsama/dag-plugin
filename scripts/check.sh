@@ -111,6 +111,20 @@ else
   note "all defined"
 fi
 
+echo "== readiness labels are created on de-fog nodes, never edited onto existing ones =="
+# /dag:plan closes a readiness-labelled issue the moment its move lands — that close is how the
+# node behind it reaches the frontier. So adding one to a build node closes the build node,
+# unbuilt and unproven. A de-fog node is *created* carrying its label (gh issue create --label).
+# The one legitimate edit is moving a mislabelled label back onto its de-fog node, which is why
+# the exemption is by placeholder name: say `defog` in the target when that is what you mean.
+git ls-files -z -- '*.md' '*.mdx' | xargs -0 grep -n "issue edit.*--add-label dag:needs-" |
+  grep -v "defog" > "$tmp/readiness" || true
+if [ -s "$tmp/readiness" ]; then
+  while read -r l; do bad "readiness label edited onto an existing issue: $l"; done < "$tmp/readiness"
+else
+  note "none"
+fi
+
 echo "== no vendor residue =="
 if git ls-files -z -- '*.md' '*.mdx' '*.json' | xargs -0 grep -niE "capxul|posthog|convex|agentmail|openfort|hogql|xelmar|matt.?pocock" | grep -v '"email"' | grep -q .; then
   bad "vendor residue found"

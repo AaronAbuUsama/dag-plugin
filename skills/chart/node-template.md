@@ -49,17 +49,57 @@ Receipts are committed to `docs/receipts/<node>-<date>/`.
 - **models** — coder `<model>` · reviewer `<model>`
 - **autonomy** — autonomous | supervised
 
+## Standing instruction — keep this map fresh
+
+This map is the chart. It is read at the start of every session and it must never be stale.
+
+Whenever a node changes state — it closes, it is sent back, a de-fog node resolves, a new node is
+graduated — regenerate this map before doing anything else, in the same turn, as part of finishing the
+work rather than as a follow-up:
+
+1. **Redraw the DAG.** Recompute which nodes are on the frontier — open, with every blocker closed — and
+   restyle: `start` for frontier (green outline, recompute every time; closing one node usually promotes
+   two or three), `defog` for open de-fog nodes (amber), `done` for closed (grey). Never delete a closed
+   node from the graph — the shape of what has been walked is the point.
+2. **Update that node's line in the index** — mark it done, or correct its readiness.
+3. **Say what moved onto the frontier** in the closing comment on the node, by title, so the next session
+   doesn't have to recompute it.
+
+Recompute the frontier from the tracker, never from memory of this file. A map whose graph disagrees with
+the tracker is a bug, and the fix is never to trust the graph.
+
+## The DAG
+
+```mermaid
+graph TD
+  classDef start stroke:#22c55e,stroke-width:2px
+  classDef defog stroke:#f59e0b,stroke-width:2px
+  classDef done  stroke:#6b7280,color:#6b7280
+
+  D1["Decide the column set"]:::defog --> N1["Export endpoint"]:::start
+  N1 --> N2["Download button"]
+  N0["Prefactor the report model"]:::done --> N1
+```
+
 ## Nodes
 
-<!-- one line per node: title (linked) — readiness — one-line gist. -->
+<!-- one line per node: title (linked) — readiness — one-line gist. Mark closed ones done. -->
 
 - [<node title>](link) — clear — <gist>
 - [<node title>](link) — needs-prototype (spike: [<spike title>](link)) — <gist>
+- [<node title>](link) — **done** — <gist>
 
 ## Not yet specified
 
 <!-- only if escalated to fog-of-war: the un-ticketable regions, graduated into nodes as upstream de-fog resolves. -->
 ```
+
+The two clauses that make the freshness instruction bind rather than aspire: **"in the same turn, as part
+of finishing the work"** — a refresh deferred to a follow-up step is a refresh that does not happen; and
+**"recompute from the tracker, never from memory"** — `dependencies/blocked_by` is the truth and the
+diagram is only a rendering of it.
+
+A map that goes stale is worse than no map, because people trust it.
 
 ## Node body (child issue of the map)
 

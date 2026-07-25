@@ -98,7 +98,8 @@ for f in sorted(pathlib.Path("skills").rglob("*.md")):
     for term in set(re.findall(r"\*\*([a-z][a-z -]{2,24})\*\*", f.read_text())):
         where[norm(term)].add(f.parent.name)
 
-EMPHASIS = {"bold", "not", "never", "always", "every", "all", "one", "now", "before", "after"}
+EMPHASIS = {"bold", "not", "never", "always", "every", "all", "one", "now", "before", "after",
+            "once", "only", "and", "or", "both", "each", "any", "no", "yes", "then", "first"}
 
 for term, files in sorted(where.items()):
     if len(files) >= 2 and term not in defined and term not in EMPHASIS:

@@ -31,9 +31,41 @@ Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
    unblocks what depended on it. Update the **design tree**, recompute, and run the next round.
    *Done when:* the answers are recorded and the next frontier is computed.
 
-When the frontier is empty, every branch has been visited and nothing is silently assumed. State the
+## An empty frontier is a claim, and it needs a check
+
+"No questions left" usually means *no questions left on the axis you find most natural*. A technical
+grilling closes on the technical spine having never asked what the user sees; a product grilling settles
+five screens and no data model. Both feel complete from the inside, which is why the frontier needs a
+test rather than a feeling.
+
+Before declaring it empty, walk the axes and name what you settled on each. An axis with nothing on it is
+either genuinely out of scope — say so — or an unasked round:
+
+| Axis | The question it answers |
+|---|---|
+| **surface** | what does a user see and do — the actual screens, commands, or messages |
+| **data & state** | what is stored, what is derived, what is the source of truth |
+| **integration** | what it talks to, and what happens when that thing is down or wrong |
+| **operations** | how it is deployed, configured, observed; who can see it |
+| **failure** | what breaks, what the user sees when it does, what is recoverable |
+| **scope edge** | what is deliberately *not* in this effort |
+
+Pick the axes that fit the effort — those six are the usual set, not a fixed one. The discipline is
+naming them *before* you close, so an empty axis has to be defended rather than overlooked.
+
+When every axis is either settled or explicitly out of scope, the frontier is genuinely empty. State the
 shared understanding and each node's **readiness**, then stop. Do not start building until the user
 confirms.
+
+## Budget the round
+
+The grounding is non-negotiable, which makes length the thing that has to give. A round that arrives as a
+wall of text does not get read closely, and a decision made from skimming is the failure this skill
+exists to prevent.
+
+**Six questions is a round.** More than that, split it: ask the ones whose answers unblock the most, and
+say plainly that a second round follows. Within a question, the artifact and the options table are what
+earn their space — cut the prose around them, not them.
 
 ## The rubric-grill — the load-bearing move
 

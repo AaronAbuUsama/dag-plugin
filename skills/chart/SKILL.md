@@ -155,10 +155,24 @@ link — the frontier renders correctly in GitHub's UI.
 
 ### 5. Fire research and hand off
 
-Spin up a `/dag:research` subagent for each research node so they resolve in parallel, each capturing
-findings back on its issue. Then hand the chart to `/dag:preflight`.
+Research nodes resolve by subagent, one each, **posting findings as a comment on their own issue** — that
+comment is what `/dag:plan` reads to close the node and unblock what it was blocking. A finding that lands
+only in a file is one the router cannot see.
 
-*Done when:* every research node has a running subagent, and the chart is handed to `/dag:preflight`.
+**Say what you are about to dispatch and how many, then dispatch.** Spawning agents is something a repo
+or a session may have its own standing rules about, and a chart with eight research nodes is eight
+agents. Where such a rule says agents are not spawned unprompted, **that rule wins**: name the research
+nodes, say they are ready to fire, and let the user trigger them. Handing the chart on with its research
+unstarted is fine — `/dag:plan` routes each unanswered research node to `/dag:research` when it comes up.
+
+Fire each research node **once**. A node that already has its answer is one `/dag:plan` closes, not one it
+re-fires; re-firing an answered node is how a chart loops forever.
+
+Then hand the chart back to `/dag:plan`, which reads what returned, closes each answered node, and runs
+the next move — pre-flight included, when the chart is complete.
+
+*Done when:* every research node is either running or named as ready-to-fire with the reason it wasn't,
+and the chart is handed to `/dag:plan`.
 
 ## Escalation: full fog-of-war
 

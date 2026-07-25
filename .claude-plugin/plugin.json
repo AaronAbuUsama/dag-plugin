@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dag",
   "displayName": "DAG Engineering",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "One way to turn intent into a graph of provable work and walk it. Grill a plan (batched, grounded in code), prototype the unknowable, chart it onto GitHub as a DAG of issues whose proof is fixed before any code, then pre-flight, run, prove and diagnose it to done-clean — evidence shown in the PR, autonomously by default.",
   "author": {
     "name": "Aaron Abu Usama",

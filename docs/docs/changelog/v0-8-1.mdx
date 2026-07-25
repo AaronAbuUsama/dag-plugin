@@ -1,0 +1,34 @@
+---
+title: v0.8.1
+description: "Finishing 0.8.0's own criterion: the nest trigger reaches prototype, grill-deep and plan, and stops being count-only."
+type: changelog
+date: 2026-07-25T07:40:00Z
+changelog:
+  version: 0.8.1
+---
+
+**Finishing 0.8.0's own criterion.** That release said the nest trigger goes where findings are produced,
+then missed three skills that produce them. A patch rather than a minor: no new behaviour, just the stated
+scope actually covered.
+
+- **`prototype`** had zero references across all three of its files, while `SKILL.md` step 6 instructs the
+  run to capture the spike's verdict as a comment on the node issue — a finding by 0.8.0's own definition.
+  It was also the skill that found the *second* confirmed instance of the very nest 0.8.0 uses as its
+  worked example, so the release fixed the skill that found instance one and missed the one that found
+  instance two.
+- **`grill-deep`** had zero while `grill` had the trigger, which is backwards: the variant that writes
+  **ADRs** is where mistaking a symptom for a root cause becomes durable, because the next reader trusts
+  what is written down.
+- **`plan`** had no real trigger — its two apparent hits were the ASCII tour diagram and the word
+  *commonest*. It is the router: the one surface that reads every node's state at once and closes de-fog
+  nodes as their answers land, which puts it in the best position to notice that two de-fog nodes settled
+  the same underlying question.
+
+**The entry condition was also too narrow to admit a spike.** It fired on "two or more findings", and a
+spike returns one verdict — so a literal reading excluded `prototype` even after adding a trigger. The
+glossary entry now says recognition counts as well as arithmetic: one instance examined closely enough that
+you recognise its shape elsewhere is a cluster of two. `prototype`'s trigger is phrased around that
+recognition rather than a count, since examining one mechanism in detail is exactly what makes a spike good
+at spotting the same shape somewhere else.
+
+`setup` still has no trigger, correctly — it configures the tracker and produces no findings.

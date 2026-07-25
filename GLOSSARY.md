@@ -90,7 +90,8 @@ which is *not* the `#number` a human sees. Read it with `gh api repos/<owner>/<r
 
 **looking for the nest** — a reflex, not a phase. The moment **two or more findings could plausibly share
 a root**, say so *unprompted* — during research, planning, grilling, review, or ad-hoc debugging, not only
-during a rollout. Three symptoms reported as three items, when they are one class, is the failure: someone
+during a rollout. **Recognition counts as well as arithmetic:** one instance examined closely enough that
+you recognise its shape somewhere else is a cluster of two, even though you only set out to find one. Three symptoms reported as three items, when they are one class, is the failure: someone
 then has to ask "are these related?", and that question should never need asking.
 
 Saying so means three things, in one short block:

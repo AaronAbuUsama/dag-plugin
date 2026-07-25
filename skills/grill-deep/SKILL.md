@@ -36,8 +36,15 @@ unrecorded:
    you just ran *is* the ADR's raw material — the options and the grading are already on the page. If any
    of the three is missing, skip it; you'd only reverse an easy decision or restate an obvious one.
 
+**An ADR that records a symptom as if it were the root cause is durable damage** — it outlives the
+session and the next reader trusts it. So before writing one, apply **looking for the nest** (glossary) to
+what the round settled: a decision that is really one instance of a wider gap should name the gap it
+belongs to, or wait until that gap is diagnosed. This matters more here than in `grill`, because here the
+mistake gets written down.
+
 *Done (per round):* every term the round resolved is in `CONTEXT.md`, and every decision meeting all
-three ADR tests has an ADR — or you can name why each settled decision needed neither.
+three ADR tests has an ADR — or you can name why each settled decision needed neither — and no ADR
+records a symptom as a root cause.
 
 ## Where the docs live
 

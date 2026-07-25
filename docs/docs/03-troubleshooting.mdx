@@ -88,16 +88,21 @@ git worktree remove <path>     # for any whose node is already closed
 That is the system working. A stop arrives pre-validated: the named root cause, a confidence level, and
 whether fixing it unblocks the rest of the graph.
 
-`/dag:execute` removes `dag:preflighted` when it stops, so the DAG is back in planning and no fresh
-window can resume execution over a graph you halted. If you find a stopped node with the label still on,
-take it off yourself:
+`/dag:execute` swaps `dag:preflighted` on the map for `dag:halted` and labels the stopped node, so the DAG
+is back in planning and no fresh window can resume execution over a graph you halted.
+
+Both marks matter. Removing the signature on its own is lossy — a chart you stopped and a chart nobody
+ever signed look identical, and `/dag:plan` would route both straight back to being signed, with the same
+method that just failed. If you find a stopped node with neither mark, do the swap yourself:
 
 ```bash
-gh issue edit <map> --remove-label dag:preflighted
+gh issue edit <map> --remove-label dag:preflighted --add-label dag:halted
+gh issue edit <node> --add-label dag:needs-grilling
 ```
 
-Then `/dag:plan` picks it up and routes it to a grill, a spike, or a re-chart. Pre-flight is re-signed
-before execution resumes.
+Then `/dag:plan` picks it up and re-plans the chart: it finds the class behind the stop, amends every
+contract carrying it, and files the repair as its own node. Pre-flight is re-signed in full — every tier
+command re-run, including the ones that were green last time — before execution resumes.
 
 ## A node's proof can't be gathered
 

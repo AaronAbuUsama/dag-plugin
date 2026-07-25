@@ -86,6 +86,12 @@ already in the repo and can never be shown absent. And it must travel **through 
 acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
 the feature worked. Its absence is established first, at each tier the contract names.
 
+**halt** — a signed DAG stopped mid-flight by a rung-3 escalation, recorded as `dag:halted` on the map in
+the same edit that removes `dag:preflighted`. Unsigning alone is *lossy*: a chart a human stopped and a
+chart nobody ever signed look identical, and the planning router sends both to be signed. The halt is
+cleared only by a **re-plan** — find the class behind the stop, amend every contract carrying it, file the
+repair node — after which pre-flight is re-run in full, not spot-checked over the amended nodes.
+
 **primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
 code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every
 claim back to one; a secondary account is where stale facts come from.

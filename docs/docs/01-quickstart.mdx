@@ -87,6 +87,7 @@ Re-run it only to change the label set or the doc layout.
 | --- | --- | --- |
 | `dag:map` | the map issue | The parent issue indexing this chart's nodes. |
 | `dag:preflighted` | the map issue | Pre-flight is signed; the DAG is cleared for `/dag:execute`. |
+| `dag:halted` | the map issue | Execution stopped this DAG; it is re-planned before it is re-signed. |
 | `dag:needs-grilling` | a **de-fog** node | A decision is still open. |
 | `dag:needs-research` | a **de-fog** node | A fact must be found first. |
 | `dag:needs-prototype` | a **de-fog** node | Not knowable on paper; a spike answers it. |
@@ -158,8 +159,9 @@ profile on your map (concurrency, models, autonomy) before you start.
 
 You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a hard
 stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of whether
-fixing it unblocks anything. When it stops, it removes `dag:preflighted` from the map, so the DAG is
-back in planning and no fresh window can resume execution over a graph you halted.
+fixing it unblocks anything. When it stops, it swaps `dag:preflighted` on the map for `dag:halted`, so the
+DAG is back in planning, no fresh window can resume execution over a graph you halted, and `/dag:plan`
+re-plans the chart rather than re-signing it with the method that failed.
 
 ## What "done" means
 

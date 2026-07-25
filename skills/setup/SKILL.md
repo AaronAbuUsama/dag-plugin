@@ -71,18 +71,22 @@ without markup and short enough to survive:
 |---|---|
 | `dag:map` | `The parent map issue indexing this chart's nodes` |
 | `dag:preflighted` | `Pre-flight signed; this DAG is cleared for /dag:execute` |
+| `dag:halted` | `Execution stopped this DAG; it is re-planned before it is re-signed` |
 | `dag:needs-grilling` | `De-fog node: a decision is still open` |
 | `dag:needs-research` | `De-fog node: a fact must be found first` |
 | `dag:needs-prototype` | `De-fog node: not knowable on paper; a spike answers it` |
 
 The three `dag:needs-*` labels go on **de-fog** nodes, which is where `/dag:plan` reads them.
+`dag:map`, `dag:preflighted` and `dag:halted` go on the map, and the last two are a pair: `preflighted`
+says a DAG is cleared for execution, `halted` says one was stopped mid-flight and must be re-planned
+before it can be cleared again.
 
 A node with none of the three readiness labels is **clear** — spec it and build, no de-fog node needed.
 Don't add a "ready" or "blocked" label: that state is native, not a label — a node is on the frontier when
 every issue blocking it is closed, and GitHub's UI already shows blocked/unblocked. `execute` closes each
 node's issue itself the moment its proof contract is satisfied (close-on-proof) — no closing label either.
 
-*Done when:* `gh label list` shows all five labels present with the descriptions above.
+*Done when:* `gh label list` shows all six labels present with the descriptions above.
 
 ### 4. Domain docs
 
@@ -104,8 +108,8 @@ update it in place rather than duplicating it.
 ## DAG suite
 
 Issues live on GitHub; native blocking is confirmed working. Labels: `dag:map` (map issue),
-`dag:preflighted` (pre-flight signed), `dag:needs-grilling` / `dag:needs-research` /
-`dag:needs-prototype` (readiness — absent means clear).
+`dag:preflighted` (pre-flight signed), `dag:halted` (execution stopped it; re-plan before re-signing),
+`dag:needs-grilling` / `dag:needs-research` / `dag:needs-prototype` (readiness — absent means clear).
 Domain docs: [single-context | multi-context], see CONTEXT.md[/CONTEXT-MAP.md]. See `GLOSSARY.md` and
 `/dag:plan` for the suite's terms and skills.
 ```

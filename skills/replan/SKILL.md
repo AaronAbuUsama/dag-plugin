@@ -28,10 +28,17 @@ the nodes still open.
 Read the stop as recorded on the map — the node it surfaced on, the tier or check that failed, and the
 evidence. Then classify it, because only one of these belongs here:
 
-- **the node was wrong** — its premise or spec. That is a de-fog node, not a re-plan: label it
-  `dag:needs-grilling` (or `dag:needs-prototype` where the unknown is whether the thing can be observed
-  at all) and hand back to `/dag:plan`, which routes it. Re-planning a whole chart around one bad node is
-  ceremony.
+- **the node was wrong** — its premise or spec. That is a de-fog node, not a re-plan: confirm it carries
+  `dag:needs-grilling` (or `dag:needs-prototype` where the unknown is whether the thing can be observed at
+  all), **clear the halt**, and hand back to `/dag:plan`, which routes it. Re-planning a whole chart
+  around one bad node is ceremony.
+
+  ```bash
+  gh issue edit <map-number> --remove-label dag:halted
+  ```
+
+  Clearing it is not optional: `dag:halted` is what routed this turn here, so leaving it on sends the next
+  `/dag:plan` straight back to this skill for the same node, forever.
 - **the method was wrong** — the node was fine and something that validated it was not. This is yours.
 
 Name the failing mechanism in one sentence, in the gate's own words: *which check passed something it

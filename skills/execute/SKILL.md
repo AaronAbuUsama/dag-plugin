@@ -35,11 +35,12 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 
 ## 1. Open the run
 
-**Check the signature before anything else.** The map must carry the `dag:preflighted` label. That label
-*is* the door between the two halves: planning is `/dag:plan`'s, execution is yours, and the signature is
-what moved the DAG across. Without it, this DAG is not cleared for dispatch — say so plainly and hand
-back to `/dag:plan`, which routes to `/dag:preflight`. A wave dispatched off an unsigned DAG is the
-whole failure the gate exists to prevent.
+**Check the signature before anything else.** The map must carry the `dag:preflighted` label, and must
+*not* carry `dag:halted`. That first label *is* the door between the two halves: planning is
+`/dag:plan`'s, execution is yours, and the signature is what moved the DAG across. Without it, this DAG
+is not cleared for dispatch — say so plainly and hand back to `/dag:plan`, which routes it. A wave
+dispatched off an unsigned DAG is the whole failure the gate exists to prevent, and a wave dispatched off
+a halted one repeats a stop a human already raised.
 
 Then read the run's inputs **off GitHub**, not off memory — this window may be the second one:
 
@@ -133,15 +134,20 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-**Unsign the DAG before you surface the stop**, or the next fresh window reads the signature and resumes
-autonomous execution over a graph you just halted:
+**Mark the halt before you surface the stop** — both the map and the node, in that order. Removing the
+signature alone is *lossy*: a chart you halted and a chart nobody ever signed look identical to
+`/dag:plan`, so it routes both straight back to signing, with the same method that just failed.
 
 ```bash
-gh issue edit <map-number> --remove-label dag:preflighted
+gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
+gh issue edit <node-number> --add-label dag:needs-grilling   # or dag:needs-prototype, if whether
+                                                             # it can be observed is the unknown
 ```
 
-The node then goes back to `/dag:plan`, which routes it to a grill, a spike, or a re-chart, and
-pre-flight is re-signed before execution resumes.
+`dag:halted` is what stops the next fresh window resuming autonomous execution over a graph you just
+stopped. Labelling the node as well is what stops it arriving back in planning as an ordinary open issue
+with nothing on it to say a human halted here. The chart then goes back to `/dag:plan`, which routes it to
+a **re-plan**, and pre-flight is re-signed in full before execution resumes.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix
@@ -202,8 +208,8 @@ What is specific to this door, and additional to that file:
   first cleanly. Blurring them tells the user they have more than they do.
 - **A stop is not an ending and must not read like one.** When the ladder reaches rung 3 the closing
   message still carries the named **nest**, whether fixing it unblocks the rest of the graph, and the fact
-  that `dag:preflighted` has been removed so the DAG is back in planning. A stop that reads as a failure
-  report leaves the user holding a diagnosis with nothing to do about it.
+  that the map now carries `dag:halted` instead of `dag:preflighted` so the DAG is back in planning. A
+  stop that reads as a failure report leaves the user holding a diagnosis with nothing to do about it.
 - **"What you do" says that re-running resumes** — usually *nothing, or run `/dag:execute` again*. And
   where planning has to happen again, name `/dag:plan`, the other door. Never `/dag:grill`, never
   `/dag:preflight`.

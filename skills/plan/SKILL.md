@@ -96,8 +96,14 @@ close is the whole mechanism: it unblocks the build node onto the frontier, and 
 `dag:needs-*` label without anyone removing one, because a closed node is never on the frontier. A
 de-fog move whose node stays open leaves its build node blocked forever.
 
+**You are the only surface that reads every node at once.** So when you close a de-fog node, look at what
+the already-closed ones settled: two de-fog nodes that answered the same underlying question mean the
+chart is carrying a nest, and the next one will ask it again. Say so and point at `/dag:diagnose` — see
+**looking for the nest** in the glossary.
+
 *Done when:* the move's answer is a comment on its de-fog node and that node is closed, or the move is
-still in flight and you have said so.
+still in flight and you have said so — and any question answered twice across de-fog nodes is named as a
+possible shared root.
 
 **A node sent back after the signature lands here again.** `/dag:execute` removes `dag:preflighted` from
 the map when it raises a rung-3 stop, so the chart arrives here unsigned and this router picks it up like

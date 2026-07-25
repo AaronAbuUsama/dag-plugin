@@ -49,3 +49,8 @@ assumption at the top of the prototype.
    the answer — as a comment on the node issue that the `needs-prototype` build node was blocked on.
    If the tracker isn't configured yet, run `/dag:setup` first. The main branch keeps only the
    validated decision.
+
+**A spike is unusually well placed to spot a nest.** You have just examined one mechanism closely enough
+to know its shape — so before you close, ask whether that shape appears anywhere else in the codebase. If
+it does, say so with the verdict and point at `/dag:diagnose`; see **looking for the nest** in the
+glossary. Recognising the second instance is the whole value of having looked at the first one this hard.

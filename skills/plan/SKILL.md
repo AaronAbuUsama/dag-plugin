@@ -11,8 +11,8 @@ signed. It finds the **chart** on GitHub, reads its state, and **runs** the next
 to work out which skill to reach for, or type a second command to get started. Terms are defined once in
 [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 Planning ends at the **pre-flight** signature. Past it the DAG belongs to
 [`/dag:execute`](../execute/SKILL.md), which walks it to done-clean.
@@ -116,7 +116,7 @@ gh issue edit <map-number> --remove-label dag:preflighted
 
 ## 4. End the turn with a position — every time, no exceptions
 
-**Read [`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md) before you write the closing message.**
+**Read [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) before you write the closing message.**
 Not optional and not a reference for later: the shape lives there and nowhere else, so a turn written
 without opening it is a turn written to a shape you invented. There is deliberately no template here to
 copy — one authoritative copy, and nothing that looks authoritative beside it.
@@ -133,12 +133,11 @@ What is specific to this door, and additional to that file:
   you were asked to fix, a tangent that mattered — the closing message still says where that left the
   plan. Off-piste work with no re-anchor is exactly how someone ends up lost, and it is the moment this
   matters most rather than least.
-- **Ask and carry on, rather than parking.** Where the next move needs a decision and the move itself is
-  cheap and reversible — charting issues that can be edited or closed — ask through `AskUserQuestion` and
-  keep going in the same turn. Stopping to request permission for a reversible write turns one command
-  into a homework list.
+- **Charting is the reversible write this most often applies to.** Issues can be edited or closed, so the
+  output style's ask-and-carry-on rule means asking which effort a chart covers and then charting it in the
+  same turn — never stopping to request permission first.
 
-*Done when:* you have read `STOPPING-MESSAGE.md` this turn and the closing message follows it; the "what
+*Done when:* you have read `RESPONSE-RULES.md` this turn and the closing message follows it; the "what
 happens next" slot names no planning command for the user to type; and "what you do" states plainly that
 re-running `/dag:plan` resumes.
 

@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.9.0
+
+**The response rules are always on.** Everything about how this suite talks to a human lived somewhere that
+only loads sometimes — and the audit found the same bug three times over.
+
+`STOPPING-MESSAGE.md` was linked from all eleven skills in one informational clause, while both doors
+carried a *complete inline template* of the shape under a heading reading "every time, no exceptions". The
+inline copy was already in context, cost nothing and looked complete, so it won every time and the linked
+file never got opened. It did not compete with the file, it **shadowed** it. And six more universal rules —
+the decision protocol, resolve-every-fact-yourself, assume-they-have-read-no-code, language-tag every
+fence, a-rubric-in-prose-is-not-a-rubric, budget the round — were filed inside `grill`, so they fired only
+while grilling. A roll-up got none of them.
+
+- **The plugin now ships an output style**, `output-styles/dag-house-style.md`, with
+  `force-for-plugin: true` — it loads into the system prompt every turn the plugin is enabled, with no file
+  to read and no skill to invoke. That is the only surface here that fires unconditionally; `hooks` and
+  `outputStyles` were both declared in the manifest schema and neither was used.
+- **It carries the reflexes, not the vocabulary.** Headline first, `---` between sections, tables over
+  prose, evidence with its source visible and *your* verification never blurred with a report you received,
+  short turns staying short — plus the decision block's six ordered parts. Roughly 70 lines, which is a
+  permanent per-turn cost and the reason it is reflexes rather than the whole spec.
+- **Both inline templates are gone.** Each door keeps only what is genuinely local, the reference is
+  imperative rather than informational, and each `Done when:` requires having read the file that turn.
+- **`STOPPING-MESSAGE.md` → `RESPONSE-RULES.md`.** It always covered the decision block, which fires
+  mid-turn rather than at the end; the old name undersold it and probably helped it read as a niche
+  reference.
+- **Rules have one home each.** Where a skill still names a global rule it points at it and adds only its
+  own mechanics — `grill` on how to resolve facts, `plan` on charting being the reversible write. Three
+  genuine duplicates were found and cut, one of them introduced during this change.
+
+Enforcement was considered and deferred: a `Stop` hook receives `last_assistant_message` and can return
+`decision: block` to force a redo, which is verified available. The style is system-prompt level and far
+stronger than anything tried so far, so it ships alone first and gets measured before machinery is added.
+
 ## 0.8.1
 
 **Finishing 0.8.0's own criterion.** That release said the nest trigger goes where findings are produced,
@@ -34,7 +68,7 @@ at spotting the same shape somewhere else.
 said what that message should look like — so each turn invented a layout, and long roll-ups collapsed into
 a wall of paragraphs and bullets with no hard breaks. Reported as genuinely hard to read.
 
-[`STOPPING-MESSAGE.md`](STOPPING-MESSAGE.md) defines it as **composable slots, not a template**: a
+`STOPPING-MESSAGE.md` (since renamed to [`RESPONSE-RULES.md`](RESPONSE-RULES.md)) defines it as **composable slots, not a template**: a
 HEADLINE that gives the shape of the news before any detail, a FLIGHT DECK for scannable state, an
 EVIDENCE TABLE, a DECISION BLOCK, and a closing what-you-do. Pick the slots the message needs and skip the
 rest — a three-line update stays three lines, because imposing ceremony on a short turn is a failure of the

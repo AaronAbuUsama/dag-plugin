@@ -15,8 +15,8 @@ trade-off to an ADR — right then, while the reasoning is fresh.
 Terms in **bold** (**design tree**, **frontier**, **round**, **rubric-grill**, **readiness**) are defined
 in [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 ## The delta: capture as you settle
 

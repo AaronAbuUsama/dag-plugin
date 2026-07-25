@@ -8,8 +8,8 @@ disable-model-invocation: true
 
 The loop you live in from a signed **pre-flight** until the **DAG** is done. It runs the DAG **wave by
 wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-completeness**, the
-**proof ledger**, and close-on-proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and the shape of the message this turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+**proof ledger**, and close-on-proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and how to respond is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 **The core loop, per node:** dispatch a self-contained brief → **merge gate** (CI + independent review
 whose verdict is *posted to the PR* + your own cold read + the **proof contract** satisfied, wherever
@@ -189,7 +189,7 @@ to planning — no node left in an in-between state.
 Execution runs long and unattended, so a turn ends whenever the loop pauses: a wave completed, a rung-3
 stop, the DAG done, or the context window running out mid-wave.
 
-**Read [`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md) before you write the closing message.**
+**Read [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) before you write the closing message.**
 Not optional and not a reference for later: the shape lives there and nowhere else, and there is
 deliberately no template here to copy from.
 
@@ -208,6 +208,6 @@ What is specific to this door, and additional to that file:
   where planning has to happen again, name `/dag:plan`, the other door. Never `/dag:grill`, never
   `/dag:preflight`.
 
-*Done when:* you have read `STOPPING-MESSAGE.md` this turn and the closing message follows it; position is
+*Done when:* you have read `RESPONSE-RULES.md` this turn and the closing message follows it; position is
 stated in nodes; in-flight work is listed separately from durable work; and "what you do" states plainly
 that re-running `/dag:execute` resumes.

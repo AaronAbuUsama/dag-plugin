@@ -20,9 +20,9 @@ Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
    answerable *now* without guessing at answers you haven't heard. A decision that depends on another
    still-open decision belongs to a *later* **round**, not this one.
    *Done when:* you have that list and can name what each item is blocked on (nothing) or blocks.
-2. **Resolve every fact yourself.** For each frontier item, dispatch a subagent (see `/dag:research`) to
-   look up anything findable in the code or environment — call sites, current behaviour, what a type
-   already guarantees. Every question you put to the user is one only the user can answer.
+2. **Resolve every fact yourself** — the rule is in the output style; here it means dispatching a subagent
+   (see `/dag:research`) per frontier item for anything findable in the code or environment: call sites,
+   current behaviour, what a type already guarantees.
    *Done when:* no frontier item is waiting on a fact you could have looked up.
 3. **Put the whole frontier to the user as one round.** Number the questions. Each one is a
    **rubric-grill** (below) — no exceptions. Then stop and wait for answers.
@@ -72,94 +72,19 @@ earn their space — cut the prose around them, not them.
 
 ## The rubric-grill — the load-bearing move
 
-**A question the user cannot judge from what is on screen is a failed question.** Every decision goes to
-them in the five parts below, in this order, with no exceptions and no preamble. This *is* the
-**decision block** of [`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md) — one house style, not a
-second rule that happens to agree with it. What follows is that block spelled out for grilling, where
-every turn is a decision.
+**A question the user cannot judge from what is on screen is a failed question.** The six ordered parts —
+the problem as real code, what it touches, the options as code or diffs, a stated rubric, a
+recommendation, then the ask through `AskUserQuestion` — are the **decision block** in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), and they are in this plugin's output style so they
+hold every turn. Read the file before a round; it is not restated here, because two copies drift and the
+inline one always wins.
 
-<rubric-grill-order>
+What grilling adds on top:
 
-**1 — The problem, as code or a diagram. First thing on screen.**
-
-Open with the artifact, not with narration. No "I read the board", no "before the questions", no summary
-of what you found — the first thing under the question's heading is a fenced block or a diagram:
-
-````
-```ts packages/installation/src/managed-config-store.ts:35-40
-export const seedManagedConfig = async (db: Database, cfg: ManagedConfig) => { … }
-```
-````
-
-Always tag the fence with its language so it renders highlighted, and always label it `file:line`. Reach
-for a diagram instead when the shape is a flow, a state machine, or a dependency web — those land faster
-drawn than quoted. Prose comes *after* the artifact, and only to say what the artifact means.
-
-**2 — What it touches. Assume they have read none of it.**
-
-The reader has not read the surrounding code, and will not go and read it. So zoom out and put the
-context on screen: the callers, the dependents, the sibling that consumes the same shape, the blast
-radius of changing it. Every file you reference gets a `file:line` and enough of a quote to judge from.
-A reference to code you did not show is a reference they cannot use.
-
-**3 — The rubric, stated as a rubric.**
-
-Name the axes before you score anything, so the scoring can be argued with. Write them out — a list or a
-table, but visible and separate from the prose:
-
-| Axis | What it means here |
-|---|---|
-| floor-first | ships the real thing now, not a promise of it |
-| reversibility | how cheaply this is undone if wrong |
-| blast radius | how much has to change, and what breaks if it does |
-| correctness / integrity | what invariant this protects or gives up |
-| parallelizability | can this run beside other work, or does it serialise |
-| fit | how well it sits with what is already there |
-
-Pick the axes that fit *this* occasion — those six are the usual set, not a fixed one. A rubric buried
-inside a sentence of prose is not a rubric.
-
-**4 — The options, each as code or a diagram.**
-
-Every candidate gets its own artifact: the real code, a diff sketch, or a diagram. Never a prose
-description of an approach.
-
-````
-```diff packages/installation/src/configuration.ts
-- export const readManagedConfig = async (path) => readPrivateJson(path, Schema);
-+ export const readManagedConfig = async (db) => store.current();
-```
-````
-
-Then score them against the rubric from part 3 — a table, one row per option, one column per axis, so the
-comparison is read rather than reconstructed. Close with your recommendation and the one-line reason.
-
-**5 — The ask, through `AskUserQuestion`.**
-
-Put the question through the **`AskUserQuestion` tool**, one question per decision, the recommended
-option first and marked `(Recommended)`. Never end a round with the ask buried in prose — a decision
-typed into chat as a paragraph is a decision that has to be re-found.
-
-The grounding from parts 1–4 goes in your message *before* the tool call; the tool carries only the
-choice.
-
-</rubric-grill-order>
-
-## Make it readable, or it will not be read
-
-The grounding only works if it can be taken in at a glance. This is part of the job, not polish:
-
-- **Every code block tagged with its language**, so it syntax-highlights. An untagged fence is a wall of
-  grey.
-- **Tables for anything compared** — options against axes, before against after. Never a paragraph that
-  makes the reader hold six values in their head.
-- **Diagrams for shapes** — flows, state machines, dependency webs. Draw them.
-- **One heading per decision**, so a round of four questions reads as four blocks and not one essay.
-- **Bold the load-bearing clause** in a long paragraph, so the eye finds the thing that decides it.
-
-The user reads the actual tradeoff off the page and rules on it; they never reconstruct it from a
-summary. Removing that reconstruction is the entire reason this skill exists — every abstract question,
-every untagged block, and every rubric hidden in prose smuggles it back in.
+- **Every question in the round is a full decision block.** No exceptions, no "this one's simple". A round
+  of four questions is four grounded blocks under four headings, not one essay.
+- **The artifact comes first inside each question** — no preamble, no summary of what you found. The fence
+  is the first thing under the heading.
 
 ## Tone
 

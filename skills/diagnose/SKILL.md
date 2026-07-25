@@ -10,8 +10,8 @@ patch spawned an adjacent defect. Stop patching. You answer one question: **what
 generates all of these findings, and is there one consolidating fix that closes the class?** Terms below
 are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 Inputs: the **cluster** of findings, the **whole subsystem** they touch (not the diff), and the
 architecture **invariants**. Work the steps in order.

@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.7.0
+
+**Every turn ends with a position.** The suite told a run how to choose a move and how to run it, and said
+nothing about how to *end a turn* — each step had a `Done when:` for the work and there was no contract for
+the closing message. So the handoff quality was left to judgement, and judgement drifts exactly when a
+session goes sideways.
+
+- **`/dag:plan` now closes every turn with a fixed block** — where we are · what's saved and where · what
+  happens next · what you do. The last line almost always reads "nothing, or run `/dag:plan` again",
+  stated explicitly, because a user who hasn't read the docs has no way to know that re-running the same
+  command resumes the work — and that is the single fact the whole design rests on.
+- **It re-anchors after off-piste work.** A turn that went sideways into a bug fix or a tangent still ends
+  with the block, saying where that left the plan. Off-piste work with no re-anchor is precisely how
+  someone ends up lost, and it is when the block matters most rather than least.
+- **It asks and carries on rather than parking.** Where the next move needs a decision and the move is
+  cheap and reversible — charting issues that can be edited or closed — it asks and keeps going in the
+  same turn. Stopping to request permission for a reversible write turns one command into a homework list.
+- **Naming a planning command is now called out as the failure it is.** "Run `/dag:preflight`" in a
+  closing message is the exact thing the door exists to prevent; `/dag:execute` is the only command either
+  door ever hands over.
+
 ## 0.6.0
 
 **What the first charted epic taught it.** Four gaps found by using the suite on real work, all

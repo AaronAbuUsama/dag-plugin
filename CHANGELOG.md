@@ -2,24 +2,30 @@
 
 ## 0.7.0
 
-**Every turn ends with a position.** The suite told a run how to choose a move and how to run it, and said
-nothing about how to *end a turn* — each step had a `Done when:` for the work and there was no contract for
-the closing message. So the handoff quality was left to judgement, and judgement drifts exactly when a
-session goes sideways.
+**Every turn ends with a position.** The suite said how to choose a move and how to run one, and nothing
+about how to *end a turn* — each step had a `Done when:` for the work and there was no contract for the
+closing message. So handoff quality was left to judgement, and judgement drifts exactly when a session
+goes sideways, which is when the user most needs to know where they stand.
 
-- **`/dag:plan` now closes every turn with a fixed block** — where we are · what's saved and where · what
-  happens next · what you do. The last line almost always reads "nothing, or run `/dag:plan` again",
-  stated explicitly, because a user who hasn't read the docs has no way to know that re-running the same
-  command resumes the work — and that is the single fact the whole design rests on.
-- **It re-anchors after off-piste work.** A turn that went sideways into a bug fix or a tangent still ends
-  with the block, saying where that left the plan. Off-piste work with no re-anchor is precisely how
-  someone ends up lost, and it is when the block matters most rather than least.
-- **It asks and carries on rather than parking.** Where the next move needs a decision and the move is
-  cheap and reversible — charting issues that can be edited or closed — it asks and keeps going in the
-  same turn. Stopping to request permission for a reversible write turns one command into a homework list.
-- **Naming a planning command is now called out as the failure it is.** "Run `/dag:preflight`" in a
-  closing message is the exact thing the door exists to prevent; `/dag:execute` is the only command either
-  door ever hands over.
+Both doors now close every turn with the same fixed block — where we are · what's saved and where · what
+happens next · what you do — and the last line almost always reads "nothing, or run the same command
+again", stated outright, because a user who hasn't read the docs has no way to know that re-running
+resumes the work. That is the single fact the whole design rests on.
+
+- **`/dag:plan`** re-anchors after off-piste work: a turn that went sideways into a bug fix or a tangent
+  still ends with the block, saying where that left the plan. It also asks-and-carries-on rather than
+  parking — where the next move needs a decision and the move is cheap and reversible, it asks and keeps
+  going in the same turn, because stopping for permission on a reversible write turns one command into a
+  homework list.
+- **`/dag:execute`** states position in nodes rather than prose, and lists durable work (closed issues,
+  merged commits, committed receipts) separately from in-flight work (open PRs, live worktrees) — a
+  resumed session inherits the first cleanly and the second not at all.
+- **A rung-3 stop no longer reads like an ending.** The block still closes the turn, carrying the named
+  nest, whether fixing it unblocks the rest of the graph, and the fact that `dag:preflighted` has been
+  removed so the DAG is back in planning. A stop that reads as a failure report leaves the user holding a
+  diagnosis with nothing to do about it.
+- **Neither door hands over a planning command.** "Run `/dag:preflight`" in a closing message is the exact
+  thing the doors exist to prevent; `/dag:execute` and `/dag:plan` name only each other.
 
 ## 0.6.0
 

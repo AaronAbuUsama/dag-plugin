@@ -1,0 +1,80 @@
+---
+title: v0.10.0
+description: "Pre-flight runs the tier commands instead of reading them, a halted DAG can no longer be re-signed by mistake, and a chart-level re-plan exists for when the method failed rather than a node."
+type: changelog
+date: 2026-07-25T20:00:00Z
+changelog:
+  version: 0.10.0
+---
+
+Everything here comes from one 21-node field run that merged eight nodes with real evidence and then
+halted deliberately. The proof discipline held under pressure — two teammates found their tier 2 command
+red, reported it, and refused to substitute a bar they could clear. What failed was upstream of them.
+
+**Pre-flight certified a proof contract by reading it, never by running it.** Two nodes were signed
+`runnable` on a tier 2 command that had been failing on `main` for two days before the signature; three
+more unbuilt nodes still carry it. The gate's rule was already correct — *a node whose contract cannot be
+run as written does not pass* — and every check underneath it was a desk check. "Its tiers exist and each
+names the command that reaches it" is satisfied by the command existing in the task runner. "The evidence
+is reachable" is future-tense, about the node's own output. A rotted command passes all five bullets.
+
+- **Pre-flight now baselines.** Before it judges a single node: collect every distinct tier command in the
+  chart and **run each one on the base branch**. A red command is not a runnable tier — every node naming
+  it is a stop, and repairing it becomes its own node. Cheap by construction; twenty nodes usually name
+  three or four distinct commands.
+- **A tier reached through a shared environment is baselined by date** — when was that path last exercised
+  end to end? Never exercised is not a runnable tier either: the first node to depend on it is sequenced
+  behind a spike, rather than three taking a first dependency on it simultaneously. In the field run,
+  three tiers had never been exercised once and three merged nodes came to owe them at the same moment.
+- **"Cannot be run as written" now means red at the baseline**, not incoherent on paper.
+- **Chart records which of the profile's commands CI actually gates.** An ungated tier command is
+  unverified by default and *will* rot between charting and signing — in that repo neither lint nor the
+  evals were gated, and both had rotted.
+
+**Unsigning was lossy, so the planning router would re-sign the chart it had just halted.** A rung-3 stop
+removed `dag:preflighted` and did nothing else, which makes a chart a human stopped identical to a chart
+nobody ever signed. Walked against the live halted chart: no open node carried a `dag:needs-*` label, the
+map carried only `dag:map`, and the router's "chart complete, unsigned → pre-flight and sign it" row was
+the only match. It would have re-signed the same unachievable tier with the same desk-check method.
+
+- **The stop writes two marks instead of one removal** — `dag:halted` onto the map in the same edit that
+  takes the signature off, and a readiness label onto the node it stopped.
+- **`plan` reads the map's halt before anything else**, and routes it above the de-fog rows: a halted
+  chart's remaining questions are asked against a plan already shown wrong somewhere.
+- **`execute` refuses to open a run on a halted map**, not merely an unsigned one.
+
+**`/dag:replan` — a chart-level move, because the method failed rather than a node.** The suite had two
+responses to a chart coming back: grill an open decision, or diagnose a cluster of code findings. Neither
+fits a chart whose nodes are individually fine and whose *signing* was wrong. The failure sits upstream of
+every node, so repairing the node that surfaced it repairs nothing — the same defect waits in every
+sibling sharing the contract, to be discovered one build cycle at a time. `replan` classifies the halt
+(a wrong node is still a de-fog node and goes back to the router), finds the class across every open node,
+amends every contract carrying it *without lowering a bar*, files the repair as a real node with real
+blocking edges, records the re-plan on the map, and re-enters pre-flight in full. It is read-and-followed
+by `/dag:plan`, so the two-door promise is untouched — there is no third command.
+
+**An at-risk verdict can no longer survive the signature.** Pre-flight already said to sign only when
+every node is satisfies-or-resolved-at-risk, but the verdict lives in a column of a table in a comment and
+nothing reads it back. The field chart was signed with two unresolved at-risk nodes, and that pre-flight
+invented a `dag:at-risk` label — with a description found nowhere in this plugin — to persist a state the
+suite gives no home to. The fix removes a state rather than adding one: an unresolved at-risk node *is* an
+open decision, which `dag:needs-grilling` already names and the router already routes. Settle the choice
+and the node is **satisfies**, or relabel it and the chart is not complete. No sixth readiness label, no
+new routing row.
+
+**Four seams, one line each, where each belongs.**
+
+- **Split tier 3, in the dispatch brief.** Where a profile splits tier 3 — some nodes provable from a
+  branch, others only on a shared environment taking merged commits — the brief states per node which half
+  applies and who runs it, and names any environment the teammate must not touch. A brief that named the
+  environment's skill and left the half to be inferred got an unmerged branch deployed to a live
+  single-home box.
+- **Time-bounded criteria, in `prove`.** Widening a timeout until it passes is weakening an assertion in
+  the form that does not look like one, and two green runs only prove the machine was quiet twice. Drive a
+  deterministic clock; the bound belongs in the code and in the PR body.
+- **Proof currency, in `execute`'s merge gate.** There was no currency check at all, and the obvious one is
+  wrong — a squash merge does not preserve ancestry, so `--is-ancestor` reports "not merged" for work that
+  merged perfectly. Diff the paths the evidence covers instead. A re-proof is not merely fresher: it runs
+  against fixes that create states the first run could not reach.
+- **File-level contention, in pre-flight's edge audit.** Two independent nodes rewriting one package cost a
+  rebase *and* a re-proof when the first merges. Named as a scheduling note, deliberately not an edge.

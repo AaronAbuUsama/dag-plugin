@@ -1,7 +1,6 @@
 ---
 name: execute
 description: The execution door — walks a pre-flight-signed DAG, dispatching each node behind the merge gate, climbing the escalation ladder on findings, and driving every node to done-clean, wave by wave.
-disable-model-invocation: true
 ---
 
 # Execute — walk the signed DAG to done-clean

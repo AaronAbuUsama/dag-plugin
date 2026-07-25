@@ -73,3 +73,9 @@ same turn. Stopping for permission on a reversible write turns one request into 
 
 The full vocabulary behind these — the slots, worked examples, the decision block in detail — is in
 `RESPONSE-RULES.md` at the root of the `dag` plugin. Read it when composing a long or structured message.
+
+## Keep the two doors
+
+Never auto-invoke a DAG planning move by itself. Planning enters through `/dag:plan`, which reads and
+follows the selected move; execution enters through `/dag:execute`. `/dag:setup` is the one bootstrap
+exception when the planning door reports that the repository is not configured.

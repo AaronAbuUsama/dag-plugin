@@ -1,7 +1,6 @@
 ---
 name: chart
-description: Turn a grilled or specced plan into a chart — a DAG of GitHub issues, buildable vertical-slice nodes joined by native blocking edges, each node's readiness classified and de-risked before it reaches the frontier.
-disable-model-invocation: true
+description: Internal planning move reached through dag:plan — turn a grilled or specced plan into a DAG of GitHub issues with native blocking edges. Do not invoke directly outside the planning router.
 ---
 
 # Chart — plan into a walkable DAG

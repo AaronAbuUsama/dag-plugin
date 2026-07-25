@@ -1,7 +1,6 @@
 ---
 name: grill
-description: Sharpen a plan or design through a batched, code-grounded interview — the flagship planning skill.
-disable-model-invocation: true
+description: Internal planning move reached through dag:plan — sharpen a plan through a batched, code-grounded interview. Do not invoke directly outside the planning router.
 ---
 
 # Grill — sharpen the plan until it is buildable

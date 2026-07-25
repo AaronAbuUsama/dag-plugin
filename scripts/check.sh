@@ -32,6 +32,13 @@ for f in skills/*/SKILL.md; do
 done
 note "$(ls -1 skills/*/SKILL.md | wc -l | tr -d ' ') skills checked"
 
+echo "== Codex-compatible skill frontmatter =="
+if grep -R "^disable-model-invocation: true$" skills/*/SKILL.md > "$tmp/codex-frontmatter"; then
+  while read -r l; do bad "Codex ingestion rejects $l"; done < "$tmp/codex-frontmatter"
+else
+  note "no Claude-only invocation guards"
+fi
+
 echo "== skills/ holds only this plugin's own skills =="
 # A skill installer that symlinks a foreign skill into skills/ makes the plugin ship it.
 # The suite's own skills are real directories; anything linked in came from elsewhere.

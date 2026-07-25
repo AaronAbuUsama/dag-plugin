@@ -1,7 +1,6 @@
 ---
 name: plan
 description: The planning door — reads the chart's state off GitHub, tells you where you are, and runs the next planning move itself, through to the pre-flight signature that hands the DAG to execution.
-disable-model-invocation: true
 ---
 
 # Plan — where you are, and the next move

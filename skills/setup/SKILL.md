@@ -1,7 +1,6 @@
 ---
 name: setup
 description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once, before the planning door.
-disable-model-invocation: true
 ---
 
 # Setup — configure this repo for the DAG suite

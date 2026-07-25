@@ -1,0 +1,64 @@
+---
+title: v0.9.0
+description: "The response rules become always-on, and the obligation to show evidence stops depending on a skill firing."
+type: changelog
+date: 2026-07-25T08:00:00Z
+changelog:
+  version: 0.9.0
+---
+
+**The response rules are always on.** Everything about how this suite talks to a human lived somewhere that
+only loads sometimes — and the audit found the same bug three times over.
+
+`STOPPING-MESSAGE.md` was linked from all eleven skills in one informational clause, while both doors
+carried a *complete inline template* of the shape under a heading reading "every time, no exceptions". The
+inline copy was already in context, cost nothing and looked complete, so it won every time and the linked
+file never got opened. It did not compete with the file, it **shadowed** it. And six more universal rules —
+the decision protocol, resolve-every-fact-yourself, assume-they-have-read-no-code, language-tag every
+fence, a-rubric-in-prose-is-not-a-rubric, budget the round — were filed inside `grill`, so they fired only
+while grilling. A roll-up got none of them.
+
+- **The plugin now ships an output style**, `output-styles/dag-house-style.md`, with
+  `force-for-plugin: true` — it loads into the system prompt every turn the plugin is enabled, with no file
+  to read and no skill to invoke. That is the only surface here that fires unconditionally; `hooks` and
+  `outputStyles` were both declared in the manifest schema and neither was used.
+- **It carries the reflexes, not the vocabulary.** Headline first, `---` between sections, tables over
+  prose, evidence with its source visible and *your* verification never blurred with a report you received,
+  short turns staying short — plus the decision block's six ordered parts. Roughly 70 lines, which is a
+  permanent per-turn cost and the reason it is reflexes rather than the whole spec.
+- **Both inline templates are gone.** Each door keeps only what is genuinely local, the reference is
+  imperative rather than informational, and each `Done when:` requires having read the file that turn.
+- **`STOPPING-MESSAGE.md` → `RESPONSE-RULES.md`.** It always covered the decision block, which fires
+  mid-turn rather than at the end; the old name undersold it and probably helped it read as a niche
+  reference.
+- **Rules have one home each.** Where a skill still names a global rule it points at it and adds only its
+  own mechanics — `grill` on how to resolve facts, `plan` on charting being the reversible write. Three
+  genuine duplicates were found and cut, one of them introduced during this change.
+
+**`prove` fires on what people ask, and the obligation no longer depends on it firing at all.** A live run
+on 0.8.1 was asked "CI is red, fix it, update the PR". It diagnosed and fixed correctly, then reported the
+proof **in chat** — no receipt, no PR comment, PR #385 with zero comments. `prove` was model-invocable and
+in the registry. One Skill call, never made.
+
+The cause is trigger shape, not the spine. `execute` has `/dag:prove` as a numbered step with a
+`Done when: /dag:prove has returned a verdict` gate, the ledger derived from the tracker, and
+close-on-proof leaving a merged-but-unproven node visibly open. All intact. But `prove` was the only skill
+in the suite whose description named **world-states** — "a merged node owes its proof", "a PR asserts
+behaviour it does not show" — rather than anything a person says. `research` and `prototype` are dispatched
+by `plan` and `chart`; `diagnose` by `execute` at rung 2. `prove` had that too, at `execute` step 5 — but
+only inside a door. "Fix CI and update the PR" pattern-matched to debugging, so no lookup happened, and off-piste
+turns are most turns during a long rollout.
+
+- **The obligation moved to the always-on style**, where no dispatch is needed: evidence goes where a
+  reviewer will see it, never chat alone, on any turn whether or not a workflow skill is running. That
+  addresses the actual harm rather than the missed dispatch.
+- **`prove`'s description triggers on request phrases** — opening or updating a PR, asked to fix something
+  and report back, about to say a change works — keeping the world-state clauses after them.
+- **`prove` gained a reduced path** for a PR with no chart behind it, since the new description invites it
+  there: name the claim, pick the evidence form, capture, post. No inventing a DAG to justify a contract.
+
+Enforcement stays deferred, now with a better candidate than the one this changelog first named. A `Stop`
+hook must either grep for claim-language or call GitHub every turn end; a **`PostToolUse` hook on
+`gh pr create`** would catch the same thing deterministically, because the world-state is *created* by an
+observable action rather than polled for. Held until the two cheap fixes above are measured — the hook's
+cost is certain and its necessity is not.

@@ -9,8 +9,8 @@ A **spike** is throwaway code that answers one design question, then is discarde
 decides the shape. This is how the suite de-risks a **needs-prototype** node cheaply, before the real
 build commits — see [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 ## Pick a branch
 

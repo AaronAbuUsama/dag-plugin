@@ -11,8 +11,8 @@ GitHub indexing child **node** issues, joined by the tracker's **native blocking
 renders visually. The suite then walks it from `/dag:preflight` onward. Terms are defined once in
 [`../../GLOSSARY.md`](../../GLOSSARY.md); this skill uses them without redefining.
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. GitHub is the
 tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.

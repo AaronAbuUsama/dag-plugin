@@ -1,6 +1,6 @@
 ---
 name: prove
-description: Put a node's proof in the pull request — the evidence its surface calls for, a committed receipt, and a tier table a reviewer can check. Use when a merged node owes its proof, when a PR asserts behaviour it does not show, or when browser evidence (screenshots, video) belongs in a PR.
+description: Put the evidence in the pull request — what the surface calls for, a committed receipt, and a tier table a reviewer can check. Use when opening or updating a PR, when asked to fix something and report back, when about to say a change works, when a merged node owes its proof, or when screenshots or video belong on a PR.
 ---
 
 # Prove — show it, don't claim it
@@ -8,14 +8,21 @@ description: Put a node's proof in the pull request — the evidence its surface
 Satisfy one node's **proof contract** and land the evidence where a human will actually look: **in the
 pull request**. `execute` reaches this skill at the **merge gate**, on the open PR, wherever the **proof
 profile** says tier 3 is reachable from a branch — and straight after the merge where it isn't. You can
-also run it directly on any PR that owes proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and the shape of the message this turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md);
+also run it directly on any PR that owes proof. Terms are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and how to respond is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md);
 the capture mechanics live in [`evidence.md`](evidence.md).
 
 Two things a reviewer needs from this, and both matter: **verification** — seeing the thing actually
 happened — and **debugging** — having the artifacts to work out what went wrong when it didn't.
 
 Inputs: the node's issue (its proof table, surface, and nonce), the map's **proof profile**, and the PR.
+
+**No node, no contract — the job is still the same.** Reached on an ordinary PR with no chart behind it —
+a CI break you fixed, an ops task, a bug someone asked you to sort — there is no proof contract to satisfy
+and you do not invent a DAG to justify one. Do the reduced version: name what you claim works, pick the
+**evidence form** its surface calls for, capture it, and post it to the PR as a comment. Steps 3, 4 and 6
+apply as written; step 1's nonce and step 2's tier walk only apply where a contract exists. The rule that
+survives every case is that the evidence lands where a reviewer will see it, never in chat alone.
 
 ## 1. Establish the baseline
 

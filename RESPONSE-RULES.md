@@ -1,8 +1,11 @@
-# The stopping message
+# Response rules
 
-Every skill in this suite ends a turn by talking to a human. This is the shape that message takes —
-whatever it carries: a state roll-up, a finding, a decision, a grill, or a two-line update. Terms are in
-[`GLOSSARY.md`](GLOSSARY.md).
+How this suite talks to a human. It covers the message a turn ends with — a state roll-up, a finding, a
+decision, a grill, or a two-line update — and the **decision block**, which fires whenever a question goes
+to the user, mid-turn as often as at the end. Terms are in [`GLOSSARY.md`](GLOSSARY.md).
+
+The reflexes here that must hold with nothing read are also in this plugin's output style, which loads
+every turn. This file is the full vocabulary behind them.
 
 **Composable slots, not a template.** Pick the slots the message actually needs and skip the rest. A
 three-line update is three lines; imposing ceremony on it is a failure of this style, not compliance with

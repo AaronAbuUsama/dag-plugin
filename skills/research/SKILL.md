@@ -12,8 +12,8 @@ something is knowable but not yet known.
 
 Its job:
 
-The shape of the message a turn ends with is in
-[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
+How to respond — the closing message, and any question put to the user — is in
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
 1. Investigate the question against **primary sources** — official docs, source code, specs, first-party
    APIs — not a secondary write-up of them. Follow every claim back to the source that owns it.

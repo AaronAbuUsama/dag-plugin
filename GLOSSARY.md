@@ -73,6 +73,12 @@ into the node's issue **when the node is created** — before any code — and v
 **A node whose proof contract cannot be defined does not get built**: that is a **stop**, routed back to
 a grill (a decision is open) or a **spike** (nobody knows yet whether it can be proven).
 
+**baseline** — running a **proof contract**'s tier command *before* the contract is signed, to establish
+that the bar can be cleared today. A command can be perfectly coherent, correctly named, and have been
+failing for days; every desk check passes it. A tier reached through a shared environment instead of a
+command is baselined by naming **when that path was last exercised end to end** — never exercised is not
+a runnable tier. Distinct from the **nonce**'s absence check, which baselines the *token*, not the bar.
+
 **nonce** — a unique token minted **per proof run** and carried through the evidence, so a receipt can
 only belong to *this* run. The **proof contract** fixes where it enters and which path it must travel;
 the *value* is minted at run time, never written into the issue — a value recorded before the run is

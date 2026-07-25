@@ -67,9 +67,35 @@ nodes named as a possible shared root rather than logged N times.
 Each node's **proof contract** was written into its issue when the node was created. Here you validate
 it — you are not inventing it now, and neither will the agent that builds the node.
 
-For each node, check its contract against the map's **proof profile**:
+### Baseline every tier command before you judge a single node
 
-- Its **tiers** exist in this repo and each names the command or query that reaches it.
+Collect every distinct command any node's contract names, and **run each one, on the base branch, now**.
+Record the result. This is the one place in this gate where you execute something, and it is deliberate:
+every other check here asks whether a contract is *coherent*, and a command can be perfectly coherent,
+correctly named, and have been exiting non-zero for days. **A contract is runnable only if the thing it
+names runs today.**
+
+A command that does not pass is not a runnable tier. Every node naming it is a **stop**, and repairing
+the command becomes its own node — the chart does not get signed over a bar nothing can clear.
+
+It is cheap by construction: a chart of twenty nodes usually names three or four distinct commands, so
+this is one run each, not one per node.
+
+**A tier reached through a shared environment rather than a command is baselined differently** — name
+**when that path was last exercised end to end**. Never exercised is not a runnable tier either: the
+first node to depend on it is sequenced behind a **spike** that exercises the path, rather than dispatched
+alongside two siblings that all take a first dependency on it at once. Three nodes discovering together
+that a shared path was never real is one failure paid for three times.
+
+*Done when:* every distinct tier command in the chart has been run on the base branch with its result
+recorded; every environment-reached tier carries when it was last exercised end to end; and every command
+that failed, or path never exercised, is named along with every node depending on it.
+
+### Then, per node, check its contract against the map's **proof profile**
+
+- Its **tiers** exist in this repo, each names the command or query that reaches it, and that command
+  **passed the baseline above**. "It is named in the repo's task runner" is not the check; "it was green
+  a moment ago" is.
 - Its **evidence form** matches its **surface** — a UI node yields screenshots and a video, a backend
   node a durable delta with exact ids, a CLI node its captured output. Every node has a surface, so no
   node is exempt.
@@ -79,17 +105,28 @@ For each node, check its contract against the map's **proof profile**:
   is a **merge gate** signal; where it isn't, the contract names the shared environment it waits on.
 - A **nonce** ties the evidence to its run.
 
-**The hard rule:** a node whose contract cannot be run as written does not pass pre-flight. "Prove it
-later" is banned — it is a **stop**, sent back to reshape the node into something provable, or to a
-**spike** when whether it can be observed at all is itself the unknown. A design that admits no proof
-is a design no one can call done.
+**The hard rule:** a node whose contract cannot be run as written does not pass pre-flight — and *cannot
+be run* means **red at the baseline just now**, not merely incoherent on paper. "Prove it later" is
+banned — it is a **stop**, sent back to reshape the node into something provable, or to a **spike** when
+whether it can be observed at all is itself the unknown. A design that admits no proof is a design no one
+can call done.
 
 *Done when:* every node's contract is validated against the profile — tiers reachable, evidence form
 matching its surface, nonce present — or the node is marked **stop** and returned to planning.
 
 ## Sign the pre-flight
 
-Emit one table, one row per node:
+Emit the **baseline** first — one row per distinct tier command or environment-reached path, shared by
+every node that names it:
+
+| tier command / path | how baselined | result | nodes depending on it |
+|---|---|---|---|
+| … | run on the base branch just now / last exercised end to end on `<date>` | green, or red + what failed | the node numbers |
+
+A red row or a never-exercised path makes every node in its last column a **stop**, whatever the rest of
+that node's row says.
+
+Then one table, one row per node:
 
 | node | invariants touched | invariant verdict | acceptance criteria | edges + couplings | proof contract |
 |---|---|---|---|---|---|

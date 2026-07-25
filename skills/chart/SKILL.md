@@ -134,6 +134,12 @@ runs its code and how a run is watched, where durable records live, whether erro
 collected somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as
 absent — but "we don't deploy anywhere" is not one of them: if the repo can run its code, it has tier 3.
 
+**Say which of the profile's commands this repo's CI actually gates.** A tier command CI does not run is
+unverified by default, permanently and silently, and it *will* rot between the day it is charted and the
+day the DAG is signed — which puts every node naming it at risk at once, since a profile is shared by the
+whole chart. Either get it gated, or record it as ungated so pre-flight knows to **baseline** it with
+suspicion rather than habit.
+
 Then, per node: name its **surface** — that fixes the **evidence form** — and fill its proof table from
 the profile, plus the **nonce** the run will carry. Every node has a surface and so has an evidence form:
 a backend node proves itself with a durable delta and exact ids, a CLI node with its captured output, a

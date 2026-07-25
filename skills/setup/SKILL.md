@@ -1,6 +1,6 @@
 ---
 name: setup
-description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once, before /dag:plan.
+description: One-time repo configuration for the DAG suite — confirms GitHub native blocking, creates the label vocabulary chart and execute rely on, and lays out domain docs. Run once, before the planning door.
 disable-model-invocation: true
 ---
 
@@ -23,14 +23,14 @@ How to respond — the closing message, and any question put to the user — is 
 - `gh auth status` — authenticated, and the token carries `repo`. It reports the host and scopes,
   not per-repo access, so confirm that separately with a read against this repo.
 - `gh label list` — which of the suite's labels (below) already exist.
-- `CLAUDE.md` / `AGENTS.md` at the repo root — does either exist, and is there already a `## DAG suite`
-  section?
+- `CLAUDE.md` / `AGENTS.md` at the repo root — does either exist, is `CLAUDE.md` a symlink or a real
+  file, does it already import `@AGENTS.md`, and is there already a `## DAG suite` section?
 - `CONTEXT.md`, `CONTEXT-MAP.md`, `docs/adr/` — existing domain docs.
 - Monorepo signals — a workspace declaration in whatever form this repo's tooling uses, plus populated
   `packages/*/src`. Their absence (the common case) means single-context.
 
-*Done when:* you know the remote, auth state, which labels already exist, which root doc to edit, and
-whether domain docs already exist.
+*Done when:* you know the remote, auth state, which labels already exist, the relationship between the
+two host instruction files, and whether domain docs already exist.
 
 ### 2. Confirm native blocking
 
@@ -100,9 +100,21 @@ per-context `CONTEXT.md` files) only when step 1 found monorepo signals, and con
 
 Show the user a draft of the `## DAG suite` block below before writing it.
 
-**Pick the file:** edit `CLAUDE.md` if it exists, else `AGENTS.md` if it exists, else ask the user which
-to create. Never create one when the other already exists. If a `## DAG suite` block is already there,
-update it in place rather than duplicating it.
+**One shared instruction source:** `AGENTS.md` is canonical for instructions both hosts need. Claude Code
+reaches it through `CLAUDE.md`; Codex reads it directly. Apply the first matching case:
+
+1. **Neither exists:** create `AGENTS.md`, then create `CLAUDE.md` as a relative symlink to it.
+2. **Only `AGENTS.md` exists:** update it and create the `CLAUDE.md` symlink.
+3. **`CLAUDE.md` already symlinks to `AGENTS.md`:** update `AGENTS.md`; do not replace the link.
+4. **Only a real `CLAUDE.md` exists:** separate shared instructions into a new `AGENTS.md`. If nothing
+   Claude-specific remains, replace `CLAUDE.md` with the relative symlink; otherwise keep the real file,
+   put `@AGENTS.md` at its top, and retain the Claude-only section below it.
+5. **Both are real files:** put the shared DAG block in `AGENTS.md` once and ensure `CLAUDE.md` imports
+   `@AGENTS.md`. Remove any duplicate DAG block from `CLAUDE.md`, preserving Claude-only instructions.
+
+On Windows, or anywhere symlink creation is unavailable, use a real `CLAUDE.md` containing
+`@AGENTS.md` instead. Never overwrite host-specific instructions. Show the exact migration diff with the
+draft before writing it.
 
 ```markdown
 ## DAG suite
@@ -111,10 +123,11 @@ Issues live on GitHub; native blocking is confirmed working. Labels: `dag:map` (
 `dag:preflighted` (pre-flight signed), `dag:halted` (execution stopped it; re-plan before re-signing),
 `dag:needs-grilling` / `dag:needs-research` / `dag:needs-prototype` (readiness — absent means clear).
 Domain docs: [single-context | multi-context], see CONTEXT.md[/CONTEXT-MAP.md]. See `GLOSSARY.md` and
-`/dag:plan` for the suite's terms and skills.
+the planning door for the suite's terms and skills (`/dag:plan` in Claude Code, `$dag:plan` in Codex).
 ```
 
-*Done when:* the block is written (or updated) in the chosen root doc.
+*Done when:* the block exists once in `AGENTS.md`, Claude Code reaches it through a symlink or import,
+Codex reads it directly, and every pre-existing host-specific instruction is preserved.
 
 ### 6. Done
 

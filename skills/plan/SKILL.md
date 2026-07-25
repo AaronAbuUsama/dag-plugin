@@ -1,12 +1,13 @@
 ---
 name: plan
-description: The planning door — reads the chart's state off GitHub, tells you where you are, and runs the next planning move itself, through to the pre-flight signature that hands the DAG to /dag:execute.
+description: The planning door — reads the chart's state off GitHub, tells you where you are, and runs the next planning move itself, through to the pre-flight signature that hands the DAG to execution.
 disable-model-invocation: true
 ---
 
 # Plan — where you are, and the next move
 
-**The planning half's one door.** Run `/dag:plan` from any context window, at any point before the DAG is
+**The planning half's one door.** Run `/dag:plan` in Claude Code or `$dag:plan` in Codex from any
+context window, at any point before the DAG is
 signed. It finds the **chart** on GitHub, reads its state, and **runs** the next move — so you never have
 to work out which skill to reach for, or type a second command to get started. Terms are defined once in
 [`../../GLOSSARY.md`](../../GLOSSARY.md).
@@ -94,10 +95,11 @@ dispatch the gate exists to prevent.
 decisions; you never pick them alone.
 
 **When the move needs an input only the user can give, ask it and then start — in the same turn.** The
-commonest is scope: with no chart, which effort does this one cover? Put that through
-**`AskUserQuestion`** with the candidates you found in the repo as options, and carry straight on into
-the grill once it is answered. What you never do is stop, hand over a command, *and* ask a question — one
-command in should produce one question back and then work, not a homework list.
+commonest is scope: with no chart, which effort does this one cover? Put that through the question path
+for the current host in [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), with the candidates you
+found in the repo as options, and carry straight on into the grill once it is answered. What you never do
+is stop, hand over a command, *and* ask a question — one command in should produce one question back and
+then work, not a homework list.
 
 **Close the de-fog node when its move lands.** Record the answer as a comment on that node — the
 decision a grill settled, the fact research found, the verdict a spike returned — then close it. That

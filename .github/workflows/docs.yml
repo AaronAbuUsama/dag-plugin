@@ -1,8 +1,6 @@
 name: docs
 
-# Publishes docs/ to GitHub Pages. Inert until Pages is enabled for this repo
-# (Settings → Pages → Source: GitHub Actions). On the Free plan that also
-# requires the repository to be public.
+# Publishes docs/ to GitHub Pages.
 
 on:
   push:
@@ -43,13 +41,8 @@ jobs:
         with:
           path: docs/dist
 
-  # Deploy only on a manual run. Pages is not enabled for this repo yet — and on the
-  # Free plan it cannot be while the repo is private — so deploying on every push
-  # would fail every time. The build above still runs on push, which is the part
-  # worth having: it catches docs that stop compiling.
   deploy:
     needs: build
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

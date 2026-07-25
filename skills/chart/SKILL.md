@@ -70,7 +70,7 @@ unknown is settled *before* the build reaches the frontier:
 - **needs-grilling** — a decision is still open. Add a grilling node (`/dag:grill`) that blocks the build
   node.
 - **needs-research** — a fact must be found first. Add a research node (`/dag:research`) that blocks the
-  build node; fire its subagent in step 5.
+  build node; assign its research teammate in step 5.
 - **needs-prototype** — not knowable on paper. Emit a **spike**: a throwaway-prototype node
   (`/dag:prototype`) that blocks the build node until it resolves. This is how the not-knowable gets
   de-risked cheaply before the real build commits.
@@ -170,15 +170,18 @@ link — the frontier renders correctly in GitHub's UI.
 
 ### 5. Fire research and hand off
 
-Research nodes resolve by subagent, one each, **posting findings as a comment on their own issue** — that
-comment is what `/dag:plan` reads to close the node and unblock what it was blocking. A finding that lands
-only in a file is one the router cannot see.
+Research nodes resolve by teammate, one each, **posting findings as a comment on their own issue** — that
+comment is what `/dag:plan` reads to close the node and unblock what it was blocking. Claude Code uses
+Agent Teams; Codex uses native child agents. There is no subagent fallback. A finding that lands only in a
+file is one the router cannot see.
 
-**Say what you are about to dispatch and how many, then dispatch.** Spawning agents is something a repo
-or a session may have its own standing rules about, and a chart with eight research nodes is eight
-agents. Where such a rule says agents are not spawned unprompted, **that rule wins**: name the research
-nodes, say they are ready to fire, and let the user trigger them. Handing the chart on with its research
-unstarted is fine — `/dag:plan` routes each unanswered research node to `/dag:research` when it comes up.
+**Say what you are about to dispatch and how many, then dispatch.** The planning orchestrator alone
+assigns each node; research teammates never self-claim another node or delegate further. Spawning agents
+is something a repo or a session may have its own standing rules about, and a chart with eight research
+nodes is eight agents. Where such a rule says agents are not spawned unprompted, **that rule wins**: name
+the research nodes, say they are ready to fire, and let the user trigger them. Handing the chart on with
+its research unstarted is fine — `/dag:plan` routes each unanswered research node to `/dag:research` when
+it comes up.
 
 Fire each research node **once**. A node that already has its answer is one `/dag:plan` closes, not one it
 re-fires; re-firing an answered node is how a chart loops forever.

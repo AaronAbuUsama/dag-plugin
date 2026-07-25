@@ -4,7 +4,7 @@ The packet handed to whatever reviews one **node**'s PR. Terms are defined in
 [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
 The suite does not own *who* reviews. That is declared on the **map**'s Skills line and is whatever this
-repo already trusts — a review skill, a subagent, a bot. It owns what the reviewer is **told**, because a
+repo already trusts — a review skill, an assigned review teammate, a bot. It owns what the reviewer is **told**, because a
 reviewer given only a diff reviews the diff: it judges style and correctness in the abstract and never
 once asks whether this node did the thing it was created to do.
 

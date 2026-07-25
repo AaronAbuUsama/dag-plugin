@@ -77,6 +77,11 @@ The open, unblocked, unclaimed nodes — every node whose blockers are all close
 edge of the graph, and it is what sizes a wave: three focused teammates beat five scattered ones, and a
 wave of four ready nodes wants about four.
 
+The main orchestrator computes that frontier from GitHub and assigns it. A host task list is only the
+orchestrator's record of current assignments; it is not another graph, and workers never self-claim the
+next node from it. When a rung-3 stop exposes a broken premise, the orchestrator freezes new dispatch,
+marks the map halted and checks in-flight nodes before allowing only work proven independent of the nest.
+
 ## Readiness
 
 How knowable a node is, decided while charting. A node that isn't **clear** gets a second issue — the

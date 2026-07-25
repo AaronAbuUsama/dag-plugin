@@ -19,6 +19,23 @@ gh issue view <map-number> --json labels --jq '.labels[].name'
 No label means pre-flight was never signed, or something took it off. Run `/dag:plan`; it will route you
 to `/dag:preflight`.
 
+## The native worker runner is unavailable
+
+Execution has one runner per host. Claude Code requires Agent Teams; Codex requires native child agents.
+If that capability is unavailable, `dag:execute` stops before creating any assignment. It does not fall
+back to Claude subagents or user-owned Codex sidebar tasks.
+
+For Claude Code, upgrade to a release with Agent Teams and enable that experimental feature. For Codex,
+confirm the `multi_agent` feature is enabled:
+
+```bash
+claude --version
+codex features list | grep multi_agent
+```
+
+Once the runner exists, run the execution door again. GitHub still owns the frontier, so nothing needs
+to be reconstructed from a runtime task list.
+
 ## A build node never becomes ready
 
 Almost always an open de-fog node. A build node blocked by one stays off the frontier until that node
@@ -73,8 +90,9 @@ gh pr list --state open --json number,headRefName,title
 ```
 
 What a resumed session **does** lose is the teammates themselves. Their branches, worktrees and open PRs
-survive; the agent sessions don't. Re-run `/dag:execute` and it dispatches fresh teammates to the nodes
-still open.
+survive; the agent sessions don't. Re-run `/dag:execute`; the main orchestrator re-reads GitHub and
+assigns fresh teammates to the nodes still open. Workers never claim the next issue from a stale runtime
+task list.
 
 **Leftover worktrees** are the one thing worth cleaning by hand:
 
@@ -167,8 +185,9 @@ Worth knowing before the first run rather than after:
 
 - **`/dag:execute` merges to your base branch and closes issues, unattended.** That is what the signature
   authorises. Run it somewhere you're willing to have written to.
-- **`/dag:setup` edits your `CLAUDE.md`** (or `AGENTS.md`) to add a `## DAG suite` block, and writes
-  `CONTEXT.md` and `docs/adr/`. It shows you the draft first.
+- **`/dag:setup` keeps shared instructions in `AGENTS.md`.** It links `CLAUDE.md` to that file where
+  possible, or preserves Claude-specific instructions and imports `@AGENTS.md`. It writes `CONTEXT.md`
+  and `docs/adr/`, and shows the migration diff first.
 - **`/dag:prove` can leave a real footprint** — durable records, and for a messaging surface, real
   messages to real recipients. It reports that footprint in the PR, but nothing caps it. Point messaging
   nodes at a test recipient.

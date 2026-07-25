@@ -20,9 +20,9 @@ Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
    answerable *now* without guessing at answers you haven't heard. A decision that depends on another
    still-open decision belongs to a *later* **round**, not this one.
    *Done when:* you have that list and can name what each item is blocked on (nothing) or blocks.
-2. **Resolve every fact yourself** — the rule is in the output style; here it means dispatching a subagent
-   (see `/dag:research`) per frontier item for anything findable in the code or environment: call sites,
-   current behaviour, what a type already guarantees.
+2. **Resolve every fact yourself** — the rule is in the output style; here it means assigning one research
+   teammate through the current host's agent-team path (see `/dag:research`) per frontier item for anything
+   findable in the code or environment: call sites, current behaviour, what a type already guarantees.
    *Done when:* no frontier item is waiting on a fact you could have looked up.
 3. **Put the whole frontier to the user as one round.** Number the questions. Each one is a
    **rubric-grill** (below) — no exceptions. Then stop and wait for answers.
@@ -74,7 +74,7 @@ earn their space — cut the prose around them, not them.
 
 **A question the user cannot judge from what is on screen is a failed question.** The six ordered parts —
 the problem as real code, what it touches, the options as code or diffs, a stated rubric, a
-recommendation, then the ask through `AskUserQuestion` — are the **decision block** in
+recommendation, then the ask through the current host's question surface — are the **decision block** in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), and they are in this plugin's output style so they
 hold every turn. Read the file before a round; it is not restated here, because two copies drift and the
 inline one always wins.

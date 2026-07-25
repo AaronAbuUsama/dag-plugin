@@ -22,6 +22,34 @@ style rather than compliance with it. Hard `---` separators between slots whenev
   in front of a human. `grill`'s rubric-grill defers to it explicitly rather than restating it.
 - **All eleven skills point at it**, beside the glossary link they already carried.
 
+---
+
+**Looking for the nest is a reflex, not a rollout ritual.** Nest thinking was stranded in the execution
+half: `diagnose` is the whole skill and `execute` uses it operationally, while `plan` had one mention
+inside an ASCII diagram and **eight skills had none at all** — chart, grill, grill-deep, preflight,
+prototype, research, setup, prove. So the planning half had no instruction to look for a shared root.
+
+What that cost, in a real session: a research node investigating why a health endpoint reported a dead
+connection as "online" surfaced three findings — a phase field that tracks startup rather than
+connectivity, a live status signal whose listener is torn down the instant auth settles and whose getter is
+never read, and a coalescer parked on an unbounded queue that outlives the transport. Those are one class:
+*live truth exists at the transport boundary and is discarded at the seam, so downstream invents its own
+state and never reconciles it.* They were reported as three separate items, and **the user had to ask** "are
+these symptoms of a deeper issue?" before they were collapsed. That prompt should never have been necessary.
+
+- **The reflex is defined once**, in the glossary as **looking for the nest**: the moment two or more
+  findings could plausibly share a root, say so unprompted — name the class in one sentence, state
+  confidence with verified instances separated from suspected ones, and flag whether it warrants diagnosing
+  rather than patching each symptom.
+- **The judgement stays where it already lives.** The entry points at `/dag:diagnose` for whether the
+  cluster is real, what the verdict is, and what a consolidating fix must cover. The glossary carries the
+  trigger; the skill carries the machinery, and nothing is duplicated.
+- **The trigger goes where findings are produced** — `research` (more than one finding), `prove` (more than
+  one failing tier), `preflight` (the same invariant or coupling across nodes), `grill` (a round's answers
+  pointing at one gap), and `chart` (several nodes waiting on what is really one decision — which should be
+  one de-fog node blocking three, not three de-fog nodes).
+
+
 ## 0.7.0
 
 **Every turn ends with a position.** The suite said how to choose a move and how to run one, and nothing

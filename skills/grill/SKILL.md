@@ -28,8 +28,11 @@ Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
    **rubric-grill** (below) — no exceptions. Then stop and wait for answers.
    *Done when:* every frontier question is presented grounded and you have handed the round over.
 4. **Fold the answers back in.** Each answer settles a decision, which pushes the frontier outward and
-   unblocks what depended on it. Update the **design tree**, recompute, and run the next round.
-   *Done when:* the answers are recorded and the next frontier is computed.
+   unblocks what depended on it. Update the **design tree**, recompute, and run the next round. If two or
+   more of the round's answers point at the same underlying gap, say so — see **looking for the nest** in
+   the glossary; a plan built around three symptoms of one root cause designs the root cause in.
+   *Done when:* the answers are recorded, the next frontier is computed, and any shared root across the
+   round's answers is named rather than left for the user to spot.
 
 ## An empty frontier is a claim, and it needs a check
 

@@ -25,5 +25,12 @@ The shape of the message a turn ends with is in
    `/dag:plan` window reads to close the node and unblock what it was blocking. A finding that lives
    only in a file is a finding the router cannot see, and the node it de-fogs stays blocked forever.
 
+**Before you report more than one finding, look for the nest.** Research that surfaces three findings has
+to ask whether they are three things or one thing seen three times — see **looking for the nest** in the
+glossary. Name the class in a sentence, separate what you read from what you inferred, and say whether it
+warrants diagnosing rather than fixing each symptom. Reporting a list and leaving the reader to notice the
+pattern is how a root cause survives being found.
+
 *Done when:* the question is answered against primary sources with each claim cited, the file is saved
-and its location stated, and — for a `needs-research` node — the answer is a comment on that issue.
+and its location stated, the answer is a comment on the node's issue for a `needs-research` node, and —
+where more than one finding came back — you have said whether they share a root.

@@ -89,6 +89,16 @@ names runs today.**
 A command that does not pass is not a runnable tier. Every node naming it is a **stop**, and repairing
 the command becomes its own node — the chart does not get signed over a bar nothing can clear.
 
+**The repair node is the exception, and without it nothing moves.** Its whole job is to turn that command
+green, so a red baseline is its *starting condition*, not a disqualification. Hold the ordinary rule to it
+and you deadlock the chart: the repair node's own contract names the broken command, so it is a stop too,
+so the DAG never signs, so `/dag:execute` never dispatches the one node that would fix it, and the command
+stays red forever. Sign it. Its contract records the red baseline as the "before" and the command passing
+as the proof it is done — a genuinely stronger contract than most, because the failure is already
+observed. Every other node naming that command stays a stop until the repair merges and the command
+**re-baselines green**; blocking them behind the repair node is `/dag:replan`'s job, not a reason to
+refuse the signature.
+
 It is cheap by construction: a chart of twenty nodes usually names three or four distinct commands, so
 this is one run each, not one per node.
 
@@ -99,8 +109,9 @@ alongside two siblings that all take a first dependency on it at once. Three nod
 that a shared path was never real is one failure paid for three times.
 
 *Done when:* every distinct tier command in the chart has been run on the base branch with its result
-recorded; every environment-reached tier carries when it was last exercised end to end; and every command
-that failed, or path never exercised, is named along with every node depending on it.
+recorded; every environment-reached tier carries when it was last exercised end to end; every command that
+failed, or path never exercised, is named along with every node depending on it; and any repair node for a
+red command is signed rather than stopped by the command it exists to fix.
 
 ### Then, per node, check its contract against the map's **proof profile**
 

@@ -101,6 +101,11 @@ live.
 contract nobody can meet because the profile named a path that does not exist is repaired by making the
 path exist, and that is buildable work.
 
+**Write the repair node's own contract around the failure, not around a clean start.** Where it repairs a
+red tier command, the red **baseline** is its recorded "before" and the command passing is its proof — and
+pre-flight signs it on exactly that basis rather than stopping it for naming a command that is broken
+today. A repair node held to the ordinary rule is a repair node that never dispatches.
+
 *Done when:* the repair node exists with criteria and a contract, and every node in the class is blocked
 by it through the tracker's real dependency relation — verified by reading the blockers back.
 

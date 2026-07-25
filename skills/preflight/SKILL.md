@@ -56,14 +56,22 @@ and the declared edges recorded only the merge dependency, never the shape — s
 invisible until review. For every pair that shares a contract, a shape, or a name one side defines and
 the other consumes, add the missing edge now.
 
+**Note file-level contention, but do not make it an edge.** Two nodes with no dependency between them can
+still be dispatched into the same wave and both rewrite the same package — the first to merge invalidates
+the other's branch *and the proof gathered on it*. That is not a blocking edge and must not become one;
+it is a scheduling note, recorded here because this is the only pass that sees every node's touched
+surface at once. Name which nodes contend, so a wave can be composed without paying for the same rebase
+and re-proof twice.
+
 **Findings across nodes are a cluster too.** Several nodes failing the same invariant, or several hidden
 edges carrying the same shape, is one design gap rendered N times — apply **looking for the nest** and say
 so before sending each node back on its own. A DAG re-planned node-by-node against one root cause gets
 re-planned again.
 
-*Done when:* every declared edge is confirmed-or-removed, and every node has been checked for hidden
-edges against the nodes it shares a contract with — new edges added where found, and any pattern across
-nodes named as a possible shared root rather than logged N times.
+*Done when:* every declared edge is confirmed-or-removed, every node has been checked for hidden edges
+against the nodes it shares a contract with — new edges added where found — contending nodes are named as
+a scheduling note rather than edged, and any pattern across nodes is called a possible shared root rather
+than logged N times.
 
 ## 4. Proof contract, per node
 

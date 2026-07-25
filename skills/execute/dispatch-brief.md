@@ -17,6 +17,13 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
   the gate; where it isn't, it builds so the contract stays satisfiable — states observable, records
   readable — and the orchestrator captures it after merge. A teammate that finds the contract
   unsatisfiable says so and stops; it never substitutes a bar it can clear.
+- **Which half of a split tier 3 this node uses, and who runs it.** A profile that splits tier 3 — some
+  nodes provable from a branch, others only on a shared environment that takes merged commits — has to say
+  per node which half applies, in words, not by naming the skill and leaving the teammate to infer it. And
+  **name any shared environment this teammate must not touch.** The motivating case: a brief named the
+  environment's skill without saying which half, so the teammate deployed an unmerged branch to a live
+  single-home box, proved there, and rolled back. The evidence was stronger than required and the rollback
+  verified — and it still broke the chart's own rule on the one box that could not afford it.
 - **Invariants touched.** The architecture invariants this node's design must hold, named at pre-flight.
 - **Ground already laid.** The merged nodes this one builds on and the exact contract/shape/name it
   consumes from each (the hidden-edge couplings pre-flight surfaced) — so it targets what exists, not a

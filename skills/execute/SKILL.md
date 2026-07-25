@@ -102,6 +102,20 @@ a reviewer is actually reading, and a node whose proof can't be gathered has not
 cheaper to learn before the merge than after. Only where tier 3 genuinely needs the merged head does
 proof move to step 5.
 
+**Proof must be current with what merges, and currency is checked by content, not ancestry.** Evidence
+gathered at an earlier commit is evidence about *that* commit, and review fixes landing after it can
+change the behaviour it claimed. A squash merge does not keep the proof commit as an ancestor, so
+`git merge-base --is-ancestor` answers "not merged" for work that merged perfectly — diff the paths the
+evidence covers instead:
+
+```bash
+git diff <proof-head> origin/main -- <paths the contract's evidence covers>
+```
+
+Empty means the proof still describes what is on `main`. Non-empty means re-prove — and a re-proof is not
+merely fresher, it is often strictly better evidence, because the fixes it runs against created states the
+first run could not reach.
+
 *Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, every finding
 of the last round was resolved through the ladder, and the proof contract is satisfied — or the profile
 says this node's tier 3 waits for the merged head.

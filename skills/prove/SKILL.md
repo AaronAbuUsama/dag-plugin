@@ -51,6 +51,13 @@ the path the acceptance criteria name proves the feature worked.
 **Never weaken an assertion to manufacture green.** A failing proof is a finding about the product, not a
 problem with the proof — take it to step 5.
 
+**A time-bounded criterion is proved against a clock you control.** Where the contract names a bound —
+"within 65 seconds", "settles inside one tick" — drive a deterministic clock and assert the bound, rather
+than running against wall-clock and widening the tolerance until it passes. Widening a timeout *is*
+weakening an assertion, in the form that does not look like one, and two green runs are not evidence a
+timing assertion is stable — only that the machine was quiet twice. The bound belongs in the code and in
+the PR body, where a reviewer can see which number was actually held.
+
 *Done when:* every tier in the contract has been run and carries a **verdict** with its identifiers, and
 no assertion was loosened, skipped, or retried into passing.
 

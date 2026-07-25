@@ -105,6 +105,47 @@ that label is what lets a fresh window resume autonomous execution over a DAG a 
 gh issue edit <map-number> --remove-label dag:preflighted
 ```
 
+## 4. End the turn with a position — every time, no exceptions
+
+A turn that ends with results and caveats leaves the user unable to answer "what now?" — and they should
+never have to ask. **The last thing in every `/dag:plan` turn is this block.** Not a summary of what you
+did; a statement of where the effort now stands.
+
+```markdown
+**Where we are** — <the phase, and the specific point inside it>
+
+**What's saved, and where** — <what is durable on the tracker; then anything sitting uncommitted locally>
+
+**What happens next** — <the next move, and that you will run it>
+
+**What you do** — <almost always: nothing, or run `/dag:plan` again>
+```
+
+The four lines each exist for a reason a session eventually finds:
+
+- **Where we are** — orientation, because the user has not been holding the process in their head.
+- **What's saved, and where** — the reason a fresh window works at all. Name the tracker artifacts, and
+  name uncommitted local work separately, because those two have very different survival odds.
+- **What happens next** — and it is *yours to run*. Never write "run `/dag:preflight`" or "run
+  `/dag:grill`": naming a planning command is the failure this whole door exists to prevent.
+  `/dag:execute` is the only command you ever hand over.
+- **What you do** — usually **nothing, or run `/dag:plan` again**. Say it explicitly. A user who has not
+  read the docs has no way to know that re-running the same command resumes the work, and that is the one
+  fact the whole design rests on.
+
+**Re-anchor after anything off-piste.** When a turn went sideways into work outside the chart — a bug you
+were asked to fix, a tangent that mattered — the block still closes the turn, and says where that left the
+plan. Off-piste work with no re-anchor is exactly how someone ends up lost, and it is the moment the block
+matters most rather than least.
+
+**Ask and carry on, rather than parking.** Where the next move needs a decision and the move itself is
+cheap and reversible — charting issues that can be edited or closed, for instance — ask through
+`AskUserQuestion` and keep going in the same turn. Stopping to request permission for a reversible write
+turns one command into a homework list.
+
+*Done when:* the turn's final block carries all four lines, the "what happens next" names no planning
+command for the user to type, and "what you do" states plainly that re-running `/dag:plan` resumes.
+
 ## First time here?
 
 With no chart, `/dag:plan` is also the tour. The pipeline, once:

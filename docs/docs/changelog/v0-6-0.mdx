@@ -1,0 +1,33 @@
+---
+title: v0.6.0
+description: "What the first charted epic taught it: frontier completeness, map freshness, round budgets, and no unprompted agents."
+type: changelog
+date: 2026-07-25T05:45:00Z
+changelog:
+  version: 0.6.0
+---
+
+**What the first charted epic taught it.** Four gaps found by using the suite on real work, all
+structural rather than one-off.
+
+- **An empty frontier is now a claim that gets checked.** `grill` said "when the frontier is empty,
+  stop" and offered no test for what a complete frontier covers — so a grilling closes on whichever axis
+  the griller finds most natural and feels finished. Twice in one run the frontier was declared empty and
+  reopened with real questions. It now walks named axes before closing — surface, data and state,
+  integration, operations, failure, scope edge — and an axis with nothing on it must be defended as out
+  of scope rather than overlooked.
+- **The map has to stay fresh, and now says so.** The template was write-once: no DAG diagram in it, and
+  nothing anywhere saying to keep it current as nodes close. A stale map is worse than no map because
+  people trust it. The map body now carries a standing freshness instruction and a mermaid DAG, with the
+  two clauses that make it bind — regenerate *in the same turn as finishing the work*, and *recompute the
+  frontier from the tracker, never from the file*. Closed nodes grey out rather than vanishing, because
+  the shape of what has been walked is the point.
+- **Rounds are budgeted.** The grounding is non-negotiable, so length is what has to give; six questions
+  is a round, and past that it splits. A wall of text gets skimmed, and a decision made from skimming is
+  the failure the rubric-grill exists to prevent.
+- **`chart` no longer spawns agents unprompted.** Its last step told the run to fire a subagent per
+  research node, which collides with any repo or session rule against spawning agents unasked — and a
+  chart with eight research nodes is eight agents. It now announces what it is about to dispatch, and
+  where a standing rule forbids it, that rule wins: the nodes are named as ready-to-fire and the user
+  triggers them. `chart` also hands back to `/dag:plan` rather than naming `/dag:preflight`, which was
+  the last place a skill routed past the door.

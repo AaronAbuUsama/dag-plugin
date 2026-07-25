@@ -9,7 +9,8 @@ disable-model-invocation: true
 Run this **once**, after a **DAG** of **nodes** and **edges** exists (laid down by `/dag:chart`) and
 before Wave 1 dispatch. It is the whole-DAG conformance gate: catch every architecture violation here,
 against the *design*, where it is cheap — not later, in review, against the *code*, where it is most
-expensive. Terms below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md).
+expensive. Terms below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and the shape of the message this turn ends with is in
+[`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md).
 
 Inputs: the DAG, the project's architecture-**invariant** doc, and each node's written spec (its
 acceptance criteria). Work the four steps in order; each produces one column of the signed table.

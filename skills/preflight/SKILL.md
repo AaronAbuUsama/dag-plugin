@@ -29,10 +29,13 @@ plan, not an implementation. Give the node one verdict:
 
 - **satisfies** — the design meets every invariant it touches.
 - **at-risk** — the design plausibly meets them but a specific choice is unconfirmed; name the choice.
+  A working state for the length of this audit only — it cannot survive the signature, and the rule that
+  says so is at the bottom of this file.
 - **re-plan** — the design cannot satisfy an invariant as written.
 
 *Done when:* every node in the DAG carries an invariant list and one of the three verdicts — no node
-left unjudged.
+left unjudged, and every at-risk node names the unconfirmed choice it is waiting on rather than the
+verdict alone.
 
 ## 2. Acceptance-criteria checkability
 
@@ -130,7 +133,7 @@ Then one table, one row per node:
 
 | node | invariants touched | invariant verdict | acceptance criteria | edges + couplings | proof contract |
 |---|---|---|---|---|---|
-| … | the invariants, named | satisfies / at-risk / re-plan | all design-checkable? | confirmed, plus the exact contract/shape/name each hidden edge carries | the runnable contract, or **stop** |
+| … | the invariants, named | satisfies / at-risk **→ settled how** / re-plan | all design-checkable? | confirmed, plus the exact contract/shape/name each hidden edge carries | the runnable contract, or **stop** |
 
 **Name the invariants and the couplings, don't just grade them.** Both the dispatch brief and the
 review brief quote this table per node — "invariants touched, as pre-flight named them" and "the
@@ -139,8 +142,16 @@ from the pre-flight author's context window, which is the one place the suite sa
 live.
 
 Any node with a **re-plan** verdict or a **stop** proof contract is not dispatchable. It goes back to
-planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart. Pre-flight is
-signed only when every remaining node is **satisfies**-or-resolved-**at-risk**, fully design-checkable,
+planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart.
+
+**An at-risk verdict cannot survive the signature.** Either the unconfirmed choice is settled here and
+recorded on that node's issue — making the node **satisfies** — or the node is relabelled
+`dag:needs-grilling` and the chart is not complete. There is no third state to carry forward, and no
+label to invent for one: at-risk *means* an open decision, which the readiness vocabulary already names
+and the planning router already routes. A verdict this gate writes and nothing reads back is a verdict
+that gets signed over, and it looks handled while it does it.
+
+Pre-flight is signed only when every remaining node is **satisfies**, fully design-checkable,
 edge-audited, and carries a proof contract. Only a signed pre-flight clears the DAG for dispatch.
 
 **Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add

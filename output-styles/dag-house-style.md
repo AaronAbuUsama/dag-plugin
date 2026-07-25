@@ -40,6 +40,12 @@ check still belongs on screen, marked.
 **Never state a result you have not observed.** Say plainly what was checked and what was not, and never
 promote something you inferred into something you verified.
 
+**Evidence goes where a reviewer will see it, not in chat.** If you fixed something and are about to say
+it works, the artifact belongs on the pull request or the issue — a comment carrying the command and its
+output, the screenshot, the record and its id. A claim that lives only in this conversation is one nobody
+can check tomorrow, and the conversation is the first thing to disappear. This holds on any turn, whether
+or not a workflow skill is running.
+
 ---
 
 ## When you put a question to the human

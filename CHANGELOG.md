@@ -30,9 +30,33 @@ while grilling. A roll-up got none of them.
   own mechanics — `grill` on how to resolve facts, `plan` on charting being the reversible write. Three
   genuine duplicates were found and cut, one of them introduced during this change.
 
-Enforcement was considered and deferred: a `Stop` hook receives `last_assistant_message` and can return
-`decision: block` to force a redo, which is verified available. The style is system-prompt level and far
-stronger than anything tried so far, so it ships alone first and gets measured before machinery is added.
+**`prove` fires on what people ask, and the obligation no longer depends on it firing at all.** A live run
+on 0.8.1 was asked "CI is red, fix it, update the PR". It diagnosed and fixed correctly, then reported the
+proof **in chat** — no receipt, no PR comment, PR #385 with zero comments. `prove` was model-invocable and
+in the registry. One Skill call, never made.
+
+The cause is trigger shape, not the spine. `execute` has `/dag:prove` as a numbered step with a
+`Done when: /dag:prove has returned a verdict` gate, the ledger derived from the tracker, and
+close-on-proof leaving a merged-but-unproven node visibly open. All intact. But `prove` was the only skill
+in the suite whose description named **world-states** — "a merged node owes its proof", "a PR asserts
+behaviour it does not show" — rather than anything a person says. `research` and `prototype` are dispatched
+by `plan` and `chart`; `diagnose` by `execute` at rung 2. `prove` had that too, at `execute` step 5 — but
+only inside a door. "Fix CI and update the PR" pattern-matched to debugging, so no lookup happened, and off-piste
+turns are most turns during a long rollout.
+
+- **The obligation moved to the always-on style**, where no dispatch is needed: evidence goes where a
+  reviewer will see it, never chat alone, on any turn whether or not a workflow skill is running. That
+  addresses the actual harm rather than the missed dispatch.
+- **`prove`'s description triggers on request phrases** — opening or updating a PR, asked to fix something
+  and report back, about to say a change works — keeping the world-state clauses after them.
+- **`prove` gained a reduced path** for a PR with no chart behind it, since the new description invites it
+  there: name the claim, pick the evidence form, capture, post. No inventing a DAG to justify a contract.
+
+Enforcement stays deferred, now with a better candidate than the one this changelog first named. A `Stop`
+hook must either grep for claim-language or call GitHub every turn end; a **`PostToolUse` hook on
+`gh pr create`** would catch the same thing deterministically, because the world-state is *created* by an
+observable action rather than polled for. Held until the two cheap fixes above are measured — the hook's
+cost is certain and its necessity is not.
 
 ## 0.8.1
 

@@ -187,36 +187,27 @@ to planning — no node left in an in-between state.
 ## 7. End the turn with a position — every time, no exceptions
 
 Execution runs long and unattended, so a turn ends whenever the loop pauses: a wave completed, a rung-3
-stop, the DAG done, or the context window running out mid-wave. **Whichever it is, the last thing in the
-turn is this block.** Not a log of what happened; a statement of where the run now stands.
+stop, the DAG done, or the context window running out mid-wave.
 
-```markdown
-**Where we are** — <wave N of the DAG; how many nodes done-clean, in flight, blocked>
+**Read [`../../STOPPING-MESSAGE.md`](../../STOPPING-MESSAGE.md) before you write the closing message.**
+Not optional and not a reference for later: the shape lives there and nowhere else, and there is
+deliberately no template here to copy from.
 
-**What's saved, and where** — <closed issues, merged PRs, committed receipts; then open PRs and worktrees>
+What is specific to this door, and additional to that file:
 
-**What happens next** — <the next wave, or the decision a stop needs from the user>
+- **State position in nodes, not prose** — how many done-clean, in flight, blocked. The user has not been
+  watching.
+- **List durable work separately from in-flight work.** Closed issues, merged commits and committed
+  receipts survive a crash; open PRs and live worktrees do not, and a resumed session inherits only the
+  first cleanly. Blurring them tells the user they have more than they do.
+- **A stop is not an ending and must not read like one.** When the ladder reaches rung 3 the closing
+  message still carries the named **nest**, whether fixing it unblocks the rest of the graph, and the fact
+  that `dag:preflighted` has been removed so the DAG is back in planning. A stop that reads as a failure
+  report leaves the user holding a diagnosis with nothing to do about it.
+- **"What you do" says that re-running resumes** — usually *nothing, or run `/dag:execute` again*. And
+  where planning has to happen again, name `/dag:plan`, the other door. Never `/dag:grill`, never
+  `/dag:preflight`.
 
-**What you do** — <almost always: nothing, or run `/dag:execute` again>
-```
-
-- **Where we are** — position in the DAG, in nodes rather than prose. The user has not been watching.
-- **What's saved, and where** — durable first (closed issues, merged commits, committed receipts), then
-  what is still in flight (open PRs, live worktrees). Those two have very different survival odds, and a
-  resumed session inherits only the first cleanly.
-- **What happens next** — the next wave, which is yours to run. The one case where it is genuinely the
-  user's is a rung-3 stop, and then say exactly what the decision is.
-- **What you do** — usually **nothing, or run `/dag:execute` again**. Say it plainly. Re-running the same
-  command resumes from the tracker, and a user who has not read the docs has no way to know that.
-
-**A stop is not an ending, and must not read like one.** When the ladder reaches rung 3 the block still
-closes the turn — with the named nest, whether fixing it unblocks the rest of the graph, and the fact that
-`dag:preflighted` has been removed so the DAG is back in planning. A stop that reads as a failure report
-leaves the user with a diagnosis and no idea what to do with it.
-
-**Never hand over a planning command.** If the answer is that planning has to happen again, say so and
-name **`/dag:plan`** — the other door. Never `/dag:grill`, never `/dag:preflight`.
-
-*Done when:* the turn's final block carries all four lines, the position is stated in nodes, in-flight
-work is listed separately from durable work, and "what you do" states plainly that re-running
-`/dag:execute` resumes.
+*Done when:* you have read `STOPPING-MESSAGE.md` this turn and the closing message follows it; position is
+stated in nodes; in-flight work is listed separately from durable work; and "what you do" states plainly
+that re-running `/dag:execute` resumes.

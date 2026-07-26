@@ -1,6 +1,6 @@
 ---
 title: Skills
-description: All twelve skills the plugin ships, what each does, and which ones the routers reach.
+description: All thirteen skills the plugin ships, what each does, and which internal moves the routers reach.
 sidebar:
   icon: terminal
 ---
@@ -26,13 +26,14 @@ one of them reaches when it is time. Claude Code invokes them as `/dag:*`; Codex
 
 | Command | What it does |
 | --- | --- |
+| Wayfinding *(internal)* | `dag:plan` resolves destination fog into one Atlas indexing related expedition charts. It is not directly invoked. |
 | `/dag:grill` | A batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
 | `/dag:grill-deep` | `grill` plus a durable paper trail: resolved terms to the glossary, hard trade-offs to ADRs, captured as they settle. |
 | `/dag:research` | Settles a fact a decision is waiting on, against primary sources, through an assigned research teammate. |
 | `/dag:prototype` | The throwaway spike that de-risks a node which isn't knowable on paper. |
 | `/dag:chart` | Lays the settled plan onto GitHub — nodes, real blocking edges, readiness labels, and each node's proof contract. |
 | `/dag:preflight` | The gate. Every node validated against its invariants, criteria, edges, and a runnable proof contract — every tier command baselined by running it. Signing it opens the execution door. |
-| `/dag:replan` | For a chart execution halted. Finds the class behind the stop, amends every contract carrying it, files the repair as its own node, then re-enters the gate in full. |
+| `/dag:replan` | Classifies a returned chart as node-, method-, or destination-wrong and routes it to the level that owns the failure. |
 
 ## Execution
 
@@ -41,10 +42,16 @@ one of them reaches when it is time. Claude Code invokes them as `/dag:*`; Codex
 | `/dag:prove` | Runs a node's proof contract, captures the evidence its surface calls for, commits a receipt, posts the tier table into the PR. |
 | `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster, and the consolidating fix that closes it. |
 
+## Support
+
+| Command | What it does |
+| --- | --- |
+| `/dag:feedback` | Captures a reproducible, redacted workflow failure and returns it to the plugin source repository. |
+
 ## Which ones fire on their own
 
-Most skills are **user-invoked**: only you, typing the name, can start them. Four are
-**model-invoked**, because another skill has to be able to reach them:
+Most skills are **user-invoked**. Five are **model-invoked**, because another skill or a reported
+failure has to be able to reach them:
 
 <CardGroup cols={2}>
   <Card title="research">
@@ -59,6 +66,10 @@ Most skills are **user-invoked**: only you, typing the name, can start them. Fou
   <Card title="prove · diagnose">
     `execute` reaches these on its own — `prove` at the merge gate, `diagnose` when the ladder climbs to
     rung 2.
+  </Card>
+  <Card title="feedback">
+    Captures a confirmed or suspected DAG workflow failure with redacted evidence and returns it to the
+    plugin source repository.
   </Card>
 </CardGroup>
 

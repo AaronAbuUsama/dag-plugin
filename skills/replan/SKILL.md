@@ -1,130 +1,120 @@
 ---
 name: replan
-description: Internal planning move reached through dag:plan after execution halts — repair the whole affected chart and return it to pre-flight. Do not invoke directly outside the planning router.
+description: Internal planning move reached through dag:plan when pre-flight or execution stops a chart — classify whether the node, validation method, or destination failed, then return the work to the correct planning level. Do not invoke as a public door.
 ---
 
-# Re-plan — the chart was wrong, not the node
+# Re-plan — send the failure to the level that owns it
 
-You are here because a signed DAG came back. Not one node sent back to be grilled — the whole chart,
-unsigned by `/dag:execute` and carrying a **halt**. Terms are defined once in
-[`../../GLOSSARY.md`](../../GLOSSARY.md), and how to respond is in
+You are here because pre-flight or execution stopped a chart carrying `dag:halted`. Read the map's halt
+comment, where it surfaced, the evidence, and either the signed pre-flight table or the pre-flight draft
+that raised the stop. Terms are defined in
+[`../../GLOSSARY.md`](../../GLOSSARY.md); response rules are in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
-**What makes this its own move.** `/dag:grill` settles a decision that is open. `/dag:diagnose` finds the
-design gap behind a **cluster** of *code* findings. Neither fits a chart whose nodes are individually fine
-and whose *method* was wrong — a contract validated by a check that could not see the defect, an edge
-audit that missed a shared shape, a profile that named a path nobody had ever walked. The failure is
-upstream of every node, so fixing the node that surfaced it fixes nothing: the same defect is sitting in
-every sibling that shares the contract, waiting to be discovered again one build cycle at a time.
+## 1. Classify the halt
 
-`/dag:plan` routes here; you never reach this skill by typing a command.
+Exactly one level owns the failure:
 
-Inputs: the map issue and the halt recorded on it, the signed pre-flight table from before the halt, and
-the nodes still open.
+| Verdict | What failed | Route |
+|---|---|---|
+| **node-wrong** | one node's premise or specification | a de-fog issue under this chart |
+| **method-wrong** | a shared check, proof contract, profile or edge method let bad work through | repair the affected class across this chart |
+| **destination-wrong** | the chart may be aiming at the wrong outcome, boundary or system shape | Wayfinding in the parent Atlas |
 
-## 1. Read the halt, and say what actually failed
+Name the verdict and cite the evidence. If the evidence cannot distinguish them, create the smallest
+decision issue that can; do not pick the cheapest repair.
 
-Read the stop as recorded on the map — the node it surfaced on, the tier or check that failed, and the
-evidence. Then classify it, because only one of these belongs here:
+## 2. Node-wrong — de-fog the node
 
-- **the node was wrong** — its premise or spec. That is a de-fog move, not a re-plan: confirm a de-fog
-  node blocks it — a *separate* issue carrying `dag:needs-grilling`, or `dag:needs-prototype` where the
-  unknown is whether the thing can be observed at all, never a label on the build node itself — then
-  **clear the halt** and hand back to `/dag:plan`, which routes it. Re-planning a whole chart around one
-  bad node is ceremony.
+Confirm a separate issue carrying `dag:needs-grilling` or `dag:needs-prototype` is both a child of the
+map and a blocker of the stopped build node. Read both relationships back. Never put the readiness label
+on the build node itself.
 
-  ```bash
-  gh issue edit <map-number> --remove-label dag:halted
-  ```
-
-  Clearing it is not optional: `dag:halted` is what routed this turn here, so leaving it on sends the next
-  `/dag:plan` straight back to this skill for the same node, forever.
-- **the method was wrong** — the node was fine and something that validated it was not. This is yours.
-
-Name the failing mechanism in one sentence, in the gate's own words: *which check passed something it
-should have caught, and what it was blind to.*
-
-*Done when:* the halt is classified, and where it is a method failure you can name the check that passed
-it and what that check could not see.
-
-## 2. Find the class — every node carrying the same defect
-
-**This is [looking for the nest](../../GLOSSARY.md) at chart scale.** The node that surfaced the halt is
-the first instance, never the only one — a chart's nodes are written from one profile by one author in one
-sitting, so a defect in the method is reproduced across every node the method touched.
-
-Read every open node against the failing mechanism, not against its own spec. Where the defect is a
-shared contract, a shared profile line, or a shared tier command, the class is *every node naming it* —
-including the ones already merged and awaiting proof, and including the ones nobody has looked at yet.
-
-Say the count out loud. "Five nodes carry this" is the finding; "the node that failed carried this" is the
-symptom you arrived with.
-
-*Done when:* every open node has been checked against the failing mechanism and the class is listed by
-node number — or you have said plainly that the class is one node and this was not a method failure after
-all.
-
-## 3. Amend every contract in the class
-
-Fix the class, not the instance. Amend each affected node's issue body in place — the **proof contract**
-lives there and is read by whoever builds the node, so an amendment anywhere else is an amendment nobody
-will see.
-
-Where the amendment changes what a node must prove, say so in a comment on that node as well as in the
-body: a teammate that already read the old contract needs the delta, not a silently rewritten table.
-
-**Do not lower a bar to make it reachable.** A contract that cannot be met is a finding about the plan; a
-contract quietly weakened until it passes is the failure the whole suite exists to prevent. Where the
-honest amendment is "this cannot be proven until X exists", X is step 4's repair node and the contract
-waits behind it.
-
-*Done when:* every node in the class carries an amended contract in its issue body, no amendment weakened
-a bar to reach it, and any node whose contract now depends on unbuilt work is edged behind it in step 4.
-
-## 4. File the repair node, and edge the class behind it
-
-The thing that broke the method is work. File it as a **node** like any other — its own issue, its own
-acceptance criteria, its own proof contract — and add a real blocking **edge** from every node in the
-class to it:
-
-```bash
-gh api repos/<owner>/<repo>/issues/<n> --jq .id                       # the repair node's database id
-gh api -X POST repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by \
-  -F issue_id=<repair-node-database-id>
-```
-
-A note on the map saying "fix the evals first" is not an edge and does not stop a wave. The tracker's
-blocking relation is what `/dag:execute` computes the ready set from, so that is where the ordering has to
-live.
-
-**Where the defect was in the gate itself rather than in this repo, the repair is still a node** — a
-contract nobody can meet because the profile named a path that does not exist is repaired by making the
-path exist, and that is buildable work.
-
-**Write the repair node's own contract around the failure, not around a clean start.** Where it repairs a
-red tier command, the red **baseline** is its recorded "before" and the command passing is its proof — and
-pre-flight signs it on exactly that basis rather than stopping it for naming a command that is broken
-today. A repair node held to the ordinary rule is a repair node that never dispatches.
-
-*Done when:* the repair node exists with criteria and a contract, and every node in the class is blocked
-by it through the tracker's real dependency relation — verified by reading the blockers back.
-
-## 5. Record the re-plan on the map, then hand back to pre-flight
-
-Post one comment on the `dag:map` issue: the halt, the mechanism that failed, the class by node number,
-what each amendment changed, and the repair node. **This is the only durable record that this chart was
-halted once and why** — the next signature is read by a context window that was not here, and a chart that
-looks freshly planned gets signed with the same method that failed.
-
-Then remove the halt and re-enter the gate:
+Then clear the chart-level halt:
 
 ```bash
 gh issue edit <map-number> --remove-label dag:halted
 ```
 
-Re-signing is a full [pre-flight](../preflight/SKILL.md), not a spot-check of the amended nodes — its
-baseline step re-runs every tier command in the chart, including the ones that were green last time. A
-command that rotted once is in a repo where commands rot.
+The chart remains unsigned and the de-fog edge prevents premature pre-flight. Hand back to `dag:plan`,
+which routes the decision.
 
-*Done when:* the re-plan comment is on the map, `dag:halted` is removed, and pre-flight has been re-run in
-full over the whole chart — never over the amended nodes alone.
+*Done when:* the map's sub-issue read includes the de-fog issue, the node's blocker read includes it, the
+map is unsigned but not halted, and the next planning move is visible from GitHub.
+
+## 3. Destination-wrong — return to the Atlas
+
+Do not amend proof contracts or re-sign the existing destination.
+
+Find the map's parent Atlas. If it has none, read [`../plan/wayfind.md`](../plan/wayfind.md) and create
+one from the chart, its halt evidence and the wider intent. Record the stopped map under **Expeditions**
+and attach it as an Atlas sub-issue using the same `sub_issues` endpoint as Wayfinding. Add an Atlas
+decision issue containing:
+
+- the destination the chart assumed;
+- the evidence that invalidated it;
+- which wider boundary or relationship is now uncertain;
+- what deciding it will do to this map.
+
+Keep `dag:halted` on the map while that decision is open. Follow Wayfinding one move at a time.
+
+When the decision lands:
+
+- destination retained → record why, amend the map if necessary, remove `dag:halted`, run full
+  pre-flight;
+- destination replaced → leave the old map halted until its open nodes are explicitly closed or moved,
+  then close the old map with a supersession comment linking the Atlas decision before charting the new
+  expedition;
+- destination abandoned → close the map and its remaining nodes with the Atlas decision linked.
+
+*Done when:* the destination decision lives in the Atlas, the old chart cannot be re-signed while it is
+open, and the decision's result explicitly retains, replaces or abandons that chart.
+
+## 4. Method-wrong — find the affected class
+
+Name the failing mechanism in the gate's own words: which check passed something it should have caught,
+and what it could not see.
+
+Read every open node against that mechanism. The affected class is every node sharing the contract,
+profile line, tier command or edge assumption — including already-merged nodes still awaiting proof.
+List the class by node number.
+
+If only one node carries it, re-check the classification: that is usually node-wrong rather than a
+chart-level method failure.
+
+*Done when:* the failed mechanism and every node carrying it are named.
+
+## 5. Amend the class and add the repair
+
+Amend every affected node's proof contract in its issue body. Comment the delta as well so a teammate
+that read the old contract sees the change. Never weaken the bar merely to make it reachable.
+
+File one repair node with its own acceptance criteria and proof contract. Attach it as a map sub-issue,
+then block every affected node behind it through GitHub's native dependency:
+
+```bash
+REPAIR_ID=$(gh api repos/<owner>/<repo>/issues/<repair-number> --jq .id)
+gh api -X POST repos/<owner>/<repo>/issues/<map-number>/sub_issues -F sub_issue_id=$REPAIR_ID
+gh api -X POST repos/<owner>/<repo>/issues/<blocked>/dependencies/blocked_by \
+  -F issue_id=$REPAIR_ID
+```
+
+Write the repair contract around the observed failure. A red tier command is its baseline, not a reason
+the repair can never dispatch.
+
+*Done when:* every affected contract is amended, the map's sub-issue read includes the repair node, and
+blocker readback shows the whole class behind it.
+
+## 6. Record and re-enter the gate
+
+Comment on the map with the halt, verdict, affected class, amendments and repair node. Then remove
+`dag:halted` and run full pre-flight:
+
+```bash
+gh issue edit <map-number> --remove-label dag:halted
+```
+
+Re-run every baseline and every node row, not only the amended class.
+
+*Done when:* the durable re-plan comment exists, the halt is cleared, and full pre-flight has either
+re-signed the chart or returned another explicit stop.

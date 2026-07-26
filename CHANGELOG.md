@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.0
+
+**The missing level above a chart now exists.** `dag:plan` distinguishes one known destination from
+destination fog. Known work remains the fast path into grilling and charting; unclear system boundaries
+or several related destinations enter Wayfinding, persisted as one `dag:atlas` issue.
+
+- **Atlas above charts.** One Atlas records the north star, decisions, unspecified territory and links
+  to related expedition maps. A chart still owns exactly one destination.
+- **Expedition replaces effort.** The bounded journey one chart covers now has a defined name.
+- **Destination-wrong is a real re-plan verdict.** Node failures return to chart de-fogging, shared
+  method failures repair the affected class, and destination failures return to the Atlas.
+- **Feedback closes the field loop.** `dag:feedback` captures a redacted, evidence-backed workflow
+  failure and returns it to the plugin source repository.
+- **Two doors remain.** Wayfinding and re-planning are internal moves behind `dag:plan`; execution
+  remains behind `dag:execute`.
+
 ## 0.11.0
 
 **One workflow, two native harnesses.** The shared skill suite now ships both Claude Code and Codex

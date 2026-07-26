@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dag",
   "displayName": "DAG Engineering",
-  "version": "0.11.0",
-  "description": "One way to turn intent into a graph of provable work and walk it. Grill a plan (batched, grounded in code), prototype the unknowable, chart it onto GitHub as a DAG of issues whose proof is fixed before any code, then pre-flight, run, prove and diagnose it to done-clean — evidence shown in the PR, autonomously by default.",
+  "version": "1.0.0",
+  "description": "Turn uncertain intent into an Atlas of expeditions, then chart each destination as a graph of provable work and walk it to done-clean — evidence fixed before code and shown in the PR.",
   "author": {
     "name": "Aaron Abu Usama",
     "email": "aaron@capxul.com"

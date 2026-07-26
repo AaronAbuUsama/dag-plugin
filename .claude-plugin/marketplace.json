@@ -5,14 +5,14 @@
     "name": "Aaron Abu Usama"
   },
   "metadata": {
-    "description": "DAG Engineering — turn intent into a graph of provable work and walk it.",
-    "version": "0.11.0"
+    "description": "DAG Engineering — Wayfind intent, chart provable work, and walk it.",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "dag",
       "source": "./",
-      "description": "Grill a plan, chart it onto GitHub as a DAG of issues whose proof is fixed before any code, then pre-flight, run, prove and diagnose it to done-clean.",
+      "description": "Wayfind uncertain intent into an Atlas, chart each expedition as a GitHub DAG, then pre-flight, execute and prove it to done-clean.",
       "category": "workflow",
       "keywords": [
         "orchestration",

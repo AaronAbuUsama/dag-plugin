@@ -7,10 +7,10 @@ description: An agent told to make the tests pass will make the tests pass. This
 so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
 whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
 
-DAG Engineering is a Claude Code and Codex plugin that closes that gap. You describe what you want; it
-breaks the work into slices on GitHub, writes down **what would convince you each slice works before any
-code exists**, and then builds them — refusing to close anything until it has captured that evidence and
-put it in the pull request.
+DAG Engineering is a Claude Code and Codex plugin that closes that gap. If the destination is unclear it
+first preserves an Atlas of decisions and related expeditions. It then breaks one destination into
+slices on GitHub, writes down **what would convince you each slice works before any code exists**, and
+builds them without closing anything until that evidence is in the pull request.
 
 ## Two commands
 
@@ -33,8 +33,8 @@ issue, one worktree and one PR.
     find out later that "done" meant "tests passed". Especially when agents are doing the building.
   </Card>
   <Card title="Overkill when">
-    It's a one-file fix, an exploration where you don't yet know what you want, or anything where writing
-    down the evidence bar costs more than the change itself. Just do the work.
+    It's a one-file fix or anything where writing down the evidence bar costs more than the change
+    itself. Just do the work.
   </Card>
 </CardGroup>
 
@@ -69,7 +69,7 @@ Three things, and they're the whole design:
     Install it and configure a repo. Ten minutes.
   </Card>
   <Card title="Walkthrough" href="/walkthrough" icon="footprints">
-    One small effort end to end, with the real issue bodies, commands and PR comment. **Start here if
+    One small expedition end to end, with the real issue bodies, commands and PR comment. **Start here if
     you'd rather see it than read about it.**
   </Card>
   <Card title="When it goes wrong" href="/troubleshooting" icon="life-buoy">

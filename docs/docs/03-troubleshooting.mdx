@@ -106,18 +106,18 @@ git worktree remove <path>     # for any whose node is already closed
 That is the system working. A stop arrives pre-validated: the named root cause, a confidence level, and
 whether fixing it unblocks the rest of the graph.
 
-`/dag:execute` swaps `dag:preflighted` on the map for `dag:halted` and files a de-fog node blocking the
-stopped one, so the DAG is back in planning and no fresh window can resume execution over a graph you
-halted.
-
-Both marks matter. Removing the signature on its own is lossy — a chart you stopped and a chart nobody
-ever signed look identical, and `/dag:plan` would route both straight back to being signed, with the same
-method that just failed. If you find a stopped node with neither mark, write them yourself:
+`/dag:execute` removes the signature and records the stop at the level that owns it:
 
 ```bash
-gh issue edit <map> --remove-label dag:preflighted --add-label dag:halted
+# node-wrong
+gh issue edit <map> --remove-label dag:preflighted
 gh issue create --title "De-fog: <the question the stop raises>" --label dag:needs-grilling
-# then block the stopped node behind that new issue, by database id
+# then attach it to the map and block the stopped node behind it, by database id
+
+# method-wrong or destination-wrong
+gh issue edit <map> --remove-label dag:preflighted --add-label dag:halted
+gh issue comment <map> --body "Class: <method-wrong|destination-wrong>
+<the evidence>"
 ```
 
 :::warning
@@ -126,9 +126,9 @@ readiness-labelled issue when its move lands — that close is what puts the nod
 Label the build node and planning closes the build node, unbuilt and unproven.
 :::
 
-Then `/dag:plan` picks it up and re-plans the chart: it finds the class behind the stop, amends every
-contract carrying it, and files the repair as its own node. Pre-flight is re-signed in full — every tier
-command re-run, including the ones that were green last time — before execution resumes.
+Then `/dag:plan` classifies the stop. A wrong node returns to its de-fog decision, a wrong validation
+method repairs the affected class across the chart, and a wrong destination returns to Wayfinding in the
+parent Atlas. Pre-flight is re-signed in full before execution resumes.
 
 ## A node's proof can't be gathered
 
@@ -145,7 +145,7 @@ The usual causes, in order of likelihood:
     Fix the profile on the map and re-run pre-flight. An absent tier is stated absent, not faked.
   </Card>
   <Card title="Nobody knows whether it can be observed at all">
-    That's a spike. Raise one, let it answer the question, then re-chart the node.
+    That's a spike. Raise one, let it answer the question, then reshape and chart the node.
   </Card>
   <Card title="The node's premise was wrong">
     Not a proof problem. Rung-3 stop, back to planning.
@@ -170,8 +170,8 @@ Enterprise.
 
 ## Two charts in one repo
 
-`/dag:plan` reads a single map. With two open `dag:map` issues it will name both and ask which effort you
-mean rather than guessing.
+`/dag:plan` reads one selected Atlas or map. With several plausible issues it names them and asks which
+expedition or Atlas you mean rather than guessing.
 
 ```bash
 gh issue list --label dag:map --state open --json number,title

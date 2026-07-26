@@ -10,6 +10,17 @@ skills use it without re-defining.
 until it closes — and under close-on-proof it closes when its proof lands, not when it merges). Laid down by `/dag:chart` from a grilled plan; the suite then validates it, walks it,
 and closes it.
 
+**Wayfinding** — the planning move used when the destination or system shape is itself unclear. It
+settles what expeditions exist and how they relate before charting any one of them. It is an internal
+move behind `dag:plan`, never a third public door.
+
+**Atlas** — one GitHub issue labelled `dag:atlas`: the durable Wayfinding index above related
+**expeditions**. It records decisions, unspecified territory and linked charts; it does not duplicate
+their nodes.
+
+**expedition** — the bounded journey one **chart** covers: one destination and scope edge, plus its
+proof profile, run profile and chosen skills. Several expeditions may belong to one Atlas.
+
 **node** — one work slice: a narrow-but-complete vertical path (schema→logic→tests) sized for a single
 fresh context, demoable on its own. One node = one **teammate** = one worktree = one PR.
 
@@ -50,6 +61,7 @@ graded:
 - a **proof tier** — **PROVEN** / **NOT PROVEN** / **BLOCKED**
 - pre-flight, on a node's invariants — satisfies / at-risk / re-plan
 - diagnosis, on a cluster — code-wrong / node-wrong / independent
+- re-plan, on a returned chart — node-wrong / method-wrong / destination-wrong
 
 `BLOCKED` is reserved for a genuine external or authorization gate; anything we could fix ourselves is
 `NOT PROVEN` plus work. Never say green, ready, proven, works, or live without naming which verdict, of
@@ -86,11 +98,21 @@ already in the repo and can never be shown absent. And it must travel **through 
 acceptance criteria name**: a token the code emits alongside the feature proves the code ran, not that
 the feature worked. Its absence is established first, at each tier the contract names.
 
-**halt** — a signed DAG stopped mid-flight by a rung-3 escalation, recorded as `dag:halted` on the map in
-the same edit that removes `dag:preflighted`. Unsigning alone is *lossy*: a chart a human stopped and a
-chart nobody ever signed look identical, and the planning router sends both to be signed. The halt is
-cleared only by a **re-plan** — find the class behind the stop, amend every contract carrying it, file the
-repair node — after which pre-flight is re-run in full, not spot-checked over the amended nodes.
+**halt** — a chart stopped by pre-flight or by a rung-3 execution escalation. A node-wrong execution
+stop removes `dag:preflighted` and persists a de-fog issue blocking that node. A method- or
+destination-wrong stop records `dag:halted` and its class on the map, replacing the signature when one
+exists. The first returns to a chart decision; the second returns to re-plan or Wayfinding. Pre-flight
+is always run in full before execution begins or resumes.
+
+**re-plan** — the internal planning move that classifies a returned chart and sends the failure to the
+level that owns it. It does not mean “edit the same map”: node-wrong returns to de-fogging,
+method-wrong repairs the chart's shared method, and destination-wrong returns to its Atlas.
+
+**method-wrong** — a halt verdict saying the chart's shared validation method failed: a proof contract,
+profile, check or edge assumption passed work it should have stopped.
+
+**destination-wrong** — a halt verdict saying the chart's outcome, boundary, value or relationship to
+the wider system is in question. It is resolved through Wayfinding, not by weakening node contracts.
 
 **primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
 code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every
@@ -160,7 +182,7 @@ reading GitHub state, creating worktrees, dispatching one issue per teammate, gr
 stopping the graph when a premise fails, and resuming from durable state. Teammates own their node; the
 orchestrator owns the run.
 
-**run profile** — how an effort is run, declared on the **map** beside the **proof profile**: the
+**run profile** — how an expedition is run, declared on the **map** beside the **proof profile**: the
 concurrency cap, the model per role, and the **autonomy level**. It lives on GitHub rather than in a
 conversation, so every context window runs the DAG the same way.
 

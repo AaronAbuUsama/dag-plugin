@@ -159,15 +159,19 @@ exact contract/shape/name it consumes". A verdict word alone leaves those fields
 from the pre-flight author's context window, which is the one place the suite says state must never
 live.
 
-Any node with a **re-plan** verdict or a **stop** proof contract is not dispatchable. It goes back to
-planning before Wave 1 begins — `/dag:plan` routes it to a grill, a spike, or a re-chart.
+Any node with a **re-plan** verdict or a **stop** proof contract is not dispatchable. Create the
+appropriate de-fog issue and return it to planning before Wave 1 begins. If the finding invalidates the
+chart's destination rather than one node, record the draft table and evidence on the map, add
+`dag:halted` with `Class: destination-wrong`, and return it to `/dag:plan`; re-plan accepts this
+pre-signature stop and sends it to Wayfinding.
 
 **An at-risk verdict cannot survive the signature.** Either the unconfirmed choice is settled here and
 recorded on that node's issue — making the node **satisfies** — or it gets a **de-fog node**: a new issue
-carrying `dag:needs-grilling`, blocking the at-risk node, and the chart is not complete. There is no third
-state to carry forward, and no label to invent for one: at-risk *means* an open decision, which the
-readiness vocabulary already names and the planning router already routes. A verdict this gate writes and
-nothing reads back is a verdict that gets signed over, and it looks handled while it does it.
+carrying `dag:needs-grilling`, attached as a map sub-issue and blocking the at-risk node. Read both the
+map's sub-issues and the node's blockers back. The chart is not complete. There is no third state to
+carry forward, and no label to invent for one: at-risk *means* an open decision, which the readiness
+vocabulary already names and the planning router already routes. A verdict this gate writes and nothing
+reads back is a verdict that gets signed over, and it looks handled while it does it.
 
 **The label goes on the new de-fog node, never on the at-risk node itself.** `/dag:plan` closes a
 readiness-labelled issue when its move lands, and that close is how the node behind it reaches the

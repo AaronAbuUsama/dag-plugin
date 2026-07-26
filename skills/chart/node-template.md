@@ -13,13 +13,17 @@ and links.
 
 <what reaching the end of this chart looks like — the spec, feature, or change it builds to. One or two lines.>
 
+## Scope edge
+
+<what this expedition deliberately does not include.>
+
 ## Notes
 
-<domain; standing preferences for this effort.>
+<domain; standing preferences for this expedition.>
 
 **Skills** — build: `<what a teammate consults while building>` · review: `<the skill, agent, or bot
 that reviews its PR>`. Both are copied verbatim into every dispatch brief, so a teammate never guesses
-what this effort builds and reviews with. The suite delegates *who* does the work; it only owns what
+what this expedition builds and reviews with. The suite delegates *who* does the work; it only owns what
 they are told.
 
 ## Proof profile
@@ -43,7 +47,7 @@ Receipts are committed to `docs/receipts/<node>-<date>/`.
 
 ## Run profile
 
-<!-- How this effort is run. Defaults are fine; state them so a fresh window runs it the same way. -->
+<!-- How this expedition is run. Defaults are fine; state them so a fresh window runs it the same way. -->
 
 - **concurrency** — `<max nodes in flight at once>`
 - **models** — coder `<model>` · reviewer `<model>`

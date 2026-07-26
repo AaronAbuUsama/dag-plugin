@@ -1,0 +1,32 @@
+---
+title: v1.0.0
+description: "Wayfinding and the Atlas add the missing level above one chart; destination failures now return to the right planning level."
+type: changelog
+date: 2026-07-26T09:00:00Z
+changelog:
+  version: 1.0.0
+---
+
+## The missing level
+
+`dag:plan` now distinguishes a known destination from destination fog. Known work still goes directly
+to grilling and charting. Unclear system boundaries or several related destinations enter Wayfinding,
+persisted as one `dag:atlas` issue.
+
+An Atlas records decisions, unspecified territory and links to related **expedition** charts. Each chart
+still owns exactly one destination and one DAG.
+
+## Re-planning reaches the right level
+
+A returned chart is classified before it is repaired:
+
+- **node-wrong** returns to a de-fog issue under the chart;
+- **method-wrong** repairs the affected contract class across the chart;
+- **destination-wrong** returns to Wayfinding in the parent Atlas.
+
+This prevents a destination failure being treated as either one bad node or a validation-method repair.
+
+## Feedback
+
+The small `dag:feedback` skill captures the plugin version, expected route, actual route, reproduction
+and redacted evidence, then drafts or files the report against the plugin source repository.

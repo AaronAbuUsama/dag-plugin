@@ -1,7 +1,7 @@
 {
   "name": "dag",
-  "version": "0.11.0",
-  "description": "Turn intent into a graph of provable work and walk it. Grill a plan, chart it onto GitHub, pre-flight it, then execute every node to done-clean.",
+  "version": "1.0.0",
+  "description": "Wayfind uncertain intent into an Atlas, chart each expedition as provable work, and execute every node to done-clean.",
   "author": {
     "name": "Aaron Abu Usama",
     "email": "aaron@capxul.com"
@@ -16,8 +16,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "DAG Engineering",
-    "shortDescription": "Plan and execute provable work",
-    "longDescription": "Turn intent into a GitHub DAG whose proof is fixed before implementation, then walk it node by node with a main orchestrator and native Codex agents.",
+    "shortDescription": "Wayfind, plan and execute provable work",
+    "longDescription": "Resolve destination fog into a GitHub Atlas, chart each expedition as a DAG whose proof is fixed before implementation, then walk it node by node.",
     "developerName": "Aaron Abu Usama",
     "category": "Productivity",
     "capabilities": [

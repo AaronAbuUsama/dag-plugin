@@ -31,9 +31,9 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
 - **Ground already laid.** The merged nodes this one builds on and the exact contract/shape/name it
   consumes from each (the hidden-edge couplings pre-flight surfaced) — so it targets what exists, not a
   guess.
-- **Skills for this effort.** The map's **Skills** line, verbatim — what this teammate consults while
+- **Skills for this expedition.** The map's **Skills** line, verbatim — what this teammate consults while
   building, and which review its PR gets. The suite does not supply an implementation method of its
-  own; it names the ones this effort has chosen, and the brief is the only place the teammate can learn
+  own; it names the ones this expedition has chosen, and the brief is the only place the teammate can learn
   them.
 - **Fix-completeness rule.** Stated to the teammate for its own work: before any change is "done",
   enumerate every branch and caller the change's reasoning touches, and cover each.

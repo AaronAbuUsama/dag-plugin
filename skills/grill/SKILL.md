@@ -50,9 +50,9 @@ either genuinely out of scope — say so — or an unasked round:
 | **integration** | what it talks to, and what happens when that thing is down or wrong |
 | **operations** | how it is deployed, configured, observed; who can see it |
 | **failure** | what breaks, what the user sees when it does, what is recoverable |
-| **scope edge** | what is deliberately *not* in this effort |
+| **scope edge** | what is deliberately *not* in this expedition |
 
-Pick the axes that fit the effort — those six are the usual set, not a fixed one. The discipline is
+Pick the axes that fit the expedition — those six are the usual set, not a fixed one. The discipline is
 naming them *before* you close, so an empty axis has to be defended rather than overlooked.
 
 When every axis is either settled or explicitly out of scope, the frontier is genuinely empty. State the

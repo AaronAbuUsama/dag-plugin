@@ -17,10 +17,9 @@ The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user po
 tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.
 
 **Default posture: decompose, don't rediscover.** The grilling already burned off the fog — your job is to
-decompose a known plan into buildable nodes and wire their edges, not to rediscover the route. Chart what
-you can specify now. Only when the effort is genuinely huge *and* still foggy — you can't yet slice whole
-regions into nodes — escalate to full fog-of-war (see [Escalation](#escalation-full-fog-of-war)); it is
-an option, not the path.
+decompose a known plan into buildable nodes and wire their edges, not to rediscover the route. If the
+destination or system boundary is still uncertain, return to `dag:plan`; that is Wayfinding, not chart
+fog. Use local fog-of-war only when the destination is known but parts of the route cannot yet be sliced.
 
 ## Refer by name
 
@@ -90,7 +89,7 @@ Work from the grilling/spec already in context. If the user passed a reference (
 fetch its full body and comments. Explore the codebase enough to name nodes in the project's glossary
 vocabulary and spot prefactoring opportunities.
 
-*Done when:* you can state the destination and every buildable region of the plan in one pass.
+*Done when:* you can state the destination, its scope edge, and every buildable region in one pass.
 
 ### 2. Draft the vertical-slice nodes
 
@@ -127,7 +126,7 @@ stranded on a blocked node.
 Proof is decided here, at issue-creation, **not** by whoever builds the node later. An implementing agent
 that invents its own bar picks the bar it can clear — so the bar is written down before the code exists.
 
-First settle the **proof profile** for this effort and put it on the map: which **tiers** genuinely exist
+First settle the **proof profile** for this expedition and put it on the map: which **tiers** genuinely exist
 in this repo and the command or query that reaches each. Take it from the repo (its test command, how it
 runs its code and how a run is watched, where durable records live, whether errors and events are
 collected somewhere queryable) and confirm it with the user. Tiers this repo doesn't have are recorded as
@@ -191,10 +190,12 @@ the next move — pre-flight included, when the chart is complete.
 *Done when:* every research node is either running or named as ready-to-fire with the reason it wasn't,
 and the chart is handed to `/dag:plan`.
 
-## Escalation: full fog-of-war
+## Escalation: local fog-of-war
 
-When the effort is genuinely huge and still foggy — whole regions you can't yet slice into nodes — don't
-force premature nodes. Chart only what's specifiable now and write the rest into a **Not yet specified**
-section on the map: the dim, un-ticketable view toward the destination. As upstream de-fog nodes resolve,
-**graduate** each patch that has become specifiable into fresh nodes, clearing it from Not yet specified.
-Reach for this only when the plan genuinely can't be fully sliced up front.
+When an expedition is huge and the route is still foggy — whole regions toward its known destination
+cannot yet be sliced into nodes — do not force premature nodes. Chart what is specifiable and put the
+rest under **Not yet specified** on the map. As upstream de-fog nodes resolve, **graduate** each patch
+that becomes specifiable into fresh nodes. Every entry names the open de-fog issue expected to unlock it;
+an entry with no next decision is a dead end, not fog. A map cannot pass pre-flight until each entry is
+graduated or moved to **Out of scope**. If the destination itself becomes uncertain, return to Wayfinding
+instead.

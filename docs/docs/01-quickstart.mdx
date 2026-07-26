@@ -50,6 +50,10 @@ claude plugin update dag@dag-engineering           # move the install to the new
 Then **restart Claude Code**. The CLI says so itself — *"restart required to apply"* — because the running
 session keeps the version it loaded at launch.
 
+When upgrading a repository configured before 1.0, re-run `/dag:setup` once to add the `dag:atlas`
+label. `dag:plan` checks the label vocabulary before it attempts Wayfinding and will route you there if
+the migration is still missing.
+
 :::warning
 **`claude plugin update` defaults to `--scope user`.** If you installed into a single project, a bare
 update fails with *"Plugin 'dag' is not installed at scope user"* even though it plainly is installed.
@@ -105,7 +109,7 @@ issue-dependency relation, which no other tracker renders.
 - **Opens two throwaway issues**, links one as blocked by the other, reads the relation back, then
   deletes the link and closes both. It refuses to assume GitHub's dependency relation works here — it
   proves it. Two issue numbers get used up.
-- **Creates six labels** (below).
+- **Creates seven labels** (below).
 - **Writes `CONTEXT.md` and `docs/adr/`** at your repo root, if they don't exist.
 - **Writes the shared `## DAG suite` block once in `AGENTS.md`.** Claude Code reaches that canonical
   file through a `CLAUDE.md` symlink where possible, or an `@AGENTS.md` import where the repository
@@ -115,6 +119,7 @@ Re-run it only to change the label set or the doc layout.
 
 | Label | Goes on | Meaning |
 | --- | --- | --- |
+| `dag:atlas` | the Atlas issue | Wayfinding index of related expedition charts and decisions. |
 | `dag:map` | the map issue | The parent issue indexing this chart's nodes. |
 | `dag:preflighted` | the map issue | Pre-flight is signed; the DAG is cleared for `/dag:execute`. |
 | `dag:halted` | the map issue | Execution stopped this DAG; it is re-planned before it is re-signed. |
@@ -131,20 +136,24 @@ node `/dag:plan` can actually see. A build node with no de-fog node blocking it 
 /dag:plan
 ```
 
-With no chart yet it says so, then opens `/dag:grill` in the same turn. From then on, every run gives you
-one sentence about where you are and performs the next planning move instead of handing you another
-command to type.
+With no artifact yet it decides whether there is one known destination. If so, it begins grilling that
+expedition; if the destination or system shape is still unclear, it begins Wayfinding and persists an
+Atlas. Every later run reads that state and performs the next planning move.
 
 **You should see** something of this shape:
 
-> No `dag:map` issue on this repo, so there's no chart yet. You're at the start.
-> **Next move: grill.** I’ll interview you until the plan is settled, then chart it as issues.
+> No Atlas or chart exists yet. The destination is still open, so I’m beginning Wayfinding and
+> recording the first decision in an Atlas.
 
 If instead it can't find the labels, `/dag:setup` didn't finish — re-run it.
 
 A typical sequence, one move per turn:
 
 <Steps>
+  <Step title="Wayfinding (internal)">
+    An internal move reached by `/dag:plan` when the destination itself is foggy. It records decisions in
+    one Atlas and graduates each settled destination into an expedition chart.
+  </Step>
   <Step title="/dag:grill">
     A batched, code-grounded interview. Every question arrives with the problem in real code, what it
     touches, the options as concrete diffs, and a graded recommendation — then the ask.
@@ -190,11 +199,9 @@ profile on your map (concurrency, models, autonomy) before you start.
 :::
 
 You do not step back in per node. `/dag:execute` owns the loop until the graph is done or it hits a hard
-stop — and a hard stop arrives pre-validated, with the root cause named and an assessment of whether
-fixing it unblocks anything. When it stops, it swaps `dag:preflighted` on the map for `dag:halted`, so the
-DAG is back in planning, freezes further dispatch, checks whether any in-flight nodes remain independent,
-and prevents a fresh window from resuming execution over the halted graph. `/dag:plan` re-plans the chart
-rather than re-signing it with the method that failed.
+stop. It freezes dispatch and records the failure at the level that owns it: a wrong node gets a blocking
+de-fog issue, a wrong shared method gets a chart halt, and a wrong destination returns to the parent
+Atlas. `/dag:plan` reads that state instead of re-signing the same assumption.
 
 ## What "done" means
 

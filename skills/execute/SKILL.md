@@ -37,6 +37,15 @@ in order; steps 2–5 repeat per wave until the DAG is done.
 
 ## 1. Open the run
 
+Locate the signed chart from GitHub rather than the previous planning conversation:
+
+```bash
+gh issue list --label dag:map,dag:preflighted --state open --json number,title,labels
+```
+
+An issue number or exact title named by the user wins. One eligible map selects itself; several must be
+named and put to the user. Exclude every map carrying `dag:halted`. Never choose by recency.
+
 **Check the signature before anything else.** The map must carry the `dag:preflighted` label, and must
 *not* carry `dag:halted`. That first label *is* the door between the two halves: planning is
 `/dag:plan`'s, execution is yours, and the signature is what moved the DAG across. Without it, this DAG
@@ -162,35 +171,51 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-**Freeze dispatch immediately, then mark the halt before you surface the stop.** Assign no fresh node.
+**Freeze dispatch immediately, then classify the planning level before you write state.** Assign no fresh node.
 Compare every in-flight node with the named nest: interrupt the teammates whose premise or proof contract
-depends on it; let an in-flight node continue only when you can show it is independent. Then mark both the
-map and the node, in that order. Removing the signature alone is *lossy*: a chart you halted and a chart
-nobody ever signed look identical to `/dag:plan`, so it routes both straight back to signing, with the
-same method that just failed.
+depends on it; let an in-flight node continue only when you can show it is independent.
+
+Route the stop at the level that failed:
+
+- **node-wrong** — remove `dag:preflighted`, create one de-fog issue blocking the stopped node, and do
+  not add `dag:halted`. The open de-fog issue is the durable reason this unsigned chart cannot be
+  re-signed.
+- **method-wrong** — replace `dag:preflighted` with `dag:halted` and comment
+  `Class: method-wrong` plus the failed mechanism. Re-plan owns the affected class.
+- **destination-wrong** — when the evidence questions the chart's outcome, boundary, value or place in
+  the wider system, replace the signature with `dag:halted` and comment `Class: destination-wrong`.
+  Re-plan returns it to Wayfinding and the parent Atlas.
 
 ```bash
 R=<owner>/<repo>
-gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
 
-# the question the stop raises becomes its own de-fog node, blocking the stopped one
-gh issue create --title "De-fog: <the question>" --label dag:needs-grilling \
-  --body "<the pre-validated nest, and what settling it unblocks>"   # or dag:needs-prototype,
-                                                                     # if whether it can be
-                                                                     # observed is the unknown
+# node-wrong
+gh issue edit <map-number> --remove-label dag:preflighted
+gh issue create --title "De-fog: <the question>" \
+  --label <dag:needs-grilling|dag:needs-research|dag:needs-prototype> \
+  --body "<the pre-validated finding, and what settling it unblocks>"
 gh api repos/$R/issues/<defog-number> --jq .id
+gh api -X POST repos/$R/issues/<map-number>/sub_issues -F sub_issue_id=<defog-database-id>
 gh api -X POST repos/$R/issues/<stopped-node>/dependencies/blocked_by -F issue_id=<defog-database-id>
+
+# method-wrong or destination-wrong
+gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
+gh issue comment <map-number> --body "Class: <method-wrong|destination-wrong>
+<the evidence and what resolving it unblocks>"
 ```
+
+Choose the readiness label from the unknown: a user decision is `dag:needs-grilling`, a look-up fact is
+`dag:needs-research`, and uncertainty about whether the behavior can be observed is
+`dag:needs-prototype`. Never substitute an interview for an observability spike.
 
 **Never put the readiness label on the stopped node itself.** `/dag:plan` closes a readiness-labelled
 issue the moment its move lands — that close is precisely how the build node behind it reaches the
 frontier. Label the build node and planning closes *the build node*, unbuilt, unproven, and looking done.
 The de-fog node is a separate issue that blocks it, which is the same shape `chart` uses everywhere else.
 
-`dag:halted` is what stops the next fresh window resuming autonomous execution over a graph you just
-stopped. The de-fog node is what stops the stopped node arriving back in planning as an ordinary open
-issue with nothing on it to say a human halted here. The chart then goes back to `/dag:plan`, which routes
-it to a **re-plan**, and pre-flight is re-signed in full before execution resumes.
+Both shapes stop a fresh window from resuming: a node-level stop is unsigned and visibly blocked by its
+de-fog issue; a chart- or destination-level stop carries `dag:halted`. `/dag:plan` routes the first to
+the de-fog move and the second to **re-plan**. Pre-flight is re-signed in full before execution resumes.
 
 **Fix-completeness binds every fix on every rung, the consolidating one included:** before a fix is
 done, enumerate every branch and caller its reasoning touches, and cover each. A consolidating fix
@@ -237,14 +262,19 @@ same step — close-on-proof, so the recorded state never drifts from the real o
 posted to the PR and the receipt committed, the node is merged, and its issue is closed — or the node is
 a rung-3 stop and its ledger row says which tier failed and why.
 
-## 6. Advance the DAG
+## 6. Advance or finish the DAG
 
 A wave is complete when every node in it is done-clean and closed — merges alone don't complete it.
-Recompute the ready set (step 2) and run the next wave. The DAG is done when every ledger row is
-satisfied-and-closed or a recorded stop.
+Recompute the ready set (step 2) and run the next wave. When every ledger row is satisfied-and-closed,
+close the map with a completion comment. The closed `dag:map` issue is the durable terminal state that
+keeps a fresh planning window from redispatching it and lets its parent Atlas see a completed expedition.
 
-*Done when:* every node in the DAG is done-clean with a closed issue, or is an open rung-3 stop returned
-to planning — no node left in an in-between state.
+```bash
+gh issue close <map-number> --comment "Expedition complete: every node is done-clean and closed."
+```
+
+*Done when:* every node in the DAG is done-clean with a closed issue and the map is closed, or an open
+rung-3 stop has returned it to planning — no node left in an in-between state.
 
 ## 7. End the turn with a position — every time, no exceptions
 
@@ -264,8 +294,9 @@ What is specific to this door, and additional to that file:
   first cleanly. Blurring them tells the user they have more than they do.
 - **A stop is not an ending and must not read like one.** When the ladder reaches rung 3 the closing
   message still carries the named **nest**, whether fixing it unblocks the rest of the graph, and the fact
-  that the map now carries `dag:halted` instead of `dag:preflighted` so the DAG is back in planning. A
-  stop that reads as a failure report leaves the user holding a diagnosis with nothing to do about it.
+  that the map is unsigned and either blocked by a de-fog issue or carries `dag:halted`, so the DAG is
+  back in planning. A stop that reads as a failure report leaves the user holding a diagnosis with
+  nothing to do about it.
 - **"What you do" says that re-running resumes** — usually *nothing, or run `/dag:execute` again*. And
   where planning has to happen again, name `/dag:plan`, the other door. Never `/dag:grill`, never
   `/dag:preflight`.

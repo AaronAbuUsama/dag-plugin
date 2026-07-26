@@ -1,181 +1,142 @@
 ---
 name: plan
-description: The planning door — reads the chart's state off GitHub, tells you where you are, and runs the next planning move itself, through to the pre-flight signature that hands the DAG to execution.
+description: The planning door — reads Atlas and chart state from GitHub, resolves destination fog when necessary, and runs the next move through to the pre-flight signature that hands one expedition to execution.
 ---
 
 # Plan — where you are, and the next move
 
-**The planning half's one door.** Run `/dag:plan` in Claude Code or `$dag:plan` in Codex from any
-context window, at any point before the DAG is
-signed. It finds the **chart** on GitHub, reads its state, and **runs** the next move — so you never have
-to work out which skill to reach for, or type a second command to get started. Terms are defined once in
-[`../../GLOSSARY.md`](../../GLOSSARY.md).
-
-How to respond — the closing message, and any question put to the user — is in
+Run `/dag:plan` in Claude Code or `$dag:plan` in Codex from any context window before a DAG is signed.
+It finds the **Atlas** or **chart**, reads its state from GitHub, and performs the next planning move in
+this turn. Terms are defined in [`../../GLOSSARY.md`](../../GLOSSARY.md); response rules are in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
 
-Planning ends at the **pre-flight** signature. Past it the DAG belongs to
-[`/dag:execute`](../execute/SKILL.md), which walks it to done-clean.
+Planning ends at the **pre-flight** signature. Past it the chart belongs to
+[`/dag:execute`](../execute/SKILL.md).
 
-**Why it works across sessions:** the state lives on the tracker, not in the conversation. The chart —
-the `dag:map` issue, its child **nodes**, their readiness labels, their **edges**, and the
-`dag:preflighted` signature — *is* the memory. A fresh window running `/dag:plan` reads the same state
-and continues exactly where the last one stopped.
+The tracker is the memory. An Atlas persists its decisions and expedition charts. A chart persists its
+nodes, readiness labels, edges, proof contracts and signature. Never depend on a prior conversation.
 
-## 1. Locate the chart
+## 1. Locate the planning artifact
 
 ```bash
+gh label list --json name --jq '.[].name'
+gh issue list --label dag:atlas --state open --json number,title
 gh issue list --label dag:map --state open --json number,title
 ```
 
-- **No `dag:map` issue** → there is no chart yet. You are at the start: ask which effort this chart
-  covers, then grill it (step 3). If the `dag:*` labels are missing, GitHub isn't configured — that is the
-  one time you hand over a command: `/dag:setup`.
-- **More than one** → name them and ask which effort this is. Two open charts in one repo is two
-  efforts, and every step below reads a single map.
+- An issue number or exact title named by the user wins.
+- One matching Atlas owns destination/system questions and relationships between expeditions.
+- One matching map owns planning toward that chart's single destination.
+- If one Atlas has no open decision and exactly one active child map, continue that map. With several
+  active child maps, name them and ask which expedition to advance.
+- Several plausible artifacts → name them and ask which one; never choose by recency.
+- No artifact → inspect the request. One known destination starts an **expedition**. Fog about the
+  destination, system boundary, or relationship between several destinations starts **Wayfinding**.
+
+If any required label, including `dag:atlas`, is missing, hand over `/dag:setup`. Querying issues by a
+missing label returns an empty list rather than an error, so check the label vocabulary first. That is
+the only setup exception to the two-door flow.
 
 ## 2. Read the state
 
-With a chart, read these off GitHub — no memory of prior turns needed:
+For an Atlas, read its body, open child decision issues and child `dag:map` issues. The body must make
+the North star, Decisions so far, Open decisions, Expeditions, Not yet specified and Out of scope
+visible.
 
-- The open **nodes** — the map's sub-issues — and their readiness labels (`dag:needs-grilling` /
-  `dag:needs-research` / `dag:needs-prototype`; no label = **clear**).
-- The **frontier**: open nodes whose every blocker is closed.
-- Whether the map carries the `dag:preflighted` label — the **signature**.
-- Whether the map carries `dag:halted` — execution stopped this chart, and it is not eligible for
-  signing again until it has been re-planned. **Read this before anything else on the map**: a halted
-  chart is also an unsigned one, and an unsigned chart with no de-fog node left is exactly what the
-  routing table's signing row matches.
+For a chart, read:
+
+- the map body, including **Destination**, **Scope edge** and **Not yet specified**;
+- its open child nodes and `dag:needs-grilling` / `dag:needs-research` /
+  `dag:needs-prototype` labels;
+- each node's native blockers and the resulting **frontier**;
+- `dag:preflighted` and `dag:halted` on the map;
+- the map comments holding the signed table or halt record.
 
 ```bash
 R=<owner>/<repo>
-gh api --paginate repos/$R/issues/<map-number>/sub_issues --jq '.[] | {number, title, state}'
-gh api --paginate repos/$R/issues/<n>/dependencies/blocked_by --jq '.[] | {number, state}'
+gh api --paginate repos/$R/issues/<parent-number>/sub_issues \
+  --jq '.[] | {number,title,state,labels:[.labels[].name]}'
+gh api --paginate repos/$R/issues/<n>/dependencies/blocked_by \
+  --jq '.[] | {number,state}'
 ```
 
-`--paginate` is not optional: both endpoints return 30 per page by default, and a truncated read looks
-exactly like a smaller DAG rather than an error. The blocker read carries each blocker's `state`, so the
-frontier costs one query per node and no more.
+`--paginate` is mandatory: a truncated graph looks like a valid smaller graph.
 
 ## 3. Run the next move
 
-Route by state, then **run the move in this turn**. Do not hand the user a command to type. The planning
-skills are user-invoked, which means you cannot dispatch them as skills — so you reach the move by
-**reading that skill's `SKILL.md` and following it here**, in this window, as written.
+Read the matching rows top-down and perform the first move that applies:
 
-`/dag:plan` is a door, not a signpost. A door that answers with another command to run has not opened
-anything, and the suite promises two commands total — naming a third breaks that promise every time it
-fires.
-
-| Chart state | The move you run | Read and follow |
+| State | Move | Read and follow |
 |---|---|---|
-| No chart | grill the plan, then chart it | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
-| Map labelled `dag:halted` | re-plan the chart before it is re-signed | [`../replan/SKILL.md`](../replan/SKILL.md) |
-| Frontier has a `dag:needs-grilling` node | grill that decision | [`../grill/SKILL.md`](../grill/SKILL.md) — or [`../grill-deep/SKILL.md`](../grill-deep/SKILL.md) if it warrants written ADRs |
-| Frontier has a `dag:needs-research` node | `/dag:research` (model-invoked — dispatch it) | it runs its own agent; you review what returns |
-| Frontier has a `dag:needs-prototype` node | `/dag:prototype` (model-invoked — dispatch it) | the spike that de-risks the node |
-| Chart complete (below), no `dag:preflighted` label | pre-flight and sign it | [`../preflight/SKILL.md`](../preflight/SKILL.md) |
-| Map labelled `dag:preflighted` | Planning is done. Tell the user to run `/dag:execute` — that is the *other door*, and the one command you do hand over. |  |
+| No artifact; destination/system shape is foggy | create or advance an Atlas | [`wayfind.md`](wayfind.md) |
+| No artifact; one destination is known | grill, then chart the expedition | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
+| Atlas has an open decision, relevant unspecified territory, or newly chartable region | advance Wayfinding once | [`wayfind.md`](wayfind.md) |
+| Map has `dag:halted` | classify and repair the returned chart | [`../replan/SKILL.md`](../replan/SKILL.md) |
+| Chart frontier has `dag:needs-grilling` | settle that decision | [`../grill/SKILL.md`](../grill/SKILL.md), or [`../grill-deep/SKILL.md`](../grill-deep/SKILL.md) when ADRs are warranted |
+| Chart frontier has `dag:needs-research` | dispatch research | the model-invoked `research` skill |
+| Chart frontier has `dag:needs-prototype` | run the spike | the model-invoked `prototype` skill |
+| Map has a `Not yet specified` entry whose decision has landed | graduate it into nodes | [`../chart/SKILL.md`](../chart/SKILL.md) |
+| Chart complete and unsigned | pre-flight and sign it | [`../preflight/SKILL.md`](../preflight/SKILL.md) |
+| Map has `dag:preflighted` | planning is done | tell the user to run `/dag:execute` |
 
-`research` and `prototype` are model-invoked, so dispatch those directly. The rest are user-invoked, so
-read their `SKILL.md` and follow it in this turn. `/dag:execute` is the only command you ever hand the
-user, because it is the other door.
+`/dag:plan` is a door, not a signpost. Planning skills are internal moves: read their `SKILL.md` and
+follow it here. `/dag:execute` is the only workflow command handed back to the user.
 
-**Read the table top-down and take the first row that matches.** `dag:halted` sits above the de-fog rows
-on purpose: a halted chart's remaining questions are asked against a plan that has already been shown
-wrong somewhere, so the re-plan comes first and the de-fog nodes are worked against the amended chart.
+An Atlas does not make every child map active. Select its only active chart, or ask when several remain,
+before applying chart rows.
+`dag:halted` is read before a chart's de-fog state because the stop must first be classified as
+node-wrong, method-wrong or destination-wrong.
 
-**Chart complete** means every de-fog node is closed — no `dag:needs-*` label is left on an open
-issue anywhere in the chart. Not "the frontier looks clear": a de-fog node buried behind build edges
-still has an unanswered question in it, and pre-flight signed over the top of one is the premature
-dispatch the gate exists to prevent.
+**Chart complete** means no open de-fog issue and no unresolved **Not yet specified** entry remains
+under the map. Every such entry must be graduated, moved to **Out of scope**, or still point at an open
+de-fog issue. A clear-looking frontier does not excuse uncertainty buried elsewhere.
 
-**Planning is human-in-the-loop.** Run one move per turn, *with* the user, and stop. The user makes the
-decisions; you never pick them alone.
+## 4. Persist every planning move
 
-**When the move needs an input only the user can give, ask it and then start — in the same turn.** The
-commonest is scope: with no chart, which effort does this one cover? Put that through the question path
-for the current host in [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), with the candidates you
-found in the repo as options, and carry straight on into the grill once it is answered. What you never do
-is stop, hand over a command, *and* ask a question — one command in should produce one question back and
-then work, not a homework list.
+Planning is human-in-the-loop and advances one move per turn.
 
-**Close the de-fog node when its move lands.** Record the answer as a comment on that node — the
-decision a grill settled, the fact research found, the verdict a spike returned — then close it. That
-close is the whole mechanism: it unblocks the build node onto the frontier, and it retires the
-`dag:needs-*` label without anyone removing one, because a closed node is never on the frontier. A
-de-fog move whose node stays open leaves its build node blocked forever.
+When a decision lands:
 
-**You are the only surface that reads every node at once.** So when you close a de-fog node, look at what
-the already-closed ones settled: two de-fog nodes that answered the same underlying question mean the
-chart is carrying a nest, and the next one will ask it again. Say so and point at `/dag:diagnose` — see
-**looking for the nest** in the glossary.
+1. record the answer as a comment on its de-fog or Atlas decision issue;
+2. for Atlas decisions, fold it into **Decisions so far** and remove it from **Open decisions**;
+3. close the decision issue.
 
-*Done when:* the move's answer is a comment on its de-fog node and that node is closed, or the move is
-still in flight and you have said so — and any question answered twice across de-fog nodes is named as a
-possible shared root.
+That close advances the durable frontier. A result left only in chat did not happen.
 
-**A node sent back after the signature lands here again.** On a rung-3 stop `/dag:execute` swaps
-`dag:preflighted` on the map for `dag:halted` and files a de-fog node blocking the stopped one, so the
-chart arrives here marked twice over and this router picks it up like any other planning state.
+When the move needs user input, ground the question through
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), ask it, and continue the move in the same turn.
+Do not ask the user whether something is “an Atlas”; show the concrete destination uncertainty and
+recommend the matching level.
 
-If you find a stopped node with neither mark — execute crashed before it could write them — write them
-yourself. The signature is what lets a fresh window resume autonomous execution over a DAG a human
-already halted, and an unmarked halt is one this router will route straight back to signing:
+If two decision issues answer the same underlying question, name the possible **nest** and route to
+diagnosis rather than multiplying decisions.
 
-```bash
-gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
-gh issue create --title "De-fog: <the question the stop raises>" --label dag:needs-grilling
-# then block the stopped node behind it, by database id — see step 2's commands
+## 5. Recover a partial stop
+
+If execution stopped but crashed before writing durable state, reconstruct the stop from its PR/issue
+evidence:
+
+- node premise wrong → remove `dag:preflighted`, create a separate de-fog issue, attach it as a map
+  sub-issue, then make it block the stopped node;
+- method or destination wrong → replace `dag:preflighted` with `dag:halted` and record
+  `Class: method-wrong` or `Class: destination-wrong` on the map.
+
+Never put a `dag:needs-*` label on the build node. Planning closes readiness-labelled issues when their
+answer lands; labelling the build node would close it unbuilt.
+
+## 6. End with a position
+
+Read [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) before the closing message. State the selected
+Atlas or chart, the move completed, the durable state written, and what comes next. Re-running
+`/dag:plan` resumes planning; only a signed chart hands over `/dag:execute`.
+
+The pipeline:
+
+```text
+WAYFIND ──► GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──► done-clean
+if the       settle one             one       sign it        walk it
+destination expedition              map
+is foggy
+
+└──────────────────── /dag:plan ────────────────────┘   └─ /dag:execute ─┘
 ```
-
-**The readiness label goes on that new issue, never on the stopped node.** You close a readiness-labelled
-node when its move lands, and that close is what puts the node behind it on the frontier — so labelling
-the build node means closing the build node, unbuilt and unproven.
-
-## 4. End the turn with a position — every time, no exceptions
-
-**Read [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) before you write the closing message.**
-Not optional and not a reference for later: the shape lives there and nowhere else, so a turn written
-without opening it is a turn written to a shape you invented. There is deliberately no template here to
-copy — one authoritative copy, and nothing that looks authoritative beside it.
-
-What is specific to this door, and additional to that file:
-
-- **"What happens next" is yours to run.** Never write "run `/dag:preflight`" or "run `/dag:grill`":
-  naming a planning command is the failure this whole door exists to prevent. `/dag:execute` is the only
-  command you ever hand over.
-- **"What you do" says that re-running resumes.** Usually *nothing, or run `/dag:plan` again* — stated
-  outright, because a user who has not read the docs has no way to know that re-running the same command
-  picks up where this left off, and that is the one fact the whole design rests on.
-- **Re-anchor after anything off-piste.** When a turn went sideways into work outside the chart — a bug
-  you were asked to fix, a tangent that mattered — the closing message still says where that left the
-  plan. Off-piste work with no re-anchor is exactly how someone ends up lost, and it is the moment this
-  matters most rather than least.
-- **Charting is the reversible write this most often applies to.** Issues can be edited or closed, so the
-  output style's ask-and-carry-on rule means asking which effort a chart covers and then charting it in the
-  same turn — never stopping to request permission first.
-
-*Done when:* you have read `RESPONSE-RULES.md` this turn and the closing message follows it; the "what
-happens next" slot names no planning command for the user to type; and "what you do" states plainly that
-re-running `/dag:plan` resumes.
-
-## First time here?
-
-With no chart, `/dag:plan` is also the tour. The pipeline, once:
-
-```
-GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──►(DIAGNOSE)──► done-clean
-  settle the plan     onto      sign it        walk it     find the nest
-  & de-fog it         GitHub                               when a class recurs
-
-  └─────────────── /dag:plan ──────────────┘   └────────── /dag:execute ─────────┘
-```
-
-The rules the suite exists to hold: **verification is king** — a claim you can't verify isn't a result,
-and only reality verifies code against the world; **proof is defined before the code**, at
-issue-creation, so no agent ever picks its own bar; **proof is never deferred and never merely
-asserted** — it is shown, in the pull request; **a recurring bug-class means stop patching and
-diagnose**; **every fix passes fix-completeness**.
-
-Then get on with step 3 — ask which effort this chart covers, and start grilling it.

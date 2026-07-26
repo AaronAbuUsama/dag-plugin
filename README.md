@@ -3,11 +3,11 @@
 A Claude Code and Codex plugin that makes an agent **prove its work** instead of reporting that the
 tests passed.
 
-You describe what you want. It breaks the work into slices as GitHub issues, writes down what would
-convince you each slice works *before any code exists*, then builds them — and refuses to close anything
-until it has captured that evidence and put it in the pull request.
+You describe what you want. If the destination is unclear it first preserves an Atlas of decisions and
+related expeditions. Then it breaks one destination into slices as GitHub issues, fixes the evidence bar
+before code exists, and refuses to close anything until that evidence is in the pull request.
 
-**[Read the docs →](docs/)** — the [walkthrough](docs/docs/02-walkthrough.mdx) shows one effort end to
+**[Read the docs →](docs/)** — the [walkthrough](docs/docs/02-walkthrough.mdx) shows one expedition end to
 end, with the real issue bodies and the PR comment.
 
 ## Quick start
@@ -52,7 +52,7 @@ signed, you run `dag:execute` once and it drives the rest on its own. Claude Cod
 
 ```
         YOU drive                    │        THE ORCHESTRATOR drives
-  grill · prototype · chart          │   execute · prove · diagnose
+  wayfind · grill · prototype · chart│   execute · prove · diagnose
   settle the plan, fix the proof     │   walk the graph, gather the evidence
 ────────────── dag:plan ─────────────►│◄──────────── dag:execute ────────────
                           the pre-flight signature
@@ -68,16 +68,16 @@ and hands the DAG back to planning instead of running the rest on broken assumpt
 
 ## Why two commands are enough
 
-The state lives on **GitHub**, not in the conversation — the chart (a `dag:map` issue, its child node
-issues, their blocking edges, the pre-flight signature) *is* the memory. So a fresh context window
-running either door picks up exactly where the last one left off. Stateful by construction.
+The state lives on **GitHub**, not in the conversation — an Atlas is a `dag:atlas` issue above related
+expedition charts; each chart is a `dag:map` issue with child nodes, blocking edges and a signature.
+A fresh context window running either door picks up where the last one left off.
 
 ## The pipeline
 
 ```
-GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──►(DIAGNOSE)──► done-clean
-  settle the plan     onto      sign it        walk it     find the nest when
-  & de-fog it         GitHub                               a bug-class recurs
+WAYFIND ──► GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──►(DIAGNOSE)──► done-clean
+if needed     settle one            onto      sign it        walk it     find the nest
+              expedition            GitHub
 
   └──────────────── dag:plan ───────────────┘   └────────── dag:execute ──────────┘
 ```
@@ -87,6 +87,7 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──�
 | **entry** | `dag:plan` | The planning door — reads state and runs the next move, through to the signature. |
 | | `dag:execute` | The execution door — walks the signed graph to done-clean. |
 | **setup** | `/dag:setup` | One-time: GitHub tracker + the suite's labels. |
+| **plan** | Wayfinding *(internal)* | Resolves destination fog into an Atlas of expedition charts. |
 | **plan** | `/dag:grill` | Batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
 | | `/dag:grill-deep` | `grill` + writes ADRs and a glossary as decisions settle. |
 | | `/dag:research` | Finds a fact a decision waits on (agent-driven). |
@@ -96,6 +97,7 @@ GRILL / PROTOTYPE ──► CHART ──► PRE-FLIGHT ──► EXECUTE ──�
 | | `/dag:execute` | Wave execution behind the merge gate, the escalation ladder, no proof deferral, close-on-proof. |
 | | `/dag:prove` | Captures a node's evidence and posts it **into the PR** — screenshots and video for a UI, the durable delta for a backend, the transcript for a CLI — plus a committed receipt. |
 | | `/dag:diagnose` | The nest-finder — one design gap behind a recurring cluster. `execute` reaches it automatically. |
+| **support** | `/dag:feedback` | Captures an evidence-backed workflow failure and returns it to this repository. |
 
 ## The non-negotiables
 

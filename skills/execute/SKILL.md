@@ -191,7 +191,8 @@ R=<owner>/<repo>
 
 # node-wrong
 gh issue edit <map-number> --remove-label dag:preflighted
-gh issue create --title "De-fog: <the question>" --label dag:needs-grilling \
+gh issue create --title "De-fog: <the question>" \
+  --label <dag:needs-grilling|dag:needs-research|dag:needs-prototype> \
   --body "<the pre-validated finding, and what settling it unblocks>"
 gh api repos/$R/issues/<defog-number> --jq .id
 gh api -X POST repos/$R/issues/<map-number>/sub_issues -F sub_issue_id=<defog-database-id>
@@ -202,6 +203,10 @@ gh issue edit <map-number> --remove-label dag:preflighted --add-label dag:halted
 gh issue comment <map-number> --body "Class: <method-wrong|destination-wrong>
 <the evidence and what resolving it unblocks>"
 ```
+
+Choose the readiness label from the unknown: a user decision is `dag:needs-grilling`, a look-up fact is
+`dag:needs-research`, and uncertainty about whether the behavior can be observed is
+`dag:needs-prototype`. Never substitute an interview for an observability spike.
 
 **Never put the readiness label on the stopped node itself.** `/dag:plan` closes a readiness-labelled
 issue the moment its move lands — that close is precisely how the build node behind it reaches the

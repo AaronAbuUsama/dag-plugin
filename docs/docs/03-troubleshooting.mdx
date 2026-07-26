@@ -111,7 +111,8 @@ whether fixing it unblocks the rest of the graph.
 ```bash
 # node-wrong
 gh issue edit <map> --remove-label dag:preflighted
-gh issue create --title "De-fog: <the question the stop raises>" --label dag:needs-grilling
+gh issue create --title "De-fog: <the question the stop raises>" \
+  --label <dag:needs-grilling|dag:needs-research|dag:needs-prototype>
 # then attach it to the map and block the stopped node behind it, by database id
 
 # method-wrong or destination-wrong
@@ -119,6 +120,9 @@ gh issue edit <map> --remove-label dag:preflighted --add-label dag:halted
 gh issue comment <map> --body "Class: <method-wrong|destination-wrong>
 <the evidence>"
 ```
+
+Use `dag:needs-prototype` when the open question is whether the behavior can be observed at all;
+`dag:needs-grilling` is for a decision and `dag:needs-research` for a look-up fact.
 
 :::warning
 The readiness label goes on the **new de-fog issue**, never on the stopped node. `/dag:plan` closes a

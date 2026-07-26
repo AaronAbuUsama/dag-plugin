@@ -75,22 +75,28 @@ decision remains listed as open.
 The moment one bounded destination is clear enough to state, graduate it into an **expedition**:
 
 1. Write the destination and scope edge into the Atlas expedition entry.
-2. Read [`../chart/SKILL.md`](../chart/SKILL.md) and copy both into that expedition's map.
-3. Add the resulting `dag:map` issue as a child of the Atlas and link it under **Expeditions**:
+2. If the expedition does not already have a grilled plan, spec or PRD, create one Atlas child issue
+   labelled `dag:needs-grilling` containing that destination and scope edge. Read
+   [`../grill/SKILL.md`](../grill/SKILL.md) and settle the expedition before charting it. Record the
+   resulting plan on the issue, fold its decisions into the Atlas, then close it.
+3. Read [`../chart/SKILL.md`](../chart/SKILL.md) only after that plan exists, and copy the destination
+   and scope edge into the expedition's map.
+4. Add the resulting `dag:map` issue as a child of the Atlas and link it under **Expeditions**:
 
-```bash
-R=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
-MAP_ID=$(gh api repos/$R/issues/<map-number> --jq .id)
-gh api -X POST repos/$R/issues/<atlas-number>/sub_issues -F sub_issue_id=$MAP_ID
+   ```bash
+   R=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+   MAP_ID=$(gh api repos/$R/issues/<map-number> --jq .id)
+   gh api -X POST repos/$R/issues/<atlas-number>/sub_issues -F sub_issue_id=$MAP_ID
    ```
 
-4. Leave unresolved territory under **Open decisions** or **Not yet specified**; every still-relevant
+5. Leave unresolved territory under **Open decisions** or **Not yet specified**; every still-relevant
    unspecified item must name the next child decision that advances it. Do not force it into the chart.
 
 One Atlas may hold several expeditions. One chart still owns exactly one destination.
 
-*Done when:* the chart can be understood without the Wayfinding conversation, the Atlas links it once,
-and no unresolved destination premise was smuggled into its nodes.
+*Done when:* the expedition has a grilled or supplied plan, the chart can be understood without the
+Wayfinding conversation, the Atlas links it once, and no unresolved destination premise was smuggled
+into its nodes.
 
 ## 4. Resume or finish
 

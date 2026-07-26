@@ -1,6 +1,6 @@
 ---
 name: execute
-description: The execution door — walks a pre-flight-signed DAG, dispatching each node behind the merge gate, climbing the escalation ladder on findings, and driving every node to done-clean, wave by wave.
+description: The execution door — walks a pre-flight-signed DAG or required Atlas portfolio, dispatching each node behind the merge gate, climbing the escalation ladder on findings, and driving every node to done-clean, wave by wave.
 ---
 
 # Execute — walk the signed DAG to done-clean
@@ -24,7 +24,7 @@ self-claims another node or spawns another agent. Nobody grades their own homewo
 fixed before the code existed, and the **verdict** is yours. Where the profile puts a tier behind a shared
 environment, that tier is yours to reach as well.
 
-**How this run behaves comes from the map's run profile** — the concurrency cap, the model per role,
+**How this run behaves comes from each map's run profile** — the concurrency cap, the model per role,
 and the **autonomy level** — not from this conversation, so a fresh context window runs the DAG the way
 the last one did. Autonomy decides how freely the loop runs:
 - **autonomous** (default) — the **inner loop** (diagnose the nest, apply the consolidating fix,
@@ -43,8 +43,11 @@ Locate the signed chart from GitHub rather than the previous planning conversati
 gh issue list --label dag:map,dag:preflighted --state open --json number,title,labels
 ```
 
-An issue number or exact title named by the user wins. One eligible map selects itself; several must be
-named and put to the user. Exclude every map carrying `dag:halted`. Never choose by recency.
+An issue number or exact title named by the user wins. One eligible map selects itself. When several
+signed maps belong to one Atlas, read the Atlas and their native cross-map blockers: required parallel
+and dependent maps form one **execution portfolio**; alternatives or maps contending for an unmodelled
+exclusive resource go to the user. Never ask merely because several required maps exist, and never
+choose by recency. Exclude every map carrying `dag:halted`.
 
 **Check the signature before anything else.** The map must carry the `dag:preflighted` label, and must
 *not* carry `dag:halted`. That first label *is* the door between the two halves: planning is
@@ -53,7 +56,8 @@ is not cleared for dispatch — say so plainly and hand back to `/dag:plan`, whi
 dispatched off an unsigned DAG is the whole failure the gate exists to prevent, and a wave dispatched off
 a halted one repeats a stop a human already raised.
 
-Then read the run's inputs **off GitHub**, not off memory — this window may be the second one:
+Then read every selected map's inputs **off GitHub**, not off memory — this window may be the second
+one:
 
 ```bash
 R=<owner>/<repo>
@@ -62,29 +66,31 @@ gh issue view <map-number> --comments --json comments  # the signed pre-flight t
 gh api --paginate repos/$R/issues/<map-number>/sub_issues --jq '.[] | {number,title,state}'
 ```
 
-**Derive the proof ledger; never store it in this conversation.** One row per open node — its **proof
-contract** from the node's own issue body, and whichever tiers already carry a recorded result in that
+**Derive the proof ledger; never store it in this conversation.** One row per open node across the
+portfolio — its owning map and **proof contract** from the node's own issue body, and whichever tiers
+already carry a recorded result in that
 issue's comments. The ledger is the record that keeps **triage-clean** (reviews pass) from ever passing
 for **done-clean** (proof gathered, in the PR), so it has to survive a crashed window: as each tier's
 result lands, post it to that node's issue. A ledger held only in context is a ledger that resumes as an
 empty one, and a merged-but-unproven node then looks exactly like a done-clean one.
 
-*Done when:* the map carries `dag:preflighted`, the run profile and signed table have been read off
-GitHub, and every open node has a ledger row derived from its issue — or you have stopped and handed
-back because the signature is absent.
+*Done when:* every selected map carries `dag:preflighted`, each run profile and signed table has been
+read off GitHub, and every open node has a ledger row derived from its issue — or you have stopped and
+handed back because a required signature is absent.
 
 ## 2. Dispatch the wave
 
-Compute the ready set: every unstarted node whose blocking **edges** are all **closed** — the same
+Compute one combined ready set: every unstarted node in the selected map or portfolio whose blocking
+**edges** are all **closed**, including native cross-map blockers — the same
 predicate `chart`, `plan` and GitHub's own UI use, so the frontier you dispatch is the frontier the
 tracker renders. Under close-on-proof a blocker closes when its proof lands, not when it merges.
 
-Before assigning a node, create its branch and worktree from the run's current base, then give the
+Before assigning a node, create its branch and worktree from its owning map's current base, then give the
 teammate the absolute worktree path and a **self-contained brief** — the fields and shape constraint are
 in [`dispatch-brief.md`](dispatch-brief.md). The orchestrator owns worktree creation and cleanup; a
 teammate never creates its own checkout.
 
-**Choose exactly one runner from the host — never mix runners inside one DAG:**
+**Choose exactly one runner from the host — never mix runners inside one DAG or portfolio:**
 
 - **Claude Code → Agent Teams.** The lead creates the team and assigns one ready node to each teammate.
   Agent Teams must be available and enabled; if they are not, stop before dispatch and say what capability
@@ -98,8 +104,10 @@ teammate never creates its own checkout.
 
 **The mechanics common to both runners:**
 
-- **Size the team from the frontier, not the DAG**: `min(frontier size, run-profile concurrency cap,
-  available worker slots)`. Keep the orchestrator itself out of the worker count.
+- **Size the team from the combined frontier, not the DAG count**. Total workers never exceed available
+  worker slots; in-flight nodes from one map never exceed that map's concurrency cap. A shared live rig
+  or other modelled exclusive resource keeps its own cap across the whole portfolio. Keep the
+  orchestrator itself out of the worker count.
 - One explicit worktree each keeps two teammates off the same file.
 - A teammate receives the repo's instruction context plus its brief, not an assumed copy of the
   orchestrator's reasoning. The brief is its whole job.
@@ -108,10 +116,10 @@ teammate never creates its own checkout.
 - A resumed session does not restore teammates. Re-read GitHub, open PRs and worktrees, then assign each
   still-open node to a fresh teammate through the same host runner.
 
-*Done when:* every ready node has a teammate whose brief carries its acceptance criteria, proof contract,
-consumed edges, exact branch and worktree, and the fix-completeness rule; the team is within both the run
-cap and host capacity; every in-flight node's edges are all closed; and no teammate owns more than one
-node.
+*Done when:* every ready node has a teammate whose brief carries its owning map, acceptance criteria,
+proof contract, consumed edges, exact branch and worktree, and the fix-completeness rule; the team is
+within every owning-map cap, shared-resource cap and host capacity; every in-flight node's edges are all
+closed; and no teammate owns more than one node.
 
 ## 3. Work the merge gate
 
@@ -262,19 +270,22 @@ same step — close-on-proof, so the recorded state never drifts from the real o
 posted to the PR and the receipt committed, the node is merged, and its issue is closed — or the node is
 a rung-3 stop and its ledger row says which tier failed and why.
 
-## 6. Advance or finish the DAG
+## 6. Advance or finish the DAG or portfolio
 
 A wave is complete when every node in it is done-clean and closed — merges alone don't complete it.
-Recompute the ready set (step 2) and run the next wave. When every ledger row is satisfied-and-closed,
-close the map with a completion comment. The closed `dag:map` issue is the durable terminal state that
-keeps a fresh planning window from redispatching it and lets its parent Atlas see a completed expedition.
+Recompute the combined ready set (step 2) and run the next wave. When every ledger row owned by one map
+is satisfied-and-closed, close that map immediately with a completion comment; do not wait for dependent
+maps in the portfolio. The closed `dag:map` issue is the durable terminal state that keeps a fresh
+planning window from redispatching it and releases native cross-map blockers. The portfolio is complete
+when every required selected map is closed.
 
 ```bash
 gh issue close <map-number> --comment "Expedition complete: every node is done-clean and closed."
 ```
 
-*Done when:* every node in the DAG is done-clean with a closed issue and the map is closed, or an open
-rung-3 stop has returned it to planning — no node left in an in-between state.
+*Done when:* every node in the DAG or portfolio is done-clean with a closed issue and every completed
+map is closed, or an open rung-3 stop has returned the affected work to planning — no node left in an
+in-between state.
 
 ## 7. End the turn with a position — every time, no exceptions
 
@@ -287,8 +298,8 @@ deliberately no template here to copy from.
 
 What is specific to this door, and additional to that file:
 
-- **State position in nodes, not prose** — how many done-clean, in flight, blocked. The user has not been
-  watching.
+- **State position in nodes, not prose** — how many done-clean, in flight, blocked, grouped by map when
+  this is a portfolio. The user has not been watching.
 - **List durable work separately from in-flight work.** Closed issues, merged commits and committed
   receipts survive a crash; open PRs and live worktrees do not, and a resumed session inherits only the
   first cleanly. Blurring them tells the user they have more than they do.

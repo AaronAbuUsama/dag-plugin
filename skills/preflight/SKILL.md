@@ -20,6 +20,23 @@ lands. A de-fog node still open here means planning isn't finished, and that is 
 rather than a node to validate. If the repo has no architecture-invariant doc, say so and judge against
 whatever design record exists rather than blocking on a file the suite never creates.
 
+## Atlas portfolio pre-flight
+
+When `/dag:plan` reaches several complete unsigned maps under one Atlas, pre-flight them as one portfolio
+batch. Run this skill once **per map** and post one independent signature on each map.
+
+- Audit cross-map edges as well as edges inside each map.
+- Run a shared baseline command once when every map names the same command against the same base commit
+  and environment; record that exact result in each signature. Different bases or environments require
+  separate baselines.
+- Sign dependent maps when their design is valid. Their native blockers still prevent dispatch; a
+  signature does not bypass an edge.
+- Do not ask the human to choose a map unless the maps are alternatives or contend for an exclusive
+  resource the tracker has not modelled.
+
+The portfolio batch is one planning move. Planning is not complete until every required active map has
+either been signed or durably returned to de-fog/re-plan.
+
 ## 1. Invariant conformance, per node
 
 For each node, read its spec and name which architecture **invariants** it touches. For each invariant

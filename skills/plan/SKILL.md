@@ -27,8 +27,12 @@ gh issue list --label dag:map --state open --json number,title
 - An issue number or exact title named by the user wins.
 - One matching Atlas owns destination/system questions and relationships between expeditions.
 - One matching map owns planning toward that chart's single destination.
-- If one Atlas has no open decision and exactly one active child map, continue that map. With several
-  active child maps, name them and ask which expedition to advance.
+- If one Atlas has no open decision and exactly one active child map, continue that map.
+- If one Atlas has several active child maps, treat them as one **portfolio** unless the tracker shows
+  they are alternatives or they contend for an unmodelled exclusive resource. Advance every
+  preflight-ready map in a portfolio batch; native cross-map blockers still decide which nodes can
+  execute. Ask which expedition only when there is a real choice the graph cannot represent — never
+  merely because several required maps exist.
 - Several plausible artifacts → name them and ask which one; never choose by recency.
 - No artifact → inspect the request. One known destination starts an **expedition**. Fog about the
   destination, system boundary, or relationship between several destinations starts **Wayfinding**.
@@ -62,6 +66,15 @@ gh api --paginate repos/$R/issues/<n>/dependencies/blocked_by \
 
 `--paginate` is mandatory: a truncated graph looks like a valid smaller graph.
 
+When an Atlas owns several active maps, also read cross-map blockers before selecting a move. Classify
+the maps as:
+
+- **parallel roots** — no open cross-map blocker;
+- **dependent maps** — one or more nodes are natively blocked by another map or its nodes;
+- **alternatives** — destinations compete or conflict and require a human choice.
+
+Parallel roots and dependent maps form one portfolio. Alternatives trigger the decision protocol.
+
 ## 3. Run the next move
 
 Read the matching rows top-down and perform the first move that applies:
@@ -82,8 +95,16 @@ Read the matching rows top-down and perform the first move that applies:
 `/dag:plan` is a door, not a signpost. Planning skills are internal moves: read their `SKILL.md` and
 follow it here. `/dag:execute` is the only workflow command handed back to the user.
 
-An Atlas does not make every child map active. Select its only active chart, or ask when several remain,
-before applying chart rows.
+An Atlas does not make every child map active. Ignore completed, abandoned, superseded and explicitly
+deferred maps. When several required maps remain, apply the rows across the portfolio:
+
+1. halted maps first;
+2. then open de-fog and newly chartable territory;
+3. then pre-flight **every complete unsigned map**, with one independent signature per map;
+4. hand over `/dag:execute` when every required active map is signed.
+
+Root-before-dependent is the reporting order, not an execution promise. A signed dependent map remains
+blocked until its native edges close.
 `dag:halted` is read before a chart's de-fog state because the stop must first be classified as
 node-wrong, method-wrong or destination-wrong.
 
@@ -93,7 +114,8 @@ de-fog issue. A clear-looking frontier does not excuse uncertainty buried elsewh
 
 ## 4. Persist every planning move
 
-Planning is human-in-the-loop and advances one move per turn.
+Planning is human-in-the-loop and advances one move per turn. A portfolio pre-flight batch is one move:
+it may sign several complete maps because they are independent artifacts at the same planning phase.
 
 When a decision lands:
 

@@ -1,10 +1,11 @@
 ---
 name: execute
 description: The execution door — walks a pre-flight-signed DAG, dispatching each node behind the merge gate, climbing the escalation ladder on findings, and driving every node to done-clean, wave by wave.
-disable-model-invocation: true
 ---
 
 # Execute — walk the signed DAG to done-clean
+
+Enter through `/dag:execute` in Claude Code or `$dag:execute` in Codex.
 
 The loop you live in from a signed **pre-flight** until the **DAG** is done. It runs the DAG **wave by
 wave**, each **node** behind the **merge gate**, carrying the **ladder**, **fix-completeness**, the
@@ -16,11 +17,12 @@ whose verdict is *posted to the PR* + your own cold read + the **proof contract*
 the **proof profile** says tier 3 is reachable from a branch) → merge → close the issue. Where tier 3
 needs the merged head instead, proof runs straight after the merge and the issue closes on it.
 
-**The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the team
-lead: each teammate runs its own node and captures the evidence its contract names, and you grade what
-comes back. Nobody grades their own homework — the contract was fixed before the code existed, and the
-**verdict** is yours. Where the profile puts a tier behind a shared environment, that tier is yours to
-reach as well.
+**The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the main
+**orchestrator**: you read the frontier, create each worktree, assign each node, and grade what comes back.
+Each teammate runs only its assigned node and captures the evidence its contract names; it never
+self-claims another node or spawns another agent. Nobody grades their own homework — the contract was
+fixed before the code existed, and the **verdict** is yours. Where the profile puts a tier behind a shared
+environment, that tier is yours to reach as well.
 
 **How this run behaves comes from the map's run profile** — the concurrency cap, the model per role,
 and the **autonomy level** — not from this conversation, so a fresh context window runs the DAG the way
@@ -68,26 +70,39 @@ Compute the ready set: every unstarted node whose blocking **edges** are all **c
 predicate `chart`, `plan` and GitHub's own UI use, so the frontier you dispatch is the frontier the
 tracker renders. Under close-on-proof a blocker closes when its proof lands, not when it merges.
 
-Give each ready node to one **teammate**, working in its own worktree from a **self-contained brief** — the fields and
-the shape constraint are in [`dispatch-brief.md`](dispatch-brief.md).
+Before assigning a node, create its branch and worktree from the run's current base, then give the
+teammate the absolute worktree path and a **self-contained brief** — the fields and shape constraint are
+in [`dispatch-brief.md`](dispatch-brief.md). The orchestrator owns worktree creation and cleanup; a
+teammate never creates its own checkout.
 
-**An agent team is how a wave runs, and its mechanics shape the work:**
+**Choose exactly one runner from the host — never mix runners inside one DAG:**
 
-- A teammate inherits the repo's own context and its brief — **never your conversation**. The brief is
-  its whole world, which is why self-contained is a hard requirement rather than a style.
-- The team's shared task list unblocks a task the moment its blockers complete — the same **frontier**
-  you compute here, kept live. Let it, and re-derive the frontier from GitHub rather than from memory.
-- **Size the team from the frontier, not the DAG**: three focused teammates beat five scattered ones, and
-  a wave of four ready nodes wants about four. Stay under the **concurrency cap** so each node runs in a
-  fresh context and you can cold-read every diff yourself.
-- One worktree each keeps two teammates off the same file.
-- A teammate cannot spawn teammates, so a node is sized to be carried by one.
-- A resumed session does not restore teammates. That costs you the spawns and nothing else — the chart
-  is on GitHub, so re-read the state and give the open nodes to fresh teammates.
+- **Claude Code → Agent Teams.** The lead creates the team and assigns one ready node to each teammate.
+  Agent Teams must be available and enabled; if they are not, stop before dispatch and say what capability
+  is missing. Do not fall back to Claude subagents. The lead alone creates and assigns tasks. Teammates do
+  not self-claim from the shared task list; that list records the lead's current assignments, while GitHub
+  remains the only dependency graph and source of the frontier.
+- **Codex → native child agents.** The main agent calls `spawn_agent` once per assigned node, using a
+  worker role, `fork_turns: "none"`, and the self-contained brief. Do not create user-owned sidebar
+  threads for node work. The main agent alone follows up, waits, interrupts and assigns; child agents do
+  not delegate further.
+
+**The mechanics common to both runners:**
+
+- **Size the team from the frontier, not the DAG**: `min(frontier size, run-profile concurrency cap,
+  available worker slots)`. Keep the orchestrator itself out of the worker count.
+- One explicit worktree each keeps two teammates off the same file.
+- A teammate receives the repo's instruction context plus its brief, not an assumed copy of the
+  orchestrator's reasoning. The brief is its whole job.
+- Recompute the frontier from GitHub after a node becomes done-clean. Never let a worker claim the next
+  node from runtime state.
+- A resumed session does not restore teammates. Re-read GitHub, open PRs and worktrees, then assign each
+  still-open node to a fresh teammate through the same host runner.
 
 *Done when:* every ready node has a teammate whose brief carries its acceptance criteria, proof contract,
-consumed edges, and the fix-completeness rule; the team is within the concurrency cap; and every
-in-flight node's edges are all closed.
+consumed edges, exact branch and worktree, and the fix-completeness rule; the team is within both the run
+cap and host capacity; every in-flight node's edges are all closed; and no teammate owns more than one
+node.
 
 ## 3. Work the merge gate
 
@@ -147,9 +162,12 @@ the round count.
 **Rung 3 fires only** when diagnose returns **node-wrong**, the node's live proof cannot be gathered, or
 the consolidating fix would cost more than the node is worth. It arrives pre-validated: the **nest**, a
 confidence level, and whether the fix unblocks — a stop the human can act on, not a bare "I'm stuck."
-**Mark the halt before you surface the stop** — both the map and the node, in that order. Removing the
-signature alone is *lossy*: a chart you halted and a chart nobody ever signed look identical to
-`/dag:plan`, so it routes both straight back to signing, with the same method that just failed.
+**Freeze dispatch immediately, then mark the halt before you surface the stop.** Assign no fresh node.
+Compare every in-flight node with the named nest: interrupt the teammates whose premise or proof contract
+depends on it; let an in-flight node continue only when you can show it is independent. Then mark both the
+map and the node, in that order. Removing the signature alone is *lossy*: a chart you halted and a chart
+nobody ever signed look identical to `/dag:plan`, so it routes both straight back to signing, with the
+same method that just failed.
 
 ```bash
 R=<owner>/<repo>
@@ -180,7 +198,8 @@ covers *every call site of the nest* — half a consolidation reopens the class 
 
 *Done when:* every finding of the round is patched (rung 1, fix-complete), folded into a consolidating
 fix (rung 2, fix-complete over the whole nest), or raised as a pre-validated stop (rung 3) — and no
-finding is still being patched after a trigger has fired.
+finding is still being patched after a trigger has fired; on rung 3, dispatch is frozen and every
+in-flight node has been interrupted-or-proven-independent.
 
 ## 5. Finish the node
 

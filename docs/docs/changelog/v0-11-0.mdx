@@ -1,0 +1,21 @@
+---
+title: v0.11.0
+description: "One DAG workflow now runs in Claude Code and Codex, with one native worker runner per host and a lead-owned frontier."
+type: changelog
+date: 2026-07-25T22:00:00Z
+changelog:
+  version: 0.11.0
+---
+
+**One workflow, two native harnesses.** The shared skill suite now ships both Claude Code and Codex
+plugin manifests. Claude Code invokes `/dag:plan` and `/dag:execute`; Codex invokes `$dag:plan` and
+`$dag:execute`.
+
+- Claude Code execution uses Agent Teams only; Codex uses native child agents only.
+- The main orchestrator reads GitHub, creates worktrees and assigns one issue per teammate. Workers do
+  not self-claim from a host task list or delegate further.
+- A rung-3 stop freezes dispatch instead of letting the rest of the graph run on a broken assumption.
+- `AGENTS.md` is the canonical shared instruction file. `CLAUDE.md` symlinks to it where possible or
+  imports it when Claude-specific instructions must remain.
+- The host's native question surface carries the same code-grounded decision protocol.
+- GitHub Pages is enabled and the docs workflow deploys successful `main` builds.

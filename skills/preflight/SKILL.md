@@ -1,7 +1,6 @@
 ---
 name: preflight
-description: Pre-flight gate for a DAG of work — validates every node against its invariants, acceptance criteria, edges, and proof contract before any dispatch.
-disable-model-invocation: true
+description: Internal planning gate reached through dag:plan — validate every node's invariants, criteria, edges, and proof contract before dispatch. Do not invoke directly outside the planning router.
 ---
 
 # Pre-flight — validate the DAG

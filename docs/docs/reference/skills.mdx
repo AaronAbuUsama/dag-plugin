@@ -1,19 +1,19 @@
 ---
 title: Skills
-description: All eleven commands the plugin ships, what each does, and which ones fire on their own.
+description: All twelve skills the plugin ships, what each does, and which ones the routers reach.
 sidebar:
   icon: terminal
 ---
 
-**You need to know two of these.** `/dag:plan` and `/dag:execute` are the doors; everything else is a
-step one of them names for you when it's time. The full list is here for reference, not as a reading
-list.
+**You need to know two of these.** `dag:plan` and `dag:execute` are the doors; everything else is a step
+one of them reaches when it is time. Claude Code invokes them as `/dag:*`; Codex invokes them as
+`$dag:*`. The full list is here for reference, not as a reading list.
 
 ## The doors
 
 | Command | What it does |
 | --- | --- |
-| `/dag:plan` | The planning door. Reads the chart's state, names the single next move, ends at the pre-flight signature. |
+| `/dag:plan` | The planning door. Reads the chart's state, runs the next move in the same turn, ends at the pre-flight signature. |
 | `/dag:execute` | The execution door. Refuses to start without the signature, then walks the signed graph to done-clean. |
 
 ## Setup
@@ -28,7 +28,7 @@ list.
 | --- | --- |
 | `/dag:grill` | A batched, code-grounded interview — the whole frontier per round, every question shown in real code with graded options. Never abstract. |
 | `/dag:grill-deep` | `grill` plus a durable paper trail: resolved terms to the glossary, hard trade-offs to ADRs, captured as they settle. |
-| `/dag:research` | Settles a fact a decision is waiting on, against primary sources, in a background agent. |
+| `/dag:research` | Settles a fact a decision is waiting on, against primary sources, through an assigned research teammate. |
 | `/dag:prototype` | The throwaway spike that de-risks a node which isn't knowable on paper. |
 | `/dag:chart` | Lays the settled plan onto GitHub — nodes, real blocking edges, readiness labels, and each node's proof contract. |
 | `/dag:preflight` | The gate. Every node validated against its invariants, criteria, edges, and a runnable proof contract — every tier command baselined by running it. Signing it opens the execution door. |
@@ -48,8 +48,9 @@ Most skills are **user-invoked**: only you, typing the name, can start them. Fou
 
 <CardGroup cols={2}>
   <Card title="research">
-    `chart` fires one subagent per research node as it lays the chart down, so those facts resolve in
-    parallel with the rest of the charting. Each posts its finding back to its own issue.
+    The main planning orchestrator assigns one research teammate per research node, through Agent Teams
+    in Claude Code or native child agents in Codex. Each posts its finding back to its own issue and
+    cannot self-claim another node.
   </Card>
   <Card title="prototype">
     Model-invoked so a de-fog move can reach it, but in practice `/dag:plan` hands it to **you** — a
@@ -62,7 +63,6 @@ Most skills are **user-invoked**: only you, typing the name, can start them. Fou
 </CardGroup>
 
 :::note
-This is why planning has a router rather than an autopilot. The planning skills are user-invoked, so
-`/dag:plan` **names** the next command for you to run instead of firing it — you never have to work out
-*which* move, only to run it.
+This is why planning has a router. `dag:plan` reads the next skill and performs that move in the same
+turn, preserving one entry point without turning the planning phase into an unattended autopilot.
 :::

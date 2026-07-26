@@ -1,7 +1,6 @@
 ---
 name: replan
-description: Re-plan a chart that execution halted — find the class behind the halt, amend every contract carrying it, file the repair node, and hand a re-planned DAG back to pre-flight.
-disable-model-invocation: true
+description: Internal planning move reached through dag:plan after execution halts — repair the whole affected chart and return it to pre-flight. Do not invoke directly outside the planning router.
 ---
 
 # Re-plan — the chart was wrong, not the node

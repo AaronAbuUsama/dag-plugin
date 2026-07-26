@@ -79,8 +79,8 @@ Evidence is a `file:line`, a command and its result, or a URL. "As discussed" is
 ## DECISION BLOCK — whenever the human must choose
 
 This is the whole of the decision protocol, and it applies to **every** moment you ask a human to decide,
-choose, or unblock — `AskUserQuestion` prompts, grills, and any options put in front of them. Nothing here
-is optional and the order is fixed:
+choose, or unblock — structured question prompts, grills, and any options put in front of them. Nothing
+here is optional and the order is fixed:
 
 1. **The problem, in code.** Real `file:line` and real snippets, in a language-tagged fence. Not a
    paraphrase of the code — the code. A diagram instead only when the shape (a flow, a state machine, a
@@ -102,7 +102,13 @@ is optional and the order is fixed:
    | fit | how well it sits with what is already there |
 
 5. **A recommendation, with the reason.** One option, one line of why.
-6. **Only then, the question** — through `AskUserQuestion`, recommended option first.
+6. **Only then, the question** — through the host's question surface, recommended option first.
+
+Use exactly one question path per host:
+
+- **Claude Code** — `AskUserQuestion`.
+- **Codex** — `request_user_input` when that tool is available; otherwise ask the grounded question
+  directly in the response. Do not stall trying to call a tool the current Codex mode does not expose.
 
 A rubric inside a sentence of prose is not a rubric. A question asked before parts 1–5 are on screen is a
 question the reader cannot judge, and asking it is the failure this block exists to prevent.

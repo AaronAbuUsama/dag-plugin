@@ -33,7 +33,7 @@ When a message makes claims that need backing, put them in a table: the claim, t
 
 Evidence is a `file:line`, a command and its output, or a URL. "As discussed" is not evidence.
 
-**Never let your own verification blur with a report you received.** A subagent's finding is a claim about
+**Never let your own verification blur with a report you received.** A teammate's finding is a claim about
 the code, not a reading of it. Label the unverified rows rather than dropping them — a claim you could not
 check still belongs on screen, marked.
 
@@ -61,7 +61,7 @@ Never present a choice cold. In this order, always:
    in a table. Floor-first, reversibility, blast radius, correctness, parallelizability, fit are the usual
    set; pick what fits. **A rubric buried in a sentence of prose is not a rubric.**
 5. **A recommendation**, with its one-line reason.
-6. **Then the question**, through `AskUserQuestion`, recommended option first.
+6. **Then the question**, through the host's question surface, recommended option first.
 
 **Resolve every fact yourself first.** Anything findable in the code or environment is yours to look up —
 every question you put to a human should be one only they can answer.
@@ -73,3 +73,9 @@ same turn. Stopping for permission on a reversible write turns one request into 
 
 The full vocabulary behind these — the slots, worked examples, the decision block in detail — is in
 `RESPONSE-RULES.md` at the root of the `dag` plugin. Read it when composing a long or structured message.
+
+## Keep the two doors
+
+Never auto-invoke a DAG planning move by itself. Planning enters through `/dag:plan`, which reads and
+follows the selected move; execution enters through `/dag:execute`. `/dag:setup` is the one bootstrap
+exception when the planning door reports that the repository is not configured.

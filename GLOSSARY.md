@@ -147,18 +147,25 @@ committed. For tier 3 that means **how this repo runs its code**, and how a run 
 This is the whole of the suite's per-repo configuration — the skills stay generic, the repo supplies its
 own reality.
 
-**agent team** — how a wave is executed: you are the team lead, and each ready **node** goes to one
-**teammate** — a separate session with its own context window that inherits the repo's context and its
-brief, never the lead's conversation. Teammates share a task list that unblocks work as its blockers
-complete, so the team mirrors the **frontier**. Sized from the frontier and held under the concurrency
-cap. It is the suite's one runner; there is no second way to walk a DAG.
+**agent team** — how a wave is executed: one main **orchestrator** reads the **frontier** from GitHub and
+assigns each ready **node** to one **teammate** — a separate session with its own context window, one
+worktree, one brief and one PR. Claude Code uses Agent Teams; Codex uses native child agents. Those are the
+two host implementations of the same runner, not two ways to run inside one host. The orchestrator alone
+assigns work, advances the wave, grades proof and merges; teammates never self-claim another node or spawn
+teammates. Any host task list records the orchestrator's current assignments only. GitHub's issue edges
+remain the durable DAG and the only source of the frontier.
+
+**orchestrator** — the main session running `/dag:plan` or `/dag:execute`. It owns the whole chart:
+reading GitHub state, creating worktrees, dispatching one issue per teammate, grading the merge gate,
+stopping the graph when a premise fails, and resuming from durable state. Teammates own their node; the
+orchestrator owns the run.
 
 **run profile** — how an effort is run, declared on the **map** beside the **proof profile**: the
 concurrency cap, the model per role, and the **autonomy level**. It lives on GitHub rather than in a
 conversation, so every context window runs the DAG the same way.
 
 **merge gate** — the signals that must all be clean before a node merges: CI, an independent review
-(bot or subagent — whose verdict is *posted to the PR*, not left in a transcript), the orchestrator's
+(review skill, teammate or bot — whose verdict is *posted to the PR*, not left in a transcript), the orchestrator's
 own cold read of the diff, and — wherever the **proof profile** says tier 3 is reachable from a
 branch — the node's **proof contract** satisfied, with the evidence in the PR.
 
@@ -227,7 +234,7 @@ to the human, show: (1) the **problem**, in code (`file:line` + real snippets) o
 fits the occasion; (2) **what it touches** — surrounding code, callers, blast radius; (3) the **options**,
 each as concrete code / a diff sketch or diagram; (4) graded against a **rubric that fits the occasion**
 (floor-first, reversibility, blast radius, correctness, parallelizability, fit), with a recommendation.
-*Only then* ask. Facts are the agent's job — dispatch a subagent for anything lookable-up, never ask the
+*Only then* ask. Facts are the agent's job — assign a research teammate for anything lookable-up, never ask the
 human for it; the **decisions** are the human's.
 
 **readiness** — how knowable a node is, decided while charting. **clear** (spec it and build) /

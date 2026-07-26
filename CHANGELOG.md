@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.11.0
+
+**One workflow, two native harnesses.** The shared skill suite now ships both Claude Code and Codex
+plugin manifests. The two public doors keep the same behavior: Claude Code invokes `/dag:plan` and
+`/dag:execute`; Codex invokes `$dag:plan` and `$dag:execute`.
+
+- **Execution has one runner per host.** Claude Code uses Agent Teams only; Codex uses native child
+  agents only. There is no Claude subagent fallback and no user-owned Codex task used for a worker.
+- **The main orchestrator owns the frontier.** It reads GitHub, creates worktrees, assigns one issue per
+  teammate, grades proof and advances the wave. Workers never self-claim from a host task list or
+  delegate further; GitHub remains the durable DAG.
+- **Rung-3 still stops the graph.** New dispatch freezes immediately and in-flight work proceeds only
+  when it is proven independent of the diagnosed nest.
+- **Shared repo instructions have one source.** `AGENTS.md` is canonical. `CLAUDE.md` symlinks to it
+  where possible, or imports it when Claude-specific instructions must remain.
+- **Questions use the host surface.** Claude Code uses `AskUserQuestion`; Codex uses
+  `request_user_input` when available and otherwise asks directly, with the same code-grounded rubric.
+- **The docs site now deploys on every successful `main` docs build.** GitHub Pages is enabled at
+  `https://aaronabuusama.github.io/dag-plugin/`.
+
 ## 0.10.0
 
 Everything here comes from one 21-node field run that merged eight nodes with real evidence and then

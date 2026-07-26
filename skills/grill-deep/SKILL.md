@@ -1,7 +1,6 @@
 ---
 name: grill-deep
-description: The heavy grill — runs the full batched, code-grounded interview and records the decisions it settles as durable ADRs and glossary entries. Reach for it when a design warrants written decisions, not just a sharpened plan.
-disable-model-invocation: true
+description: Internal planning move reached through dag:plan — run the batched, code-grounded interview and record durable ADRs and glossary entries. Do not invoke directly outside the planning router.
 ---
 
 # Grill-deep — grill, and write the decisions down

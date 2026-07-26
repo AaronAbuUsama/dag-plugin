@@ -8,13 +8,19 @@ note() { printf "  %s\n" "$1"; }
 bad() { printf "  FAIL: %s\n" "$1"; fail=1; }
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
-echo "== manifest =="
+echo "== manifests =="
 python3 -c "
-import json,sys
-m=json.load(open('.claude-plugin/plugin.json'))
-for k in ('name','version','description'):
-    assert m.get(k), 'manifest missing '+k
-print('  valid JSON, name=%s version=%s' % (m['name'], m['version']))
+import json, pathlib
+claude=json.load(open('.claude-plugin/plugin.json'))
+codex=json.load(open('.codex-plugin/plugin.json'))
+market=json.load(open('.claude-plugin/marketplace.json'))
+for label, manifest in (('Claude', claude), ('Codex', codex)):
+    for key in ('name','version','description'):
+        assert manifest.get(key), '%s manifest missing %s' % (label, key)
+assert claude['name'] == codex['name'] == market['plugins'][0]['name']
+assert claude['version'] == codex['version'] == market['metadata']['version']
+assert codex.get('skills') == './skills/' and pathlib.Path(codex['skills']).is_dir()
+print('  valid JSON, name=%s version=%s (Claude + Codex)' % (claude['name'], claude['version']))
 " || bad "manifest invalid"
 
 echo "== frontmatter =="
@@ -25,6 +31,13 @@ for f in skills/*/SKILL.md; do
   grep -q "^description: " "$f" || bad "$f: no description"
 done
 note "$(ls -1 skills/*/SKILL.md | wc -l | tr -d ' ') skills checked"
+
+echo "== Codex-compatible skill frontmatter =="
+if grep -R "^disable-model-invocation: true$" skills/*/SKILL.md > "$tmp/codex-frontmatter"; then
+  while read -r l; do bad "Codex ingestion rejects $l"; done < "$tmp/codex-frontmatter"
+else
+  note "no Claude-only invocation guards"
+fi
 
 echo "== skills/ holds only this plugin's own skills =="
 # A skill installer that symlinks a foreign skill into skills/ makes the plugin ship it.

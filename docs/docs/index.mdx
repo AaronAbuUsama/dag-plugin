@@ -7,22 +7,23 @@ description: An agent told to make the tests pass will make the tests pass. This
 so when the model is wrong the tests are wrong the same way — confidently. And an agent optimises for
 whatever signal it is judged on: tell it to make the tests pass and it will make the tests pass.
 
-DAG Engineering is a Claude Code plugin that closes that gap. You describe what you want; it breaks the
-work into slices on GitHub, writes down **what would convince you each slice works before any code
-exists**, and then builds them — refusing to close anything until it has captured that evidence and put
-it in the pull request.
+DAG Engineering is a Claude Code and Codex plugin that closes that gap. You describe what you want; it
+breaks the work into slices on GitHub, writes down **what would convince you each slice works before any
+code exists**, and then builds them — refusing to close anything until it has captured that evidence and
+put it in the pull request.
 
 ## Two commands
 
-```
-/dag:plan       # settle the plan, chart it, sign it off
-/dag:execute    # walk the signed graph until every slice is done
-```
+| Move | Claude Code | Codex |
+| --- | --- | --- |
+| Settle, chart and sign the plan | `/dag:plan` | `$dag:plan` |
+| Walk every signed slice to done-clean | `/dag:execute` | `$dag:execute` |
 
-`/dag:plan` is where you live until the plan is signed. Run it from any window: it reads the state off
-GitHub, tells you where you are, and names the single next move — so you never work out which command to
-run, only run the one it names. When it tells you the plan is signed, `/dag:execute` takes it from there
-on its own.
+`dag:plan` is where you live until the plan is signed. Run it from any window: it reads the state off
+GitHub, tells you where you are, and performs the next planning move in the same turn. When the plan is
+signed, `dag:execute` takes it from there. The main orchestrator owns the frontier and assignments;
+Claude Code uses Agent Teams, Codex uses native child agents, and every worker receives exactly one
+issue, one worktree and one PR.
 
 ## Is this for you?
 

@@ -1,15 +1,28 @@
 ---
 name: replan
-description: Internal planning move reached through dag:plan when pre-flight or execution stops a chart — classify whether the node, validation method, or destination failed, then return the work to the correct planning level. Do not invoke as a public door.
+description: Internal planning repair reached through dag:plan when a premise is invalidated or pre-flight/execution stops a chart — retract descendants, classify the owning level, and return work to the nearest valid frontier. Do not invoke as a public door.
 ---
 
 # Re-plan — send the failure to the level that owns it
 
-You are here because pre-flight or execution stopped a chart carrying `dag:halted`. Read the map's halt
-comment, where it surfaced, the evidence, and either the signed pre-flight table or the pre-flight draft
-that raised the stop. Terms are defined in
+You are here because planning invalidated a premise or pre-flight/execution stopped a chart carrying
+`dag:halted`. Read the contradiction or halt comment, where it surfaced, the evidence, and any signed
+pre-flight table or draft it affected. Terms are defined in
 [`../../GLOSSARY.md`](../../GLOSSARY.md); response rules are in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+In every case follow
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md) first.
+
+## 0. Invalidate the premise and freeze descendants
+
+When the trigger is a correction, changed canon pointer, deletion, conflicting current source or failed
+verification, mark the premise contested/invalid/superseded and write the invalidation receipt. Enumerate
+every `Derived from` descendant before choosing a replacement. Remove `dag:preflighted` from affected maps
+and stop new dispatch; add `dag:halted` when a map-level premise or destination is unsafe. Native blocking
+remains unchanged unless the repair itself needs a new dependency.
+
+*Done when:* the premise, contradiction, complete descendant set, disposition and nearest valid frontier
+are durable, and no affected map remains dispatchable.
 
 ## 1. Classify the halt
 
@@ -22,13 +35,15 @@ Exactly one level owns the failure:
 | **destination-wrong** | the chart may be aiming at the wrong outcome, boundary or system shape | Wayfinding in the parent Atlas |
 
 Name the verdict and cite the evidence. If the evidence cannot distinguish them, create the smallest
-decision issue that can; do not pick the cheapest repair.
+decision issue that can; do not pick the cheapest repair. This classification assigns each invalidated
+descendant to its owning level; it does not replace the premise invalidation receipt.
 
 ## 2. Node-wrong — de-fog the node
 
 Confirm a separate issue carrying `dag:needs-grilling` or `dag:needs-prototype` is both a child of the
 map and a blocker of the stopped build node. Read both relationships back. Never put the readiness label
-on the build node itself.
+on the build node itself. The de-fog issue names the invalid premise, contradiction and active premises
+it still derives from.
 
 Then clear the chart-level halt:
 
@@ -55,6 +70,7 @@ decision issue containing:
 - the evidence that invalidated it;
 - which wider boundary or relationship is now uncertain;
 - what deciding it will do to this map.
+- the invalid premise ID, its source/ref and every affected descendant.
 
 Keep `dag:halted` on the map while that decision is open. Follow Wayfinding one move at a time.
 
@@ -77,7 +93,7 @@ and what it could not see.
 
 Read every open node against that mechanism. The affected class is every node sharing the contract,
 profile line, tier command or edge assumption — including already-merged nodes still awaiting proof.
-List the class by node number.
+List the class by node number and premise ID.
 
 If only one node carries it, re-check the classification: that is usually node-wrong rather than a
 chart-level method failure.
@@ -107,14 +123,15 @@ blocker readback shows the whole class behind it.
 
 ## 6. Record and re-enter the gate
 
-Comment on the map with the halt, verdict, affected class, amendments and repair node. Then remove
-`dag:halted` and run full pre-flight:
+Comment on the map with the halt, invalidation receipt, verdict, affected class, amendments and repair
+node. Then remove `dag:halted` only when every invalid descendant has a disposition and run full
+pre-flight:
 
 ```bash
 gh issue edit <map-number> --remove-label dag:halted
 ```
 
-Re-run every baseline and every node row, not only the amended class.
+Re-run every premise row, baseline and node row, not only the amended class.
 
 *Done when:* the durable re-plan comment exists, the halt is cleared, and full pre-flight has either
 re-signed the chart or returned another explicit stop.

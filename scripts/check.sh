@@ -66,6 +66,88 @@ else
   note "checked"
 fi
 
+echo "== evidence-authority contract is wired =="
+python3 - <<'PYAUTH' || bad "evidence-authority contract incomplete"
+from pathlib import Path
+
+contract = Path("EVIDENCE-AUTHORITY.md")
+assert contract.is_file(), "missing EVIDENCE-AUTHORITY.md"
+body = contract.read_text()
+for term in (
+    "user-intent",
+    "current-repo-source",
+    "current-external-primary",
+    "historical/tombstoned",
+    "report/memory",
+    "Derived from",
+    "invalidation receipt",
+):
+    assert term in body, f"contract missing {term}"
+assert "historical only" not in body
+
+covered = (
+    "README.md",
+    "skills/setup/SKILL.md",
+    "skills/plan/SKILL.md",
+    "skills/plan/wayfind.md",
+    "skills/grill/SKILL.md",
+    "skills/grill-deep/SKILL.md",
+    "skills/research/SKILL.md",
+    "skills/prototype/SKILL.md",
+    "skills/prototype/LOGIC.md",
+    "skills/prototype/UI.md",
+    "skills/chart/SKILL.md",
+    "skills/chart/node-template.md",
+    "skills/preflight/SKILL.md",
+    "skills/replan/SKILL.md",
+    "skills/feedback/SKILL.md",
+    "RESPONSE-RULES.md",
+    "output-styles/dag-house-style.md",
+    "GLOSSARY.md",
+)
+for name in covered:
+    assert "EVIDENCE-AUTHORITY.md" in Path(name).read_text(), f"{name} does not reference the contract"
+
+plan = Path("skills/plan/SKILL.md").read_text()
+assert plan.index("request carries no planning intent") < plan.index(
+    "destination/system shape is foggy"
+), "no-intent route must precede foggy Wayfinding"
+assert "Make no GitHub or repo mutation" in plan
+
+wayfind = Path("skills/plan/wayfind.md").read_text()
+assert "active `user-intent` premise" in wayfind
+
+readme = Path("README.md").read_text()
+setup = Path("skills/setup/SKILL.md").read_text()
+assert "if the invocation is bare" in readme and "before writing" in readme
+assert "setup completion is not planning intent" in setup
+
+logic = Path("skills/prototype/LOGIC.md").read_text()
+ui = Path("skills/prototype/UI.md").read_text()
+assert "exact commit" in logic and "not current product canon" in logic
+assert "exact commit" in ui and "not current product canon" in ui
+
+templates = Path("skills/chart/node-template.md").read_text()
+assert templates.count("## Premises") >= 2, "map and node templates both need premise fields"
+assert "**Derived from:**" in templates
+
+research = Path("skills/research/SKILL.md").read_text()
+assert "candidate answer" in research and "Only an admitted answer" in research
+assert "write no project research/canon file" in research
+
+deep = Path("skills/grill-deep/SKILL.md").read_text()
+assert deep.count("Derived from:") >= 2 and "Source refs:" in deep
+
+style = Path("output-styles/dag-house-style.md").read_text()
+response = Path("RESPONSE-RULES.md").read_text()
+assert "historical only" not in response
+assert "Cheap and reversible does not authorize a write" in style
+assert "A grill presents the whole" in style
+assert "Ask and carry on rather than parking" not in style
+
+print(f"  contract + {len(covered)} covered call sites checked")
+PYAUTH
+
 echo "== completion criteria use one format =="
 grep -rn "Done when" skills/*/SKILL.md | grep -v '\*Done when' > "$tmp/criteria" || true
 if [ -s "$tmp/criteria" ]; then

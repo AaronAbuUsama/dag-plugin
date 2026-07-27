@@ -1,6 +1,7 @@
 # Chart templates and the create-then-wire mechanic
 
 Reached from `SKILL.md` step 4. Terms are defined in [`../../GLOSSARY.md`](../../GLOSSARY.md).
+Premise fields follow [`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 ## Map body (issue labelled `dag:map`)
 
@@ -16,6 +17,18 @@ and links.
 ## Scope edge
 
 <what this expedition deliberately does not include.>
+
+## Premises
+
+<!-- Include every premise that unlocks this map. Full premise records may live on the parent Atlas or
+     planning issue; keep exact refs and the chain walkable. -->
+
+### Premise P-1
+- **Claim:** <intent or fact>
+- **Class:** <authority class>
+- **Source/ref:** <exact user answer, path@commit, or versioned URL + observed date>
+- **Status:** active
+- **Derived artifacts:** <map and node titles/links>
 
 ## Notes
 
@@ -68,6 +81,9 @@ work rather than as a follow-up:
 2. **Update that node's line in the index** — mark it done, or correct its readiness.
 3. **Say what moved onto the frontier** in the closing comment on the node, by title, so the next session
    doesn't have to recompute it.
+4. **Re-check premise status.** Operational frontier and evidence authority are separate: an open node
+   whose premise is contested, invalid or superseded is stopped even when native blockers are closed.
+   Run the invalidation receipt before redrawing a replacement route.
 
 Recompute the frontier from the tracker, never from memory of this file. A map whose graph disagrees with
 the tracker is a bug, and the fix is never to trust the graph.
@@ -117,6 +133,13 @@ The end-to-end behaviour this node makes work, from the user's perspective — n
 - [ ] Criterion 1
 - [ ] Criterion 2
 
+## Premises
+
+**Derived from:** P-1, P-2
+
+<!-- Every listed premise is active at the exact ref recorded on the map/Atlas. A contested, invalid or
+     superseded premise makes this node non-dispatchable regardless of native blockers. -->
+
 ## Proof
 
 <!-- Written NOW, before any code — never left for the implementing agent to invent.
@@ -146,9 +169,11 @@ clear | needs-grilling | needs-research | needs-prototype — one line on the de
 The blocking nodes (build edges + any de-fog node), or "None — on the frontier".
 ```
 
-Avoid file paths and code snippets — they go stale. Exception: a prototype/spike that produced a
-decision-encoding snippet (state machine, reducer, schema, type shape) — inline the decision-rich bit and
-note it came from a spike.
+Avoid speculative implementation file lists and code snippets — they go stale. Immutable provenance is
+required: premise source paths carry the exact commit/ref that made them authoritative. A
+prototype/spike that produced a decision-encoding snippet (state machine, reducer, schema, type shape)
+may inline the decision-rich bit, scoped to its question and exact spike commit; it is not current canon
+without current adoption.
 
 De-fog node bodies (grilling / research / prototype) hold just the question or spike goal; the matching
 `/dag:grill`, `/dag:research`, `/dag:prototype` skill drives them.

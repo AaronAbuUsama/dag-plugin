@@ -16,24 +16,28 @@ in [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
 How to respond — the closing message, and any question put to the user — is in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+Durable glossary and ADR writes also pass
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 ## The delta: capture as you settle
 
-Grill's loop folds each round's answers back into the design tree (its step 4). Grill-deep extends that
-fold with a capture pass, run *before* you recompute the next frontier so nothing settled slips by
-unrecorded:
+Grill's loop folds each round's admitted answers back into the design tree (its step 4). Grill-deep
+extends that fold with a capture pass, run *before* you recompute the next frontier so nothing settled
+slips by unrecorded. A candidate, contested or inferred answer is not settled and is not written:
 
 1. **Glossary — every term the round pinned down.** When a round settles what a word *means* — sharpens
    a fuzzy term, picks one word over rival spellings, resolves two people meaning different things —
-   write it to `CONTEXT.md` immediately (format below). Don't batch these to the end; capture them the
-   moment they crystallise. And challenge forward: if the user reaches for a term the glossary already
-   defines differently, stop the round and surface the clash before it settles wrong.
+   write it to `CONTEXT.md` with `Derived from: P-...` immediately after premise admission (format
+   below). Don't batch these to the end; capture them the moment they crystallise. And challenge forward:
+   if the user reaches for a term the glossary already defines differently, mark the old/new premises
+   contested and stop the round to surface the clash before it settles wrong.
 2. **ADR — every decision that will outlive its reasoning.** Offer an ADR only when *all three* hold:
    **hard to reverse** (changing your mind later costs real work), **surprising without context** (a
    future reader will look at the code and wonder "why this way?"), and **the result of a real
    trade-off** (there were genuine alternatives and you picked one for stated reasons). The rubric-grill
    you just ran *is* the ADR's raw material — the options and the grading are already on the page. If any
-   of the three is missing, skip it; you'd only reverse an easy decision or restate an obvious one.
+   of the three is missing, skip it; you'd only reverse an easy decision or restate an obvious one. Every
+   ADR cites its active premise IDs and exact source refs.
 
 **An ADR that records a symptom as if it were the root cause is durable damage** — it outlives the
 session and the next reader trusts it. So before writing one, apply **looking for the nest** (glossary) to
@@ -65,6 +69,7 @@ general programming concept does not, however much the project leans on it.
 **Invoice**:
 A request for payment sent to a customer after delivery.
 _Avoid_: Bill, payment request
+Derived from: P-7 — user answer in planning issue #12
 ```
 
 ### ADR format
@@ -76,6 +81,9 @@ not filling sections.
 # {Short title of the decision}
 
 {1–3 sentences: the context, what you decided, and why.}
+
+Derived from: P-7, P-9
+Source refs: <exact user answer, path@commit, or versioned URL + observed date>
 ```
 
 Add `Status`, `Considered Options`, or `Consequences` only when a rejected alternative is worth

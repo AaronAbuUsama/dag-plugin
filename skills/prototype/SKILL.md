@@ -11,6 +11,8 @@ build commits — see [`../../GLOSSARY.md`](../../GLOSSARY.md).
 
 How to respond — the closing message, and any question put to the user — is in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+The spike's question, source ref and verdict follow
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 ## Pick a branch
 
@@ -22,10 +24,11 @@ node's readiness note, or by asking if the user is around:
 - **"What should this look like?"** → [UI.md](UI.md). Generate several radically different UI
   variations on a single route, switchable via a URL search param and a floating bottom bar.
 
-The two branches produce very different artifacts — getting this wrong wastes the whole spike. If the
-question is genuinely ambiguous and the user isn't reachable, default to whichever branch better
-matches the surrounding code (a backend module → logic; a page or component → UI) and state the
-assumption at the top of the prototype.
+The two branches produce very different artifacts — getting this wrong wastes the whole spike. Record
+the active premise IDs that establish the question. If the question is genuinely ambiguous and the user
+isn't reachable, default to whichever branch better matches the current surrounding code (a backend
+module → logic; a page or component → UI) and state that `inference` at the top of the prototype. It may
+select a throwaway spike shape, but cannot settle the product decision or unblock the build.
 
 ## Rules that apply to both
 
@@ -44,9 +47,11 @@ assumption at the top of the prototype.
 5. **Surface the state.** After every action (logic) or on every variant switch (UI), print or render
    the full relevant state so the user can see what changed.
 6. **Capture it when done.** Fold any validated decision into the real code, then capture the spike
-   itself as a **primary source**: commit it to a throwaway branch, out of main, and leave a context
-   pointer to that branch on the node's issue. Capture the verdict too — the question it settled and
-   the answer — as a comment on the node issue that the `needs-prototype` build node was blocked on.
+   itself as a **primary source for the narrow question it exercised**: commit it to a throwaway branch,
+   out of main, record that exact branch/commit and scope, and leave the context pointer on the node's
+   issue. It is not current product canon merely because it is observable. Capture the verdict too — the
+   admitted premises, question, answer and `Derived from: P-...` — as a comment on the de-fog node. Only
+   an admitted verdict closes that node and unblocks the build.
    If the tracker isn't configured yet, run `/dag:setup` first. The main branch keeps only the
    validated decision.
 

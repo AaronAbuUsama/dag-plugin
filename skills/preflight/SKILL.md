@@ -10,15 +10,19 @@ before Wave 1 dispatch. It is the whole-DAG conformance gate: catch every archit
 against the *design*, where it is cheap — not later, in review, against the *code*, where it is most
 expensive. Terms below are defined once in [`../../GLOSSARY.md`](../../GLOSSARY.md), and how to respond is in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+Premise authority is the first gate and is defined in
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 Inputs: the DAG, the project's architecture-**invariant** doc, and each node's written spec (its
-acceptance criteria). Work the four steps in order; each produces one column of the signed table.
+acceptance criteria), premise IDs and exact source refs. Work the five checks in order; each produces one
+column of the signed table.
 
 **Judge the open build nodes only.** De-fog nodes — grilling, research, spike — are planning moves, not
 dispatchable work: they carry no proof contract by design, and `/dag:plan` closes each one as its answer
 lands. A de-fog node still open here means planning isn't finished, and that is a stop before pre-flight
 rather than a node to validate. If the repo has no architecture-invariant doc, say so and judge against
-whatever design record exists rather than blocking on a file the suite never creates.
+the current authoritative design record rather than blocking on a file the suite never creates. “Whatever
+exists” is not enough: resolve the current canon pointer and exact ref first.
 
 ## Atlas portfolio pre-flight
 
@@ -37,7 +41,17 @@ batch. Run this skill once **per map** and post one independent signature on eac
 The portfolio batch is one planning move. Planning is not complete until every required active map has
 either been signed or durably returned to de-fog/re-plan.
 
-## 1. Invariant conformance, per node
+## 1. Premise authority, per node
+
+Read every premise named by the map and node. Confirm its class owns the claim, its exact source/ref is
+current, and its status is `active`. Re-check current repo premises against HEAD and the current canon
+pointer; do not substitute memory, a report or Git history. A changed pointer, deletion, correction or
+contradiction triggers the shared invalidation receipt and returns the affected map to planning.
+
+*Done when:* every node names all premises it derives from and every one is active at a verified exact
+ref — or the map is unsigned and returned for descendant invalidation.
+
+## 2. Invariant conformance, per node
 
 For each node, read its spec and name which architecture **invariants** it touches. For each invariant
 touched, confirm the node's *design* will satisfy it — there is no code yet, so you are checking the
@@ -53,17 +67,17 @@ plan, not an implementation. Give the node one verdict:
 left unjudged, and every at-risk node names the unconfirmed choice it is waiting on rather than the
 verdict alone.
 
-## 2. Acceptance-criteria checkability
+## 3. Acceptance-criteria checkability
 
 For each node, read each written acceptance criterion and confirm it can be checked against a *design*
 now. A criterion you can only settle by running finished code is a criterion that will be validated
 reactively, in review — the exact failure this gate exists to prevent. Where a criterion is
-design-checkable, it belongs in that node's proof-contract reasoning (step 4).
+design-checkable, it belongs in that node's proof-contract reasoning (step 5).
 
 *Done when:* every acceptance criterion of every node is marked **design-checkable** or **code-only**,
 and each code-only criterion names why it resists a design check.
 
-## 3. Edge audit
+## 4. Edge audit
 
 For each declared blocking **edge**, confirm it is real: node B genuinely cannot proceed until node A
 merges. Then hunt **hidden edges** — a node depending on another's *specific implementation choice*, not
@@ -89,7 +103,7 @@ against the nodes it shares a contract with — new edges added where found — 
 a scheduling note rather than edged, and any pattern across nodes is called a possible shared root rather
 than logged N times.
 
-## 4. Proof contract, per node
+## 5. Proof contract, per node
 
 Each node's **proof contract** was written into its issue when the node was created. Here you validate
 it — you are not inventing it now, and neither will the agent that builds the node.
@@ -166,9 +180,9 @@ that node's row says.
 
 Then one table, one row per node:
 
-| node | invariants touched | invariant verdict | acceptance criteria | edges + couplings | proof contract |
-|---|---|---|---|---|---|
-| … | the invariants, named | satisfies / at-risk **→ settled how** / re-plan | all design-checkable? | confirmed, plus the exact contract/shape/name each hidden edge carries | the runnable contract, or **stop** |
+| node | active premises + exact refs | invariants touched | invariant verdict | acceptance criteria | edges + couplings | proof contract |
+|---|---|---|---|---|---|---|
+| … | P-1, P-2 @ refs | the invariants, named | satisfies / at-risk **→ settled how** / re-plan | all design-checkable? | confirmed, plus the exact contract/shape/name each hidden edge carries | the runnable contract, or **stop** |
 
 **Name the invariants and the couplings, don't just grade them.** Both the dispatch brief and the
 review brief quote this table per node — "invariants touched, as pre-flight named them" and "the
@@ -195,8 +209,9 @@ readiness-labelled issue when its move lands, and that close is how the node beh
 frontier — so a build node wearing the label is a build node planning will close, with the work unbuilt
 and its proof contract unsatisfied. Same shape `chart` uses for every other de-fog signal.
 
-Pre-flight is signed only when every remaining node is **satisfies**, fully design-checkable,
-edge-audited, and carries a proof contract. Only a signed pre-flight clears the DAG for dispatch.
+Pre-flight is signed only when every remaining node derives solely from active premises at verified refs,
+is **satisfies**, fully design-checkable, edge-audited, and carries a proof contract. Only a signed
+pre-flight clears the DAG for dispatch.
 
 **Record the signature on the chart.** Post the signed table as a comment on the `dag:map` issue and add
 the `dag:preflighted` label to it. That label *is* the signature — it lives on GitHub, so `/dag:plan`

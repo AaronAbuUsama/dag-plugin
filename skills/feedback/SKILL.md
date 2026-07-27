@@ -7,6 +7,8 @@ description: Capture a DAG Engineering workflow failure, wrong route, lost state
 
 Record what happened without diagnosing beyond the evidence. This skill reports against
 `AaronAbuUsama/dag-plugin`; it does not alter the downstream chart and does not fix the plugin.
+Classify sources, contradicted premises and unsafe descendants using
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md); planning owns the actual invalidation.
 
 ## 1. Establish the report
 
@@ -18,6 +20,8 @@ Collect:
 - starting Atlas, map, node, labels, and relevant comments;
 - expected route, citing the exact skill clause;
 - actual route and its durable effects;
+- premise IDs/classes/source refs involved, when the failed run recorded them;
+- the correction or contradiction and every known downstream descendant left unsafe;
 - the shortest reproduction;
 - redacted transcript, commands, issue links, or screenshots that prove the difference.
 
@@ -63,6 +67,12 @@ Use this issue body:
 ## Evidence
 - ...
 
+## Premise impact
+- Contradicted premise:
+- Source/ref and authority class:
+- Descendants left unsafe:
+- Required planning-side invalidation:
+
 ## Verdict
 confirmed | not reproduced | already fixed | expectation gap
 ```
@@ -71,7 +81,9 @@ If the user explicitly asked to file or record the feedback, create or update th
 show the redacted draft and ask before making the external write. Use an existing feedback/bug label when
 available; do not create repository configuration from this skill.
 
-Return the issue URL or the draft, plus any downstream state the failure left unsafe.
+Return the issue URL or the draft, plus any downstream state the failure left unsafe. Route that state
+back to `/dag:plan`; plan/replan writes the invalidation receipt and repairs it. Feedback remains
+read-only downstream.
 
 ## 4. Close the loop
 
@@ -80,7 +92,7 @@ A confirmed report is fixed only when:
 1. the old behavior is reproduced or its durable evidence is sufficient;
 2. the relevant skill contract is corrected;
 3. an independent reviewer checks the affected route and its neighbouring transitions;
-4. the original reproduction passes on the candidate;
+4. the original reproduction and authority/invalidation matrix pass on the candidate;
 5. the issue names the fixed version.
 
 Never close feedback because a patch looks plausible.

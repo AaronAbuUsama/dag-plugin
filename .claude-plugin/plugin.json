@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dag",
   "displayName": "DAG Engineering",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Turn uncertain intent into an Atlas of expeditions, then chart each destination as a graph of provable work and walk it to done-clean — evidence fixed before code and shown in the PR.",
   "author": {
     "name": "Aaron Abu Usama",

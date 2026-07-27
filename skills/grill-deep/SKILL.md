@@ -69,6 +69,7 @@ general programming concept does not, however much the project leans on it.
 **Invoice**:
 A request for payment sent to a customer after delivery.
 _Avoid_: Bill, payment request
+Derived from: P-7 — user answer in planning issue #12
 ```
 
 ### ADR format
@@ -80,6 +81,9 @@ not filling sections.
 # {Short title of the decision}
 
 {1–3 sentences: the context, what you decided, and why.}
+
+Derived from: P-7, P-9
+Source refs: <exact user answer, path@commit, or versioned URL + observed date>
 ```
 
 Add `Status`, `Considered Options`, or `Consequences` only when a rejected alternative is worth

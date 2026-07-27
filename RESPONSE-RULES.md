@@ -65,7 +65,7 @@ message — a finding, a roll-up, and a grill can all need one.
 | Claim | Evidence/ref | Verified | Authority | Premise status |
 |---|---|---|---|---|
 | The listener is torn down when auth settles | `wa/session.ts:214 @ abc1234` | ✅ read it at HEAD | `current-repo-source` | active |
-| An old design used cyan radicals | deleted file at `92878a9` | ✅ read from history | `historical/tombstoned` | historical only |
+| An old design used cyan radicals | deleted file at `92878a9` | ✅ read from history | `historical/tombstoned` | active |
 | The coalescer's queue is unbounded | agent report, not re-checked | ⚠️ unverified | `report/memory` | contested |
 ```
 

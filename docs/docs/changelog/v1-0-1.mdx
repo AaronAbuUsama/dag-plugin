@@ -9,9 +9,9 @@ changelog:
 
 ## Premises have authority
 
-Planning now distinguishes user intent, current repository source, current external primary source,
-historical or tombstoned material, inference, and reports or memory. Each premise that unlocks durable
-state carries an exact source/ref and status.
+The planning contract now distinguishes user intent, current repository source, current external primary
+source, historical or tombstoned material, inference, and reports or memory. Each premise that unlocks
+durable state carries an exact source/ref and status.
 
 Current canon pointers are resolved before Git history. Deleted material may explain history but cannot
 stand in for current source unless a current authoritative source explicitly re-adopts it.
@@ -27,3 +27,6 @@ disposes every descendant before planning issues a replacement baseline.
 Research teammates post candidate answers; the planning lead verifies and admits them before they become
 project notes or unblock a node. A bare `dag:plan` invocation in a fresh repo performs read-only grounding
 and asks what outcome is being planned before writing.
+
+The bundled stdlib harness is an executable oracle for these contract transitions, including dirty
+worktrees and real temporary Git histories. A cold plugin run remains the runtime acceptance test.

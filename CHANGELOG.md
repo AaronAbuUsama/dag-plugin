@@ -2,9 +2,9 @@
 
 ## 1.0.1
 
-**Planning evidence now has authority, provenance and invalidation.** Current source, historical
-material, inference, memory and teammate reports can no longer silently substitute for one another or
-for user intent.
+**Planning evidence is now governed by authority, provenance and invalidation.** The shared contract
+forbids current source, historical material, inference, memory and teammate reports from silently
+substituting for one another or for user intent.
 
 - **One premise contract.** Every planning route shares authority classes, exact source refs, admission
   status and `Derived from` provenance.
@@ -17,9 +17,9 @@ for user intent.
   planning lead verifies and admits them.
 - **Bare planning stays read-only.** With no artifact and no supplied outcome, `dag:plan` grounds one
   batched interview and writes nothing.
-- **Regression coverage.** Tier-1 checks protect the shared contract and templates; a stdlib behavioral
-  harness exercises tombstones, changed/absent canon, memory/report conflicts, correction invalidation,
-  re-adoption and the no-intent route.
+- **Regression coverage.** Tier-1 checks protect the shared contract and templates; a stdlib contract
+  oracle exercises tombstones, dirty worktrees, changed/absent canon, memory/report conflicts, correction
+  invalidation, re-adoption and the no-intent route. Cold plugin runs remain the runtime acceptance test.
 
 ## 1.0.0
 

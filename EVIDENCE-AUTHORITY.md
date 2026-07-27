@@ -154,7 +154,7 @@ An evidence table shows both verification and authority:
 | Claim | Evidence/ref | Verified | Authority | Premise status |
 |---|---|---|---|---|
 | The current canon points at `screens.html` | `README.md:10-19 @ abc1234` | read at HEAD | `current-repo-source` | active |
-| An old design used cyan radicals | deleted file at `92878a9` | read from history | `historical/tombstoned` | historical only |
+| An old design used cyan radicals | deleted file at `92878a9` | read from history | `historical/tombstoned` | active |
 | The queue is unbounded | teammate report | not re-checked | `report/memory` | contested |
 
 “Observed” and “authoritative for this claim” are different assertions. Show both.

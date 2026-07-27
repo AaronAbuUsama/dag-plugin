@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from dataclasses import dataclass
+from hashlib import sha256
 from pathlib import Path
 
 
@@ -95,16 +96,24 @@ def was_deleted(repo: Path, path: str) -> bool:
     return bool(output)
 
 
-def current_canon_pointer(repo: Path) -> str:
-    return (repo / "CANON").read_text().strip()
+def exact_ref(repo: Path, path: str) -> str:
+    head = run(repo, "git", "rev-parse", "HEAD")
+    status = run(repo, "git", "status", "--porcelain", "--", path)
+    if not status:
+        return f"{path}@{head}"
+    digest = sha256((repo / path).read_bytes()).hexdigest()[:12]
+    return f"{path}@{head}+worktree:{digest}"
 
 
 def classify_canon_candidate(repo: Path, path: str) -> Premise:
     head = run(repo, "git", "rev-parse", "HEAD")
-    current_pointer = current_canon_pointer(repo)
-    if path == current_pointer and exists_at_head(repo, path):
-        return Premise("P-canon", f"{path} is current canon", CURRENT_REPO, f"{path}@{head}", ACTIVE)
-    if was_deleted(repo, path) and not exists_at_head(repo, path):
+    current_pointer = (repo / "CANON").read_text().strip()
+    worktree_exists = (repo / path).is_file()
+    head_exists = exists_at_head(repo, path)
+    if path == current_pointer and worktree_exists:
+        source_ref = f"{exact_ref(repo, 'CANON')} -> {exact_ref(repo, path)}"
+        return Premise("P-canon", f"{path} is current canon", CURRENT_REPO, source_ref, ACTIVE)
+    if was_deleted(repo, path) and not head_exists:
         deletion = run(repo, "git", "log", "-1", "--diff-filter=D", "--format=%H", "--", path)
         return Premise(
             "P-canon",
@@ -113,12 +122,14 @@ def classify_canon_candidate(repo: Path, path: str) -> Premise:
             f"{path}@deleted:{deletion}",
             SUPERSEDED,
         )
-    if exists_at_head(repo, path):
+    if path == current_pointer and not worktree_exists:
+        return Premise("P-canon", f"{path} is current canon", None, f"{path}@{head}", UNKNOWN)
+    if worktree_exists:
         return Premise(
             "P-canon",
             f"{path} is current canon",
             CURRENT_REPO,
-            f"{path}@{head}",
+            exact_ref(repo, path),
             SUPERSEDED,
         )
     return Premise("P-canon", f"{path} is current canon", None, f"{path}@{head}", UNKNOWN)
@@ -205,6 +216,34 @@ class EvidenceAuthorityRegression(unittest.TestCase):
             self.assertEqual(old.status, SUPERSEDED)
             self.assertTrue(may_unlock(new, "repo-fact"))
             self.assertEqual(receipt.descendants, ("R-1", "D-1", "M-1"))
+
+    def test_dirty_worktree_deletion_is_not_active_head_evidence(self) -> None:
+        with init_repo() as temp:
+            repo = Path(temp)
+            write(repo, "design/current.html", "committed")
+            write(repo, "CANON", "design/current.html\n")
+            commit(repo, "add current canon")
+            (repo / "design/current.html").unlink()
+
+            current = classify_canon_candidate(repo, "design/current.html")
+
+            self.assertEqual((current.authority, current.status), (None, UNKNOWN))
+            self.assertFalse(may_unlock(current, "repo-fact"))
+
+    def test_dirty_worktree_modification_has_an_exact_ref(self) -> None:
+        with init_repo() as temp:
+            repo = Path(temp)
+            write(repo, "design/current.html", "committed")
+            write(repo, "CANON", "design/current.html\n")
+            commit(repo, "add current canon")
+            clean = classify_canon_candidate(repo, "design/current.html")
+            write(repo, "design/current.html", "uncommitted change")
+
+            dirty = classify_canon_candidate(repo, "design/current.html")
+
+            self.assertTrue(may_unlock(dirty, "repo-fact"))
+            self.assertNotEqual(dirty.source_ref, clean.source_ref)
+            self.assertIn("+worktree:", dirty.source_ref)
 
     def test_absent_current_source_stays_unknown(self) -> None:
         with init_repo() as temp:

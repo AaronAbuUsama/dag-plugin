@@ -83,6 +83,7 @@ for term in (
     "invalidation receipt",
 ):
     assert term in body, f"contract missing {term}"
+assert "historical only" not in body
 
 covered = (
     "README.md",
@@ -134,7 +135,12 @@ research = Path("skills/research/SKILL.md").read_text()
 assert "candidate answer" in research and "Only an admitted answer" in research
 assert "write no project research/canon file" in research
 
+deep = Path("skills/grill-deep/SKILL.md").read_text()
+assert deep.count("Derived from:") >= 2 and "Source refs:" in deep
+
 style = Path("output-styles/dag-house-style.md").read_text()
+response = Path("RESPONSE-RULES.md").read_text()
+assert "historical only" not in response
 assert "Cheap and reversible does not authorize a write" in style
 assert "A grill presents the whole" in style
 assert "Ask and carry on rather than parking" not in style

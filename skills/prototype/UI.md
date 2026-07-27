@@ -134,8 +134,10 @@ code and move the rest onto the throwaway branch, not into main:
 - **Sub-shape B** — promote the winning variant to a real route; drop the throwaway route and the
   switcher from main.
 
-The full set of variants is the primary source, so it lands on the throwaway branch, not the bin —
-variant components and the switcher left in the main branch rot fast and confuse the next reader.
+The full set of variants is the primary source **for the narrow comparison it ran**, so it lands on the
+throwaway branch at an exact commit, not the bin. It is not current product canon; admitting the result
+still follows [`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md). Variant components and the
+switcher left in the main branch rot fast and confuse the next reader.
 
 ## Anti-patterns
 

@@ -140,4 +140,6 @@ change the label set or domain layout later.
 **Then hand back to the door — `/dag:plan` — and name nothing else.** Never route the user to a planning
 step like `/dag:grill` or `/dag:chart`: which step comes next is `/dag:plan`'s judgement, read off the
 chart's state, and naming one here teaches the user a model the suite spends the rest of its time undoing.
-Two doors is the whole interface.
+Two doors is the whole interface. In a fresh repo, a bare planning-door invocation asks for the outcome
+before writing an Atlas; setup completion is not planning intent. The planning door applies
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md) before any durable planning write.

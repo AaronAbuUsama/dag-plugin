@@ -98,7 +98,10 @@ in the _idea_, which is the whole point. If they want new actions added, add the
 Once the spike has answered its question, capture the answer, then capture the prototype the way the
 [SKILL](SKILL.md) describes. The logic-specific mapping: the validated reducer / machine / function
 set lifts into the real module (the decision, absorbed); the TUI shell rides along to the throwaway
-branch that keeps the spike as a primary source, referenced from the `needs-prototype` node's issue.
+branch that keeps the spike as the primary source **for the narrow question it answered**, referenced
+from the `needs-prototype` node's issue at an exact commit. That branch is not current product canon:
+admitting the result still follows the authority and provenance gate in
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 ## Anti-patterns
 

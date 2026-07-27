@@ -9,12 +9,16 @@ Run `/dag:plan` in Claude Code or `$dag:plan` in Codex from any context window b
 It finds the **Atlas** or **chart**, reads its state from GitHub, and performs the next planning move in
 this turn. Terms are defined in [`../../GLOSSARY.md`](../../GLOSSARY.md); response rules are in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+Before reading or writing planning state, follow the premise admission and invalidation contract in
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 Planning ends at the **pre-flight** signature. Past it the chart belongs to
 [`/dag:execute`](../execute/SKILL.md).
 
-The tracker is the memory. An Atlas persists its decisions and expedition charts. A chart persists its
-nodes, readiness labels, edges, proof contracts and signature. Never depend on a prior conversation.
+The tracker is the memory, not authority by itself. An Atlas persists its decisions, premises and
+expedition charts. A chart persists its nodes, readiness labels, edges, proof contracts, premise links and
+signature. Never depend on a prior conversation, and never treat a persisted claim as current merely
+because it survived there.
 
 ## 1. Locate the planning artifact
 
@@ -36,6 +40,10 @@ gh issue list --label dag:map --state open --json number,title
 - Several plausible artifacts → name them and ask which one; never choose by recency.
 - No artifact → inspect the request. One known destination starts an **expedition**. Fog about the
   destination, system boundary, or relationship between several destinations starts **Wayfinding**.
+- No artifact and no desired outcome, destination, problem or scope in the request → there is no
+  `user-intent` premise. Inspect only enough current code/canon to ground one batched interview asking
+  what outcome is being planned, then stop for the answer. Repository context is evidence, not intent.
+  Make no GitHub or repo mutation before the answer establishes the planning territory.
 
 If any required label, including `dag:atlas`, is missing, hand over `/dag:setup`. Querying issues by a
 missing label returns an empty list rather than an error, so check the label vocabulary first. That is
@@ -45,7 +53,7 @@ the only setup exception to the two-door flow.
 
 For an Atlas, read its body, open child decision issues and child `dag:map` issues. The body must make
 the North star, Decisions so far, Open decisions, Expeditions, Not yet specified and Out of scope
-visible.
+visible. Read its premise records and confirm every premise that still unlocks territory is `active`.
 
 For a chart, read:
 
@@ -55,6 +63,12 @@ For a chart, read:
 - each node's native blockers and the resulting **frontier**;
 - `dag:preflighted` and `dag:halted` on the map;
 - the map comments holding the signed table or halt record.
+- the map and node premise records, their exact refs and `Derived from` links.
+
+Resolve current repo authority before Git history. If a current canon pointer changed, a source was
+deleted, or a user correction contradicts a premise, stop ordinary routing and run the invalidation
+protocol before selecting another move. A structurally current tracker is not enough when its premise is
+contested, invalid or superseded. An intentional deletion is a tombstone, not a missing-source invitation.
 
 ```bash
 R=<owner>/<repo>
@@ -81,12 +95,14 @@ Read the matching rows top-down and perform the first move that applies:
 
 | State | Move | Read and follow |
 |---|---|---|
+| No artifact; request carries no planning intent | ground one batched outcome interview; no mutation, then stop | [`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md), [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) |
 | No artifact; destination/system shape is foggy | create or advance an Atlas | [`wayfind.md`](wayfind.md) |
 | No artifact; one destination is known | grill, then chart the expedition | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
 | Atlas has an open decision, relevant unspecified territory, or newly chartable region | advance Wayfinding once | [`wayfind.md`](wayfind.md) |
 | Map has `dag:halted` | classify and repair the returned chart | [`../replan/SKILL.md`](../replan/SKILL.md) |
 | Chart frontier has `dag:needs-grilling` | settle that decision | [`../grill/SKILL.md`](../grill/SKILL.md), or [`../grill-deep/SKILL.md`](../grill-deep/SKILL.md) when ADRs are warranted |
-| Chart frontier has `dag:needs-research` | dispatch research | the model-invoked `research` skill |
+| Chart frontier has `dag:needs-research` and a candidate answer | lead verifies and admits or contests it; close only after admission | [`../research/SKILL.md`](../research/SKILL.md), [`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md) |
+| Chart frontier has `dag:needs-research` and no candidate answer | dispatch research once | the model-invoked `research` skill |
 | Chart frontier has `dag:needs-prototype` | run the spike | the model-invoked `prototype` skill |
 | Map has a `Not yet specified` entry whose decision has landed | graduate it into nodes | [`../chart/SKILL.md`](../chart/SKILL.md) |
 | Chart complete and unsigned | pre-flight and sign it | [`../preflight/SKILL.md`](../preflight/SKILL.md) |
@@ -110,7 +126,9 @@ node-wrong, method-wrong or destination-wrong.
 
 **Chart complete** means no open de-fog issue and no unresolved **Not yet specified** entry remains
 under the map. Every such entry must be graduated, moved to **Out of scope**, or still point at an open
-de-fog issue. A clear-looking frontier does not excuse uncertainty buried elsewhere.
+de-fog issue. Every premise used by an open build node must also be `active`; contested, invalid or
+superseded premises make the chart incomplete. A clear-looking frontier does not excuse uncertainty
+buried elsewhere.
 
 ## 4. Persist every planning move
 
@@ -119,16 +137,20 @@ it may sign several complete maps because they are independent artifacts at the 
 
 When a decision lands:
 
-1. record the answer as a comment on its de-fog or Atlas decision issue;
+1. run the premise admission gate and record the answer, authority class, exact source/ref and premise ID
+   as a comment on its de-fog or Atlas decision issue;
 2. for Atlas decisions, fold it into **Decisions so far** and remove it from **Open decisions**;
-3. close the decision issue.
+3. add `Derived from: P-...` to every durable descendant the answer unlocks;
+4. close the decision issue.
 
 That close advances the durable frontier. A result left only in chat did not happen.
 
 When the move needs user input, ground the question through
-[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), ask it, and continue the move in the same turn.
-Do not ask the user whether something is “an Atlas”; show the concrete destination uncertainty and
-recommend the matching level.
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), ask it, and stop when the answer has not yet been
+given. If the host returns the answer in the same turn, continue only after admitting it as an active
+premise. Grill still presents the whole batched round and stops for its answers. A cheap or reversible
+write never bypasses premise admission. Do not ask the user whether something is “an Atlas”; show the
+concrete destination uncertainty and recommend the matching level.
 
 If two decision issues answer the same underlying question, name the possible **nest** and route to
 diagnosis rather than multiplying decisions.
@@ -145,6 +167,9 @@ evidence:
 
 Never put a `dag:needs-*` label on the build node. Planning closes readiness-labelled issues when their
 answer lands; labelling the build node would close it unbuilt.
+
+If the recovered evidence contradicts a premise rather than merely recording an execution stop, write
+the premise invalidation receipt first and enumerate every descendant before creating replacement state.
 
 ## 6. End with a position
 

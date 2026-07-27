@@ -1,6 +1,6 @@
 {
   "name": "dag",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wayfind uncertain intent into an Atlas, chart each expedition as provable work, and execute every node to done-clean.",
   "author": {
     "name": "Aaron Abu Usama",

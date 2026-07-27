@@ -8,6 +8,8 @@ relate, and which expedition should be charted next.
 destination, rather than a node or its validation method, was wrong. Terms are defined in
 [`../../GLOSSARY.md`](../../GLOSSARY.md); response rules are in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+Premise authority and descendant invalidation are governed by
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
 ## 1. Locate or create the Atlas
 
@@ -19,14 +21,25 @@ gh issue list --label dag:atlas --state open --json number,title
 ```
 
 Use the one the user named or the only one whose scope matches. If several could match, show them and
-ask; never guess. If none matches, create one:
+ask; never guess. If none matches, create one only after an active `user-intent` premise establishes the
+initiative, desired outcome, problem or scope it will own. Repository code and canon may ground the
+question but may not supply that intent. With no admitted planning territory, return to plan's read-only
+outcome interview without mutation.
 
 ```markdown
 # North star
 <The direction and value sought. It may be less precise than a chart destination.>
 
 ## Known terrain
-<What exists, the system boundary currently visible, and primary-source links.>
+<What exists, the system boundary currently visible, and premise IDs with exact current source refs.>
+
+## Premises
+### Premise P-1
+- **Claim:** <the admitted intent or fact>
+- **Class:** <authority class>
+- **Source/ref:** <exact user answer, path@commit, or versioned URL + observed date>
+- **Status:** active
+- **Derived artifacts:** <decisions, expeditions and maps, or none yet>
 
 ## Decisions so far
 - <decision and why>
@@ -61,11 +74,13 @@ the Atlas and carries the existing readiness label that names how it resolves:
 
 Several consequences of one unknown are one decision issue, not several. Do not create implementation
 nodes here. A decision issue records the question, why it changes the map, and what becomes chartable
-when it lands.
+when it lands, plus the premise IDs it tests or depends on.
 
-Run one decision move per planning turn. Put the answer in a comment, fold the result into **Decisions
-so far**, update or remove the matching **Open decisions** line, then close the decision issue. The
-close advances the Atlas frontier in the same way a de-fog issue advances a chart.
+Run one decision move per planning turn. Admit the answer under the shared evidence-authority contract,
+put its premise record in a comment, fold the result into **Decisions so far** with `Derived from:
+P-...`, update or remove the matching **Open decisions** line, then close the decision issue. A candidate
+research answer or contested premise does not close it. The close advances the Atlas frontier in the same
+way a de-fog issue advances a chart.
 
 *Done when:* the current question has one durable answer, the Atlas summary reflects it, and no closed
 decision remains listed as open.
@@ -79,8 +94,9 @@ The moment one bounded destination is clear enough to state, graduate it into an
    labelled `dag:needs-grilling` containing that destination and scope edge. Read
    [`../grill/SKILL.md`](../grill/SKILL.md) and settle the expedition before charting it. Record the
    resulting plan on the issue, fold its decisions into the Atlas, then close it.
-3. Read [`../chart/SKILL.md`](../chart/SKILL.md) only after that plan exists, and copy the destination
-   and scope edge into the expedition's map.
+3. Confirm the destination, scope edge and supplied plan/spec/PRD derive only from active premises at
+   exact refs. Read [`../chart/SKILL.md`](../chart/SKILL.md) only after that check, and copy the destination,
+   scope edge and `Derived from: P-...` links into the expedition's map.
 4. Add the resulting `dag:map` issue as a child of the Atlas and link it under **Expeditions**:
 
    ```bash
@@ -101,7 +117,9 @@ into its nodes.
 ## 4. Resume or finish
 
 On every re-entry, read the Atlas body, its open child decision issues, and its child `dag:map` issues
-from GitHub. Do not depend on the prior conversation.
+from GitHub. Read the premise records and exact refs too; do not depend on the prior conversation. A
+changed current canon pointer, deletion, user correction or conflicting current source triggers the
+shared invalidation receipt before another Wayfinding move.
 
 Keep the Atlas open while it has an open decision, unspecified territory that still matters, or an
 active expedition. For every still-relevant **Not yet specified** item, create the next decision issue

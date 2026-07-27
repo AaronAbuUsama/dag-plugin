@@ -12,8 +12,11 @@ renders visually. The suite then walks it from `/dag:preflight` onward. Terms ar
 
 How to respond — the closing message, and any question put to the user — is in
 [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md).
+Premises, exact refs and descendant invalidation are governed by
+[`../../EVIDENCE-AUTHORITY.md`](../../EVIDENCE-AUTHORITY.md).
 
-The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. GitHub is the
+The plan arrives from `/dag:grill`, `/dag:grill-deep`, or a spec/PRD the user points at. It is chartable
+only when its destination, scope and decisions derive from active premises at exact refs. GitHub is the
 tracker (issues + sub-issues + native blocking); run `/dag:setup` if it hasn't been configured.
 
 **Default posture: decompose, don't rediscover.** The grilling already burned off the fog — your job is to
@@ -74,7 +77,8 @@ unknown is settled *before* the build reaches the frontier:
   de-risked cheaply before the real build commits.
 
 A de-fog node is a real child issue with its own blocking edge into the build node — so the frontier
-never surfaces a build node whose premise is still unsettled.
+never surfaces a build node whose premise is still unsettled. `clear` requires admitted active premises;
+a plausible answer, teammate report, inference, historical artifact or contested premise is not clear.
 
 **The `dag:needs-*` label goes on the de-fog node, not the build node.** The de-fog node is the one
 sitting on the frontier with work to do; the build node is blocked and invisible to the router by
@@ -87,9 +91,12 @@ de-fogging this node is, so `/dag:plan` can route it without opening it.
 
 Work from the grilling/spec already in context. If the user passed a reference (spec path, issue URL),
 fetch its full body and comments. Explore the codebase enough to name nodes in the project's glossary
-vocabulary and spot prefactoring opportunities.
+vocabulary and spot prefactoring opportunities. Resolve the current canon pointer and exact HEAD before
+history; confirm every source the plan relies on is current-authoritative for its claim. Record the
+premise IDs and refs that establish destination, scope and design decisions.
 
-*Done when:* you can state the destination, its scope edge, and every buildable region in one pass.
+*Done when:* you can state the destination, its scope edge, active premise IDs and every buildable region
+in one pass.
 
 ### 2. Draft the vertical-slice nodes
 
@@ -116,7 +123,7 @@ whether the readiness verdicts share a root — see **looking for the nest** in 
 each marked needs-grilling for what is really one decision should be one grilling node blocking all three:
 that settles it once, and it is the difference between one round with the user and three.
 
-*Done when:* every build node carries a readiness verdict in its body; every non-clear one has a de-fog
+*Done when:* every build node carries its active premise IDs and a readiness verdict in its body; every non-clear one has a de-fog
 node blocking it; every de-fog node carries the `dag:needs-*` label matching what it is for; and no two
 de-fog nodes ask the same question — no build node left resting on an unsettled premise, and no label
 stranded on a blocked node.
@@ -160,7 +167,8 @@ de-fog node blocking it instead of a proof table.
 ### 4. Create, then wire
 
 Create the map, then every node as a child issue — **first pass creates, second pass wires the blocking
-edges** (issues need ids before they can reference each other). Follow the mechanics in
+edges** (issues need ids before they can reference each other). Map and node bodies carry their premise
+records or `Derived from: P-...` links. Follow the mechanics in
 [`node-template.md`](node-template.md).
 
 *Done when:* the map indexes every node, and every build and de-fog edge exists as a native blocking
@@ -168,10 +176,11 @@ link — the frontier renders correctly in GitHub's UI.
 
 ### 5. Fire research and hand off
 
-Research nodes resolve by teammate, one each, **posting findings as a comment on their own issue** — that
-comment is what `/dag:plan` reads to close the node and unblock what it was blocking. Claude Code uses
+Research nodes investigate by teammate, one each, **posting candidate findings as a comment on their own
+issue**. The planning lead verifies and admits or contests them; only the lead's admission comment with an
+active premise ID lets `/dag:plan` close the node and unblock what it was blocking. Claude Code uses
 Agent Teams; Codex uses native child agents. There is no subagent fallback. A finding that lands only in a
-file is one the router cannot see.
+file is one the router cannot see, and a candidate report alone is not an answer.
 
 **Say what you are about to dispatch and how many, then dispatch.** The planning orchestrator alone
 assigns each node; research teammates never self-claim another node or delegate further. Spawning agents
@@ -181,11 +190,12 @@ the research nodes, say they are ready to fire, and let the user trigger them. H
 its research unstarted is fine — `/dag:plan` routes each unanswered research node to `/dag:research` when
 it comes up.
 
-Fire each research node **once**. A node that already has its answer is one `/dag:plan` closes, not one it
-re-fires; re-firing an answered node is how a chart loops forever.
+Fire each research node **once**. A node with an admitted answer is one `/dag:plan` closes, not one it
+re-fires. A node with only a candidate or contested answer stays open for lead admission; re-firing it is
+not a substitute for that judgement.
 
-Then hand the chart back to `/dag:plan`, which reads what returned, closes each answered node, and runs
-the next move — pre-flight included, when the chart is complete.
+Then hand the chart back to `/dag:plan`, which reads what returned, closes each node whose answer the
+planning lead admitted, and runs the next move — pre-flight included, when the chart is complete.
 
 *Done when:* every research node is either running or named as ready-to-fire with the reason it wasn't,
 and the chart is handed to `/dag:plan`.
@@ -195,7 +205,8 @@ and the chart is handed to `/dag:plan`.
 When an expedition is huge and the route is still foggy — whole regions toward its known destination
 cannot yet be sliced into nodes — do not force premature nodes. Chart what is specifiable and put the
 rest under **Not yet specified** on the map. As upstream de-fog nodes resolve, **graduate** each patch
-that becomes specifiable into fresh nodes. Every entry names the open de-fog issue expected to unlock it;
+that becomes specifiable from active premises into fresh nodes. Every entry names the open de-fog issue
+and premise expected to unlock it;
 an entry with no next decision is a dead end, not fog. A map cannot pass pre-flight until each entry is
 graduated or moved to **Out of scope**. If the destination itself becomes uncertain, return to Wayfinding
 instead.

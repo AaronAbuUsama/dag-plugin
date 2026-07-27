@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.1
+
+**Planning evidence now has authority, provenance and invalidation.** Current source, historical
+material, inference, memory and teammate reports can no longer silently substitute for one another or
+for user intent.
+
+- **One premise contract.** Every planning route shares authority classes, exact source refs, admission
+  status and `Derived from` provenance.
+- **Current canon precedes history.** Intentional deletion is a tombstone, not a gap to fill; historical
+  artifacts cannot unlock current decisions without explicit current re-adoption.
+- **Corrections retract descendants.** A changed source or user correction produces an invalidation
+  receipt covering every dependent recommendation, decision, Atlas, map, node, ADR and signature before
+  planning resumes.
+- **Research is candidate-first.** Teammate findings do not become repo canon or close a node until the
+  planning lead verifies and admits them.
+- **Bare planning stays read-only.** With no artifact and no supplied outcome, `dag:plan` grounds one
+  batched interview and writes nothing.
+- **Regression coverage.** Tier-1 checks protect the shared contract and templates; a stdlib behavioral
+  harness exercises tombstones, changed/absent canon, memory/report conflicts, correction invalidation,
+  re-adoption and the no-intent route.
+
 ## 1.0.0
 
 **The missing level above a chart now exists.** `dag:plan` distinguishes one known destination from

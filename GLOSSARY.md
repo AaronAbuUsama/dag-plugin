@@ -115,8 +115,44 @@ profile, check or edge assumption passed work it should have stopped.
 the wider system is in question. It is resolved through Wayfinding, not by weakening node contracts.
 
 **primary source** — the thing that owns the fact, not a write-up of it: official docs, the source
-code, a spec, a first-party API — or, for a **spike**, the spike's own code. Research follows every
-claim back to one; a secondary account is where stale facts come from.
+code, a spec, a first-party API — or, for a **spike**, the spike's own code within the question it
+exercised. “Primary” names ownership, not currency: every current claim still needs an exact current ref,
+version or observation date. A deleted source is primary for what existed then, not for what exists now.
+
+**premise** — a claim planning relies on to recommend, decide, persist or sign something. An unlocking
+premise has a stable ID, claim, **authority class**, exact source/ref, status and a list of descendants.
+The full admission and invalidation contract is in [`EVIDENCE-AUTHORITY.md`](EVIDENCE-AUTHORITY.md).
+
+**authority class** — which claim domain a source is allowed to own:
+
+- `user-intent` — desired outcome, scope, value, choices and corrections;
+- `current-repo-source` — current repo/system facts at an exact worktree/HEAD ref;
+- `current-external-primary` — current external facts at a versioned source and observation date;
+- `historical/tombstoned` — past, deleted or rejected material; historical explanation only;
+- `inference` — a proposed consequence of admitted premises;
+- `report/memory` — a teammate report, transcript, tracker summary or model memory awaiting verification.
+
+Authority is domain-specific, not one ladder: the user owns intent and current HEAD owns current repo
+facts. Neither may silently substitute for the other.
+
+**premise status** — whether a premise may unlock descendants: `active` may; `contested`, `invalid` and
+`superseded` may not. A correction or contradictory current source changes status before any replacement
+recommendation is issued.
+
+**current authority pointer** — the current repo source that names which artifact/configuration owns a
+claim now: for example a README canon section, AGENTS instruction, manifest, architecture doc or live
+configuration. Resolve it and exact HEAD before Git history.
+
+**tombstone** — an intentional deletion, a negative authority signal. The deleted content remains useful
+historical evidence but cannot substitute for an absent current source or unlock a current decision
+unless current authority explicitly re-adopts it.
+
+**Derived from** — the provenance edge from a recommendation, decision, issue, ADR, map, node or signature
+back to its premise IDs or parent descendants. It is an epistemic edge, not GitHub native blocking.
+
+**invalidation receipt** — the durable record written when a premise is corrected, contradicted,
+superseded or deleted: the premise and trigger, every `Derived from` descendant, each disposition, and
+the nearest valid frontier. Planning retracts descendants before issuing a corrected baseline.
 
 **database id** — GitHub's internal issue id, which every dependency and sub-issue endpoint takes, and
 which is *not* the `#number` a human sees. Read it with `gh api repos/<owner>/<repo>/issues/<n> --jq
@@ -243,9 +279,9 @@ unrelated → resume patching, with confidence.
 **design tree** — the plan seen as decisions, each branching into the decisions that hang off it.
 Grilling walks it in **rounds**, not depth-first.
 
-**frontier** — the set of decisions whose prerequisites are already settled: the questions you can ask
-*now* without guessing at answers you haven't heard yet. (The same word names the executable edge of a
-**chart**: the open, unblocked, unclaimed nodes.)
+**frontier** — the set of decisions whose prerequisites are already settled by active **premises**: the
+questions you can ask *now* without guessing at answers you haven't heard yet. (The same word names the
+executable edge of a **chart**: the open, unblocked, unclaimed nodes whose premises are also active.)
 
 **round** — one batched pass over the whole **frontier**. Ask every frontier question at once — numbered,
 each with a recommended answer — then recompute the frontier from the answers. The cure for

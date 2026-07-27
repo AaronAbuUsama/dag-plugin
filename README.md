@@ -118,7 +118,10 @@ if needed     settle one            onto      sign it        walk it     find th
 - **The docs site** lives in [`docs/`](docs/) — `bun run --cwd docs dev` to read it locally. It is live
   on [GitHub Pages](https://aaronabuusama.github.io/dag-plugin/) and deployed by
   [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
-- **The guided tour** is just `dag:plan` with no chart yet — it orients you and starts.
+- **The guided tour** is just `dag:plan` with no chart yet. If you supplied an outcome it routes that
+  work; if the invocation is bare it grounds one interview and asks what you want planned before writing.
+- **The planning evidence contract** — authority classes, exact refs, premise provenance, tombstones and
+  descendant invalidation — lives in [`EVIDENCE-AUTHORITY.md`](EVIDENCE-AUTHORITY.md).
 - **The vocabulary** — every **bold term** in the skills — lives in [`GLOSSARY.md`](GLOSSARY.md).
 - **Each skill** reads as a standalone playbook under [`skills/`](skills/).
 

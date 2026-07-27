@@ -3,6 +3,8 @@
 How this suite talks to a human. It covers the message a turn ends with — a state roll-up, a finding, a
 decision, a grill, or a two-line update — and the **decision block**, which fires whenever a question goes
 to the user, mid-turn as often as at the end. Terms are in [`GLOSSARY.md`](GLOSSARY.md).
+Evidence authority, premise admission and correction receipts are in
+[`EVIDENCE-AUTHORITY.md`](EVIDENCE-AUTHORITY.md); presentation must never hide those states.
 
 The reflexes here that must hold with nothing read are also in this plugin's output style, which loads
 every turn. This file is the full vocabulary behind them.
@@ -60,19 +62,23 @@ Drop this in **whenever the message makes claims that need backing**. It is not 
 message — a finding, a roll-up, and a grill can all need one.
 
 ```markdown
-| Claim | Evidence | Verified |
-|---|---|---|
-| The listener is torn down when auth settles | `wa/session.ts:214` | ✅ read it |
-| The getter is never read anywhere | `rg 'getConnectionState'` → 1 hit, the definition | ✅ ran it |
-| The coalescer's queue is unbounded | agent report, not re-checked | ⚠️ unverified |
+| Claim | Evidence/ref | Verified | Authority | Premise status |
+|---|---|---|---|---|
+| The listener is torn down when auth settles | `wa/session.ts:214 @ abc1234` | ✅ read it at HEAD | `current-repo-source` | active |
+| An old design used cyan radicals | deleted file at `92878a9` | ✅ read from history | `historical/tombstoned` | historical only |
+| The coalescer's queue is unbounded | agent report, not re-checked | ⚠️ unverified | `report/memory` | contested |
 ```
 
-**The `Verified` column is the point of the table.** It separates what *you* checked from what something
-else told you, and those must never blur — an agent's report is a claim about the code, not a reading of
-it. Mark unverified rows plainly rather than dropping them; a claim you could not check is still worth
-surfacing as long as it is labelled.
+**Verification and authority are separate.** `Verified` separates what *you* checked from what something
+else told you. `Authority` says whether that source owns this claim now. A deleted file can be personally
+verified and still have no authority over the current product. Mark unverified, historical, contested and
+inferred rows plainly rather than dropping them.
 
-Evidence is a `file:line`, a command and its result, or a URL. "As discussed" is not evidence.
+Evidence is a `file:line @ commit`, a command and its result, a versioned URL plus observation date, or
+an exact user answer. "As discussed" is not evidence.
+
+When a correction invalidates a displayed recommendation or decision, show the premise invalidation
+receipt and every descendant disposition before presenting a replacement baseline.
 
 ---
 
@@ -82,9 +88,10 @@ This is the whole of the decision protocol, and it applies to **every** moment y
 choose, or unblock — structured question prompts, grills, and any options put in front of them. Nothing
 here is optional and the order is fixed:
 
-1. **The problem, in code.** Real `file:line` and real snippets, in a language-tagged fence. Not a
-   paraphrase of the code — the code. A diagram instead only when the shape (a flow, a state machine, a
-   dependency web) lands faster drawn.
+1. **The problem, in authoritative code.** Current `file:line @ ref` and real snippets, in a
+   language-tagged fence. Not a paraphrase of the code — the code. Historical material is labelled
+   `historical/tombstoned` and can explain history, never pose as current source. A diagram instead only
+   when the shape (a flow, a state machine, a dependency web) lands faster drawn.
 2. **What it touches.** Zoom out: the surrounding code, its callers and dependents, the blast radius.
    **Assume the reader has read none of it** — a reference to code you did not show is one they cannot use.
 3. **The options, as code or diffs.** Each candidate as a concrete snippet or diff sketch. Never a prose

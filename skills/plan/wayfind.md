@@ -19,14 +19,15 @@ gh issue list --label dag:atlas --state open --json number,title
 ```
 
 Use the one the user named or the only one whose scope matches. If several could match, show them and
-ask; never guess. If none matches, create one:
+ask; never guess. If none matches, create one only from an outcome, problem or scope already stated by
+the user. Otherwise return to Plan's no-intent route without writing.
 
 ```markdown
 # North star
 <The direction and value sought. It may be less precise than a chart destination.>
 
 ## Known terrain
-<What exists, the system boundary currently visible, and primary-source links.>
+<What exists in the current worktree and its named current docs, plus the visible system boundary.>
 
 ## Decisions so far
 - <decision and why>

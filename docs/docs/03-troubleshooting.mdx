@@ -21,16 +21,15 @@ to `/dag:preflight`.
 
 ## The native worker runner is unavailable
 
-Execution has one runner per host. Claude Code requires Agent Teams; Codex requires native child agents.
+Execution has one runner per host. Claude Code requires Agent Teams; Codex requires its task/thread tools.
 If that capability is unavailable, `dag:execute` stops before creating any assignment. It does not fall
-back to Claude subagents or user-owned Codex sidebar tasks.
+back to Claude subagents or literal Codex subagents.
 
 For Claude Code, upgrade to a release with Agent Teams and enable that experimental feature. For Codex,
-confirm the `multi_agent` feature is enabled:
+confirm that creating and reading tasks is available:
 
 ```bash
 claude --version
-codex features list | grep multi_agent
 ```
 
 Once the runner exists, run the execution door again. GitHub still owns the frontier, so nothing needs
@@ -89,10 +88,10 @@ gh api --paginate repos/<o>/<r>/issues/<map>/sub_issues --jq '.[] | {number,titl
 gh pr list --state open --json number,headRefName,title
 ```
 
-What a resumed session **does** lose is the teammates themselves. Their branches, worktrees and open PRs
-survive; the agent sessions don't. Re-run `/dag:execute`; the main orchestrator re-reads GitHub and
-assigns fresh teammates to the nodes still open. Workers never claim the next issue from a stale runtime
-task list.
+The durable state is the issues, PRs, and each PR's latest `Review state`; host sessions are only
+assignments. Re-run `/dag:execute`; the main orchestrator re-reads GitHub, reconnects to a live Codex
+task when its id is available, or assigns a fresh teammate to the still-open node. Workers never claim
+the next issue from a stale runtime task list.
 
 **Leftover worktrees** are the one thing worth cleaning by hand:
 

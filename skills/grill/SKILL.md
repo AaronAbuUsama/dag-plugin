@@ -19,10 +19,12 @@ Map the plan as a **design tree**. Then repeat until the **frontier** is empty:
    answerable *now* without guessing at answers you haven't heard. A decision that depends on another
    still-open decision belongs to a *later* **round**, not this one.
    *Done when:* you have that list and can name what each item is blocked on (nothing) or blocks.
-2. **Resolve every fact yourself** — the rule is in the output style; here it means assigning one research
-   teammate through the current host's agent-team path (see `/dag:research`) per frontier item for anything
-   findable in the code or environment: call sites, current behaviour, what a type already guarantees.
-   *Done when:* no frontier item is waiting on a fact you could have looked up.
+2. **Ground the current frontier.** Read the current worktree and its named current docs for facts that
+   change a frontier choice: call sites, current behaviour, what a type already guarantees. Assign a
+   research teammate only when an established frontier decision is blocked on a fact that current source
+   cannot settle directly.
+   *Done when:* no question asks the user for a fact you could verify, and no research extends beyond the
+   current frontier.
 3. **Put the whole frontier to the user as one round.** Number the questions. Each one is a
    **rubric-grill** (below) — no exceptions. Then stop and wait for answers.
    *Done when:* every frontier question is presented grounded and you have handed the round over.

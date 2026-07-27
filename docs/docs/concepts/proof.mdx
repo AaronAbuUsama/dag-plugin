@@ -63,7 +63,8 @@ decides when proof runs, and no individual node gets to decide it for itself.
 <CardGroup cols={2}>
   <Card title="Reachable from a branch">
     The proof contract is a fourth **merge gate** signal, satisfied on the open PR. A node that cannot
-    be proven never merges, and reaches done-clean *before* it lands.
+    be proven never merges. It reaches the merge already proven, then becomes done-clean when merged
+    and closed.
   </Card>
   <Card title="Needs the merged head">
     The profile names the shared environment it waits on, and proof runs straight after the merge.

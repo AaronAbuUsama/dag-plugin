@@ -66,6 +66,40 @@ else
   note "checked"
 fi
 
+echo "== planning waits for intent =="
+no_intent=$(grep -n "No artifact; no desired outcome" skills/plan/SKILL.md | cut -d: -f1)
+fog=$(grep -n "No artifact; destination/system shape is foggy" skills/plan/SKILL.md | cut -d: -f1)
+[ -n "$no_intent" ] && [ "$no_intent" -lt "$fog" ] || bad "no-intent route must precede Wayfinding"
+grep -q "Persist accepted planning moves" skills/plan/SKILL.md || bad "only accepted moves persist"
+grep -q "When the user corrects an assumption" skills/plan/SKILL.md || bad "corrections do not rewind"
+grep -A3 "When the user corrects an assumption" skills/plan/SKILL.md |
+  grep -q "remove.*dag:preflighted" || bad "corrections do not unsign affected maps"
+grep -q "Ground the current frontier" skills/grill/SKILL.md || bad "Grill grounding is unbounded"
+grep -q "Stop at the decision boundary" output-styles/dag-house-style.md ||
+  bad "house style does not stop for answers"
+grep -q "Write the findings to a single Markdown file" skills/research/SKILL.md &&
+  bad "research still writes unconditionally"
+note "entry, grounding, persistence and correction boundaries checked"
+
+echo "== Codex tasks and review state survive context =="
+if rg -n 'calls `spawn_agent`|native child agents|user-owned Codex sidebar tasks' \
+  README.md GLOSSARY.md RESPONSE-RULES.md output-styles skills docs/docs \
+  --glob '!docs/docs/changelog/**' > "$tmp/codex-runner"; then
+  while read -r l; do bad "obsolete Codex runner contract: $l"; done < "$tmp/codex-runner"
+fi
+grep -q "Codex → Codex tasks" skills/execute/SKILL.md || bad "execute does not use Codex tasks"
+grep -q "Review state" skills/execute/SKILL.md || bad "review state is not durable"
+grep -q "whole history, not this context" skills/execute/SKILL.md || bad "review rounds reset with context"
+grep -q "reviewed head" skills/execute/review-brief.md || bad "review verdict is not head-bound"
+grep -q "setup returns only a client id" skills/execute/SKILL.md || bad "queued Codex task is treated as assigned"
+grep -q "whenever the rung" skills/execute/SKILL.md || bad "ladder transitions are not checkpointed"
+rg -n "reaches done-clean.*before|done-clean before" GLOSSARY.md skills docs/docs \
+  --glob '!docs/docs/changelog/**' > "$tmp/early-done" || true
+if [ -s "$tmp/early-done" ]; then
+  while read -r l; do bad "done-clean claimed before merge and close: $l"; done < "$tmp/early-done"
+fi
+note "runner and cumulative review checkpoint checked"
+
 echo "== completion criteria use one format =="
 grep -rn "Done when" skills/*/SKILL.md | grep -v '\*Done when' > "$tmp/criteria" || true
 if [ -s "$tmp/criteria" ]; then

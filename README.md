@@ -61,8 +61,8 @@ signed, you run `dag:execute` once and it drives the rest on its own. Claude Cod
 **Planning is human-in-the-loop**: `dag:plan` reads the chart's state and runs the next move *with* you,
 in the same turn — you make the decisions, it never hands you a command to type. **Execution is not**:
 once pre-flight is signed, `dag:execute` walks the graph on its own. The main orchestrator reads the
-frontier from GitHub, creates the worktrees and assigns one issue to each teammate. Claude Code uses
-Agent Teams; Codex uses native child agents. Workers never self-claim from a runtime task list or
+frontier from GitHub and assigns one issue to each worktree-backed teammate. Claude Code uses
+Agent Teams; Codex uses separate Codex tasks. Workers never self-claim from a runtime task list or
 delegate further. The signed pre-flight is the door between the halves; a rung-3 stop freezes dispatch
 and hands the DAG back to planning instead of running the rest on broken assumptions.
 
@@ -136,8 +136,8 @@ reports the plugin as not installed. Codex refreshes the configured marketplace 
 
 **What it needs.** GitHub is the tracker and that is not optional — the chart's **edges** are GitHub's
 own issue-dependency relation, so `gh` authenticated against the repo is a hard requirement.
-Execution needs the host's native multi-agent runner: Agent Teams in Claude Code, or child agents in
-Codex. There is no Claude subagent fallback. `/dag:prove` needs whatever its **evidence form** calls for
+Execution needs the host's native multi-agent runner: Agent Teams in Claude Code, or Codex tasks created
+and supervised through its thread tools. There is no literal-subagent fallback. `/dag:prove` needs whatever its **evidence form** calls for
 — a browser to drive a UI, `ffmpeg` to pull a still out of a journey video. The optional DAG output
 style is Claude Code-only; the shared response rules carry the same behavioral contract in Codex.
 

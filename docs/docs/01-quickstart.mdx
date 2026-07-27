@@ -95,7 +95,7 @@ issue-dependency relation, which no other tracker renders.
 | Requirement | Why |
 | --- | --- |
 | **`gh`, authenticated** | Non-negotiable. The suite creates issues, sub-issues, dependency links, and labels through it. |
-| **Native multi-agent support** | Claude Code uses Agent Teams; Codex uses native child agents. Execution stops before dispatch if the host runner is unavailable. |
+| **Native multi-agent support** | Claude Code uses Agent Teams; Codex uses worktree-backed tasks through its thread tools. Execution stops before dispatch if the host runner is unavailable. |
 | **A browser, `ffmpeg`** | Only what a node's evidence form calls for — driving a UI, pulling a still out of a journey video. |
 
 ## Configure the repo, once
@@ -180,7 +180,7 @@ A typical sequence, one move per turn:
 
 It checks the signature first and refuses to dispatch without it. Then the main orchestrator walks the
 graph wave by wave: it reads the ready set from GitHub, creates one worktree per node and assigns exactly
-one node to each teammate. Claude Code uses Agent Teams only; Codex uses native child agents only.
+one node to each teammate. Claude Code uses Agent Teams only; Codex uses separate Codex tasks only.
 Workers do not self-claim from the host's task list and do not spawn more workers.
 
 **You should see** the ready set named before anything is dispatched, then one PR appear per node. If it
@@ -210,7 +210,7 @@ Atlas. `/dag:plan` reads that state instead of re-signing the same assumption.
     The reviews are clean. Necessary, not sufficient.
   </Card>
   <Card title="done-clean">
-    The proof contract is satisfied — the evidence exists, it is in the PR, and a receipt is committed.
-    The only real done.
+    The node is merged and closed with its proof contract satisfied — the evidence exists, it is in the
+    PR, and a receipt is committed. The only real done.
   </Card>
 </CardGroup>

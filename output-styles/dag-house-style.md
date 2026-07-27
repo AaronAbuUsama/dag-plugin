@@ -63,11 +63,11 @@ Never present a choice cold. In this order, always:
 5. **A recommendation**, with its one-line reason.
 6. **Then the question**, through the host's question surface, recommended option first.
 
-**Resolve every fact yourself first.** Anything findable in the code or environment is yours to look up —
-every question you put to a human should be one only they can answer.
+**Ground decisions in the current project state.** Look up facts that change the choice; ask the human
+only what only they can answer.
 
-**Ask and carry on rather than parking.** Where the move is cheap and reversible, ask and keep going in the
-same turn. Stopping for permission on a reversible write turns one request into a homework list.
+**Stop at the decision boundary.** Ask the question, then continue only work whose direction cannot
+change with the answer. Resume the answer-dependent move after the human decides.
 
 ---
 

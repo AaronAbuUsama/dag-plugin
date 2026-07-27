@@ -66,6 +66,19 @@ else
   note "checked"
 fi
 
+echo "== planning waits for intent =="
+no_intent=$(grep -n "No artifact; no desired outcome" skills/plan/SKILL.md | cut -d: -f1)
+fog=$(grep -n "No artifact; destination/system shape is foggy" skills/plan/SKILL.md | cut -d: -f1)
+[ -n "$no_intent" ] && [ "$no_intent" -lt "$fog" ] || bad "no-intent route must precede Wayfinding"
+grep -q "Persist accepted planning moves" skills/plan/SKILL.md || bad "only accepted moves persist"
+grep -q "When the user corrects an assumption" skills/plan/SKILL.md || bad "corrections do not rewind"
+grep -q "Ground the current frontier" skills/grill/SKILL.md || bad "Grill grounding is unbounded"
+grep -q "Stop at the decision boundary" output-styles/dag-house-style.md ||
+  bad "house style does not stop for answers"
+grep -q "Write the findings to a single Markdown file" skills/research/SKILL.md &&
+  bad "research still writes unconditionally"
+note "entry, grounding, persistence and correction boundaries checked"
+
 echo "== completion criteria use one format =="
 grep -rn "Done when" skills/*/SKILL.md | grep -v '\*Done when' > "$tmp/criteria" || true
 if [ -s "$tmp/criteria" ]; then

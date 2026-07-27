@@ -34,8 +34,8 @@ gh issue list --label dag:map --state open --json number,title
   execute. Ask which expedition only when there is a real choice the graph cannot represent — never
   merely because several required maps exist.
 - Several plausible artifacts → name them and ask which one; never choose by recency.
-- No artifact → inspect the request. One known destination starts an **expedition**. Fog about the
-  destination, system boundary, or relationship between several destinations starts **Wayfinding**.
+- No artifact → use the routing table below; it separates an absent planning request, one known
+  destination, and destination/system fog.
 
 If any required label, including `dag:atlas`, is missing, hand over `/dag:setup`. Querying issues by a
 missing label returns an empty list rather than an error, so check the label vocabulary first. That is
@@ -81,6 +81,7 @@ Read the matching rows top-down and perform the first move that applies:
 
 | State | Move | Read and follow |
 |---|---|---|
+| No artifact; no desired outcome, problem or scope in the request | inspect the current worktree and its named current docs only enough to ground one batched question about what the user wants planned; make no GitHub or repository writes, then stop | [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) |
 | No artifact; destination/system shape is foggy | create or advance an Atlas | [`wayfind.md`](wayfind.md) |
 | No artifact; one destination is known | grill, then chart the expedition | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
 | Atlas has an open decision, relevant unspecified territory, or newly chartable region | advance Wayfinding once | [`wayfind.md`](wayfind.md) |
@@ -112,10 +113,12 @@ node-wrong, method-wrong or destination-wrong.
 under the map. Every such entry must be graduated, moved to **Out of scope**, or still point at an open
 de-fog issue. A clear-looking frontier does not excuse uncertainty buried elsewhere.
 
-## 4. Persist every planning move
+## 4. Persist accepted planning moves
 
 Planning is human-in-the-loop and advances one move per turn. A portfolio pre-flight batch is one move:
 it may sign several complete maps because they are independent artifacts at the same planning phase.
+Write durable planning state only after the user has supplied or confirmed the outcome or decision it
+records. Exploration and unanswered questions stay in the turn.
 
 When a decision lands:
 
@@ -126,12 +129,16 @@ When a decision lands:
 That close advances the durable frontier. A result left only in chat did not happen.
 
 When the move needs user input, ground the question through
-[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), ask it, and continue the move in the same turn.
-Do not ask the user whether something is “an Atlas”; show the concrete destination uncertainty and
-recommend the matching level.
+[`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md), ask it, and stop work whose direction depends on
+the answer. Continue only independent grounding. Do not ask the user whether something is “an Atlas”;
+show the concrete destination uncertainty and recommend the matching level.
 
 If two decision issues answer the same underlying question, name the possible **nest** and route to
 diagnosis rather than multiplying decisions.
+
+When the user corrects an assumption, discard conclusions that depended on it and return to the last
+user-confirmed decision. If those conclusions are already durable, amend or reopen the affected planning
+state before proposing a replacement.
 
 ## 5. Recover a partial stop
 

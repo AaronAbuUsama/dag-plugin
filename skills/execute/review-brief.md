@@ -21,6 +21,8 @@ Compose one per PR, from the node's issue and its **proof ledger** row. Include 
 - **Ground already laid** — the merged nodes this one consumes a contract, shape, or name from, so the
   reviewer can tell "targets what exists" from "targets a guess".
 - **Where to put the verdict** — a comment on this PR. A verdict left in a transcript did not happen.
+- **The exact reviewed head** — the PR head SHA the reviewer actually read. A verdict without it cannot
+  pass the merge gate, and a later head makes it stale.
 
 ## The two questions a review must answer
 
@@ -36,9 +38,10 @@ Findings from either question feed the **ladder** exactly the same way.
 
 ## The verdict
 
-One comment on the PR carrying: each acceptance criterion with met / not-met, the provability answer,
-and every finding. Findings are the review's product — a review returning "looks good" on a node whose
+One comment on the PR carrying: the exact reviewed head, each acceptance criterion with met / not-met,
+the provability answer, and every finding. Findings are the review's product — a review returning "looks good" on a node whose
 contract it never checked reviewed nothing.
 
-*Done when:* the verdict is posted to the PR as a comment, every acceptance criterion carries a
-met/not-met judgement, and the provability question is answered explicitly rather than assumed.
+*Done when:* the verdict is posted to the PR as a comment with its reviewed head, every acceptance
+criterion carries a met/not-met judgement, and the provability question is answered explicitly rather
+than assumed.

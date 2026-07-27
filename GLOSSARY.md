@@ -149,17 +149,20 @@ on the observation itself — which is exactly why that observation must be an a
 open, never an assertion that it happened. Say which of the two this is: a chain claiming a convergence
 it doesn't have is worse than one that states it has none.
 
-**proof ledger** — the running record of each node's proof contract and whether it is satisfied. Makes
-the difference between the two done-states impossible to blur:
+**proof ledger** — the running record of each node's proof contract and whether it is satisfied. For an
+open PR it also carries the cumulative review round, live and reviewed heads, unresolved-thread count,
+finding classes, ladder rung, diagnosis, proof head and receipt path, so a resumed context cannot reset
+either gate. Makes the difference between
+the two done-states impossible to blur:
 
 - **triage-clean** — the reviews are clean. Necessary, not sufficient.
-- **done-clean** — the proof contract is *satisfied*: the evidence exists, is in the PR, and is
-  committed as a receipt. The only real "done".
+- **done-clean** — the node is merged and closed with its proof contract *satisfied*: the evidence
+  exists, is in the PR, and is committed as a receipt. The only real "done".
 
 Proof is never deferred, and it is never merely asserted — **show it, don't claim it**. Where the
 **proof profile** says tier 3 is reachable from a branch, proof is gathered *before* the merge, as a
-**merge gate** signal — so "never deferred" is literal, and a node reaches **done-clean** before it
-lands. Where tier 3 needs the merged head, proof runs immediately after the merge and the issue closes
+**merge gate** signal — so "never deferred" is literal, and the node reaches the merge already proven.
+It becomes **done-clean** when it lands and closes. Where tier 3 needs the merged head, proof runs immediately after the merge and the issue closes
 on it. If a node cannot be proven, that is a **stop** signal — before work starts if the contract can't
 be defined, or at the gate if the evidence can't be gathered — never a shrug.
 
@@ -171,8 +174,9 @@ own reality.
 
 **agent team** — how a wave is executed: one main **orchestrator** reads the **frontier** from GitHub and
 assigns each ready **node** to one **teammate** — a separate session with its own context window, one
-worktree, one brief and one PR. Claude Code uses Agent Teams; Codex uses native child agents. Those are the
-two host implementations of the same runner, not two ways to run inside one host. The orchestrator alone
+worktree, one brief and one PR. Claude Code uses Agent Teams; Codex uses separate worktree-backed tasks.
+Those are the two host implementations of the same runner, not two ways to run inside one host. Codex
+teammates are created and supervised through the task/thread tools, never literal subagents. The orchestrator alone
 assigns work, advances the wave, grades proof and merges; teammates never self-claim another node or spawn
 teammates. Any host task list records the orchestrator's current assignments only. GitHub's issue edges
 remain the durable DAG and the only source of the frontier.

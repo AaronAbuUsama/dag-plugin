@@ -22,7 +22,7 @@ builds them without closing anything until that evidence is in the pull request.
 `dag:plan` is where you live until the plan is signed. Run it from any window: it reads the state off
 GitHub, tells you where you are, and performs the next planning move in the same turn. When the plan is
 signed, `dag:execute` takes it from there. The main orchestrator owns the frontier and assignments;
-Claude Code uses Agent Teams, Codex uses native child agents, and every worker receives exactly one
+Claude Code uses Agent Teams, Codex uses separate worktree-backed tasks, and every worker receives exactly one
 issue, one worktree and one PR.
 
 ## Is this for you?

@@ -170,13 +170,13 @@ link — the frontier renders correctly in GitHub's UI.
 
 Research nodes resolve by teammate, one each, **posting findings as a comment on their own issue** — that
 comment is what `/dag:plan` reads to close the node and unblock what it was blocking. Claude Code uses
-Agent Teams; Codex uses native child agents. There is no subagent fallback. A finding that lands only in a
+Agent Teams; Codex uses separate Codex tasks. A finding that lands only in a
 file is one the router cannot see.
 
 **Say what you are about to dispatch and how many, then dispatch.** The planning orchestrator alone
-assigns each node; research teammates never self-claim another node or delegate further. Spawning agents
+assigns each node; research teammates never self-claim another node or delegate further. Creating tasks
 is something a repo or a session may have its own standing rules about, and a chart with eight research
-nodes is eight agents. Where such a rule says agents are not spawned unprompted, **that rule wins**: name
+nodes is eight tasks. Where such a rule says tasks are not created unprompted, **that rule wins**: name
 the research nodes, say they are ready to fire, and let the user trigger them. Handing the chart on with
 its research unstarted is fine — `/dag:plan` routes each unanswered research node to `/dag:research` when
 it comes up.

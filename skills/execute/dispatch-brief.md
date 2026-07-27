@@ -8,8 +8,9 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
 
 - **Scope — the vertical slice.** The narrow-but-complete path this node cuts (schema→logic→tests),
   and its boundary: what is in, and what belongs to a sibling node so the teammate doesn't reach into it.
-- **Assignment.** The node issue number, runtime runner (Claude Code Agent Teams or Codex child agents),
-  exact branch name, and absolute worktree path created by the orchestrator. The teammate works only
+- **Assignment.** The node issue number, runtime runner (Claude Code Agent Teams or Codex task),
+  exact branch name, and assigned worktree (absolute path for Agent Teams; the task-owned cwd for
+  Codex). The teammate works only
   there, owns only this node, never self-claims another task, and never spawns another agent.
 - **Acceptance criteria.** The node's written criteria, verbatim from its spec — the bar its own work
   and the merge gate both judge against.
@@ -43,8 +44,8 @@ Compose one per node from the node's spec and its **proof ledger** row. Include 
 
 ## The shape constraint (state it in every brief)
 
-One **teammate** = one node = one worktree = one PR. The orchestrator creates the worktree and assigns the
-node; the teammate runs only that node in that worktree and captures the evidence its contract names. It
+One **teammate** = one node = one worktree = one PR. The orchestrator assigns the node and its worktree;
+the teammate runs only that node there and captures the evidence its contract names. It
 never self-claims more work, delegates, or grades that evidence — the **verdict** is the orchestrator's.
 Any tier the profile puts behind a shared environment is the orchestrator's to reach.
 

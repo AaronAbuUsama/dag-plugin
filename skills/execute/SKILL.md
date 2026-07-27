@@ -18,7 +18,7 @@ the **proof profile** says tier 3 is reachable from a branch) → merge → clos
 needs the merged head instead, proof runs straight after the merge and the issue closes on it.
 
 **The one shape, everywhere:** one **teammate** = one node = one worktree = one PR. You are the main
-**orchestrator**: you read the frontier, create each worktree, assign each node, and grade what comes back.
+**orchestrator**: you read the frontier, assign each node to its own worktree-backed session, and grade what comes back.
 Each teammate runs only its assigned node and captures the evidence its contract names; it never
 self-claims another node or spawns another agent. Nobody grades their own homework — the contract was
 fixed before the code existed, and the **verdict** is yours. Where the profile puts a tier behind a shared
@@ -71,8 +71,10 @@ portfolio — its owning map and **proof contract** from the node's own issue bo
 already carry a recorded result in that
 issue's comments. The ledger is the record that keeps **triage-clean** (reviews pass) from ever passing
 for **done-clean** (proof gathered, in the PR), so it has to survive a crashed window: as each tier's
-result lands, post it to that node's issue. A ledger held only in context is a ledger that resumes as an
-empty one, and a merged-but-unproven node then looks exactly like a done-clean one.
+result lands, post it to that node's issue. For an open PR, also read its latest `Review state` comment:
+the cumulative round, live head, reviewed head, unresolved-thread count, finding classes and counts,
+current rung, diagnosis link if any, proof head, and receipt path. A ledger held only in context is a ledger that resumes as an empty one, and a
+merged-but-unproven node or round-eleven review then looks exactly like a fresh one.
 
 *Done when:* every selected map carries `dag:preflighted`, each run profile and signed table has been
 read off GitHub, and every open node has a ledger row derived from its issue — or you have stopped and
@@ -85,10 +87,9 @@ Compute one combined ready set: every unstarted node in the selected map or port
 predicate `chart`, `plan` and GitHub's own UI use, so the frontier you dispatch is the frontier the
 tracker renders. Under close-on-proof a blocker closes when its proof lands, not when it merges.
 
-Before assigning a node, create its branch and worktree from its owning map's current base, then give the
-teammate the absolute worktree path and a **self-contained brief** — the fields and shape constraint are
-in [`dispatch-brief.md`](dispatch-brief.md). The orchestrator owns worktree creation and cleanup; a
-teammate never creates its own checkout.
+Before assigning a node, give the teammate a **self-contained brief** — the fields and shape constraint
+are in [`dispatch-brief.md`](dispatch-brief.md). The orchestrator owns the assignment and cleanup; a
+teammate never creates an extra checkout.
 
 **Choose exactly one runner from the host — never mix runners inside one DAG or portfolio:**
 
@@ -97,10 +98,13 @@ teammate never creates its own checkout.
   is missing. Do not fall back to Claude subagents. The lead alone creates and assigns tasks. Teammates do
   not self-claim from the shared task list; that list records the lead's current assignments, while GitHub
   remains the only dependency graph and source of the frontier.
-- **Codex → native child agents.** The main agent calls `spawn_agent` once per assigned node, using a
-  worker role, `fork_turns: "none"`, and the self-contained brief. Do not create user-owned sidebar
-  threads for node work. The main agent alone follows up, waits, interrupts and assigns; child agents do
-  not delegate further.
+- **Codex → Codex tasks.** Call `list_projects` to resolve the saved project once, then call
+  `create_thread` once per ready node
+  with a worktree environment and the node's base branch as its starting state. Keep the returned task
+  and host ids; if setup returns only a client id, use `list_threads` until the task has a thread and
+  host id, and do not mark the node assigned before then. Use `wait_threads`, `read_thread`, and
+  `send_message_to_thread` to supervise it. Do not use `spawn_agent` for node work. The main task alone
+  creates, follows up and assigns; node tasks do not delegate further.
 
 **The mechanics common to both runners:**
 
@@ -108,13 +112,15 @@ teammate never creates its own checkout.
   worker slots; in-flight nodes from one map never exceed that map's concurrency cap. A shared live rig
   or other modelled exclusive resource keeps its own cap across the whole portfolio. Keep the
   orchestrator itself out of the worker count.
-- One explicit worktree each keeps two teammates off the same file.
+- One explicit worktree each keeps two teammates off the same file. In Claude Code the orchestrator
+  creates it; in Codex `create_thread` creates it from the assigned base.
 - A teammate receives the repo's instruction context plus its brief, not an assumed copy of the
   orchestrator's reasoning. The brief is its whole job.
 - Recompute the frontier from GitHub after a node becomes done-clean. Never let a worker claim the next
   node from runtime state.
-- A resumed session does not restore teammates. Re-read GitHub, open PRs and worktrees, then assign each
-  still-open node to a fresh teammate through the same host runner.
+- A resumed session first re-reads GitHub, open PRs and each PR's `Review state`. Use `list_threads` to
+  reconnect to a live Codex task by its task id when available; otherwise assign the still-open node to a fresh
+  teammate through the same host runner.
 
 *Done when:* every ready node has a teammate whose brief carries its owning map, acceptance criteria,
 proof contract, consumed edges, exact branch and worktree, and the fix-completeness rule; the team is
@@ -128,6 +134,14 @@ Skills line names, briefed with [`review-brief.md`](review-brief.md) and its **v
 as a comment**, never left in a transcript; your own cold read of the full diff; and — wherever the
 **proof profile** says tier 3 is reachable from a branch — the node's **proof contract** satisfied by
 `/dag:prove`, with the evidence in the PR. Each review round returns findings; every round's findings feed the ladder (step 4), and the fix goes back through every signal.
+
+**Checkpoint the loop after every verdict.** Re-read the live PR head, comments, reviews and unresolved
+threads, then post one `Review state` comment with the cumulative round, live head, the verdict's reviewed
+head, unresolved-thread count, finding classes and counts, rung, diagnosis link if any, proof head, and
+receipt path. A clean verdict whose reviewed head differs from the live head is stale. Count the PR's
+whole history, not this context window. Before any later review request, read that checkpoint. If step 4 says rung 2, another
+point review is forbidden until the diagnosis and consolidating fix are linked from it. Update the same
+checkpoint whenever the rung, diagnosis verdict, or consolidating-fix status changes.
 
 **Proof belongs at this gate whenever it can be reached from the branch.** The open PR is the one moment
 a reviewer is actually reading, and a node whose proof can't be gathered has not earned a merge — far
@@ -147,9 +161,10 @@ Empty means the proof still describes what is about to merge. Non-empty means re
 not merely fresher, it is often strictly better evidence, because the fixes it runs against created states
 the first run could not reach.
 
-*Done when:* CI is green, the review verdict is posted to the PR, your cold read is clean, every finding
-of the last round was resolved through the ladder, and the proof contract is satisfied — or the profile
-says this node's tier 3 waits for the merged head.
+*Done when:* the exact current head has CI green and a current review verdict, the live PR has zero
+unresolved threads, your cold read is clean, every finding in the cumulative `Review state` was resolved
+through the ladder, and the proof contract and committed receipt are current and visible in the PR — or
+the profile says this node's tier 3 waits for the merged head.
 
 ## 4. Climb the ladder
 

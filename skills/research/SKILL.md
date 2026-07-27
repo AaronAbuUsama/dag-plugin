@@ -7,7 +7,7 @@ description: Settle a DAG node's open fact against primary sources and return th
 
 This is the brief for one research **teammate** assigned by the main planning **orchestrator**, so the
 caller keeps working while it reads. Claude Code assigns it through Agent Teams; Codex assigns it through
-native child agents. Do not spawn another agent from inside this skill. This is the AFK fact-finder other
+a separate Codex task. Do not create another task from inside this skill. This is the AFK fact-finder other
 planning skills in the [`dag`](../../GLOSSARY.md) suite dispatch whenever a decision is blocked on a fact
 rather than a choice — a `needs-research` node exists precisely because something is knowable but not yet
 known.

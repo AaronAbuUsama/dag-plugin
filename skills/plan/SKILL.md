@@ -82,6 +82,7 @@ Read the matching rows top-down and perform the first move that applies:
 | State | Move | Read and follow |
 |---|---|---|
 | No artifact; no desired outcome, problem or scope in the request | inspect the current worktree and its named current docs only enough to ground one batched question about what the user wants planned; make no GitHub or repository writes, then stop | [`../../RESPONSE-RULES.md`](../../RESPONSE-RULES.md) |
+| User corrects an outcome, decision or assumption used by durable planning state | remove `dag:preflighted` from every affected map; reopen or amend the affected decisions and descendants; return to the last user-confirmed decision before proposing a replacement | [Persist accepted planning moves](#4-persist-accepted-planning-moves) |
 | No artifact; destination/system shape is foggy | create or advance an Atlas | [`wayfind.md`](wayfind.md) |
 | No artifact; one destination is known | grill, then chart the expedition | [`../grill/SKILL.md`](../grill/SKILL.md), then [`../chart/SKILL.md`](../chart/SKILL.md) |
 | Atlas has an open decision, relevant unspecified territory, or newly chartable region | advance Wayfinding once | [`wayfind.md`](wayfind.md) |
@@ -137,8 +138,8 @@ If two decision issues answer the same underlying question, name the possible **
 diagnosis rather than multiplying decisions.
 
 When the user corrects an assumption, discard conclusions that depended on it and return to the last
-user-confirmed decision. If those conclusions are already durable, amend or reopen the affected planning
-state before proposing a replacement.
+user-confirmed decision. If those conclusions are already durable, remove `dag:preflighted` from every
+affected map and amend or reopen the affected decisions and descendants before proposing a replacement.
 
 ## 5. Recover a partial stop
 
